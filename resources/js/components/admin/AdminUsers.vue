@@ -67,8 +67,8 @@
               <div class="flex items-center">
                 <div class="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center overflow-hidden">
                   <img
-                    v-if="user.avatar"
-                    :src="user.avatar"
+                    v-if="user.avatar_url"
+                    :src="user.avatar_url"
                     :alt="user.name"
                     class="h-full w-full object-cover"
                   />
