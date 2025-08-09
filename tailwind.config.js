@@ -14,6 +14,21 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                primary: {
+                    50: '#f3f2ff',
+                    100: '#e8e5ff',
+                    200: '#d4cefd',
+                    300: '#b6a9fa',
+                    400: '#9279f5',
+                    500: '#7556ee', // PHP紫色為基底
+                    600: '#6442e3',
+                    700: '#5533ca',
+                    800: '#472ba6',
+                    900: '#3c2685',
+                    950: '#241757',
+                },
+            },
         },
     },
     plugins: [
