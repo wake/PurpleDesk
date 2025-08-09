@@ -1,31 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- 導航欄 -->
-    <nav class="bg-white shadow">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex items-center">
-            <router-link to="/dashboard" class="flex-shrink-0 flex items-center">
-              <div class="h-8 w-8 bg-primary-600 rounded-full flex items-center justify-center">
-                <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.93 10.7a.75.75 0 00-1.06 1.061l1.5 1.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <span class="ml-2 text-xl font-bold text-gray-900">PurpleDesk</span>
-            </router-link>
-          </div>
-          
-          <div class="flex items-center">
-            <router-link
-              to="/dashboard"
-              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              返回儀表板
-            </router-link>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <AppNavbar />
 
     <!-- 主要內容 -->
     <main class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -41,8 +17,8 @@
             <!-- 頭像上傳 -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">頭像</label>
-              <div class="flex items-center space-x-6">
-                <div class="h-20 w-20 rounded-full bg-primary-600 flex items-center justify-center overflow-hidden">
+              <div class="flex items-start space-x-6">
+                <div class="h-20 w-20 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden">
                   <img
                     v-if="form.avatar || user?.avatar"
                     :src="avatarPreview || user.avatar"
@@ -54,7 +30,31 @@
                   </span>
                 </div>
                 
-                <div>
+                <div class="flex-1">
+                  <!-- 拖曳上傳區域 -->
+                  <div
+                    ref="dropZone"
+                    @drop="handleDrop"
+                    @dragover="handleDragOver"
+                    @dragenter="handleDragEnter"
+                    @dragleave="handleDragLeave"
+                    :class="{
+                      'border-primary-500 bg-primary-50': isDragOver,
+                      'border-gray-300': !isDragOver
+                    }"
+                    class="border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer hover:border-primary-400 hover:bg-primary-25"
+                    @click="$refs.fileInput.click()"
+                  >
+                    <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <p class="mt-2 text-sm text-gray-600">
+                      <span class="font-medium text-primary-500">點擊上傳</span>
+                      或拖曳檔案至此
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">支援 JPG, PNG 格式，檔案大小不超過 2MB</p>
+                  </div>
+                  
                   <input
                     ref="fileInput"
                     type="file"
@@ -62,14 +62,6 @@
                     @change="handleFileChange"
                     class="hidden"
                   />
-                  <button
-                    type="button"
-                    @click="$refs.fileInput.click()"
-                    class="bg-white border border-gray-300 rounded-md py-2 px-3 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                  >
-                    更換頭像
-                  </button>
-                  <p class="text-xs text-gray-500 mt-1">支援 JPG, PNG 格式，檔案大小不超過 2MB</p>
                 </div>
               </div>
             </div>
@@ -184,23 +176,6 @@
             </div>
           </form>
 
-          <!-- 成功訊息 -->
-          <div v-if="successMessage" class="mx-6 mb-6">
-            <div class="bg-green-50 border border-green-200 rounded-md p-4">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.93 10.7a.75.75 0 00-1.06 1.061l1.5 1.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <p class="text-sm font-medium text-green-800">
-                    {{ successMessage }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- 錯誤訊息 -->
           <div v-if="errorMessage" class="mx-6 mb-6">
@@ -225,16 +200,32 @@
         </div>
       </div>
     </main>
+    
+    <!-- 成功訊息 Toast -->
+    <div v-if="successMessage" class="fixed bottom-4 right-4 z-50">
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg max-w-sm">
+        <div class="flex items-center">
+          <svg class="h-5 w-5 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.93 10.7a.75.75 0 00-1.06 1.061l1.5 1.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          <span class="text-sm font-medium">{{ successMessage }}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import AppNavbar from './AppNavbar.vue'
 import axios from 'axios'
 
 export default {
   name: 'ProfilePage',
+  components: {
+    AppNavbar
+  },
   setup() {
     const authStore = useAuthStore()
     const isLoading = ref(false)
@@ -243,6 +234,7 @@ export default {
     const errors = ref({})
     const organizations = ref([])
     const avatarPreview = ref(null)
+    const isDragOver = ref(false)
     
     const user = computed(() => authStore.user)
     
@@ -272,29 +264,61 @@ export default {
       }
     }
     
+    const validateAndProcessFile = (file) => {
+      // 驗證檔案大小 (2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        errorMessage.value = '檔案大小不能超過 2MB'
+        return false
+      }
+      
+      // 驗證檔案類型
+      if (!file.type.startsWith('image/')) {
+        errorMessage.value = '請選擇圖片檔案'
+        return false
+      }
+      
+      form.avatar = file
+      
+      // 產生預覽圖
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        avatarPreview.value = e.target.result
+      }
+      reader.readAsDataURL(file)
+      
+      return true
+    }
+    
     const handleFileChange = (event) => {
       const file = event.target.files[0]
       if (file) {
-        // 驗證檔案大小 (2MB)
-        if (file.size > 2 * 1024 * 1024) {
-          errorMessage.value = '檔案大小不能超過 2MB'
-          return
-        }
-        
-        // 驗證檔案類型
-        if (!file.type.startsWith('image/')) {
-          errorMessage.value = '請選擇圖片檔案'
-          return
-        }
-        
-        form.avatar = file
-        
-        // 產生預覽圖
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          avatarPreview.value = e.target.result
-        }
-        reader.readAsDataURL(file)
+        validateAndProcessFile(file)
+      }
+    }
+    
+    // 拖曳事件處理
+    const handleDragEnter = (e) => {
+      e.preventDefault()
+      isDragOver.value = true
+    }
+    
+    const handleDragOver = (e) => {
+      e.preventDefault()
+      isDragOver.value = true
+    }
+    
+    const handleDragLeave = (e) => {
+      e.preventDefault()
+      isDragOver.value = false
+    }
+    
+    const handleDrop = (e) => {
+      e.preventDefault()
+      isDragOver.value = false
+      
+      const files = e.dataTransfer.files
+      if (files.length > 0) {
+        validateAndProcessFile(files[0])
       }
     }
     
@@ -335,6 +359,11 @@ export default {
         
         successMessage.value = '個人資料已成功更新'
         
+        // 3秒後清除成功訊息
+        setTimeout(() => {
+          successMessage.value = ''
+        }, 3000)
+        
         // 清空密碼欄位
         form.current_password = ''
         form.password = ''
@@ -374,8 +403,13 @@ export default {
       errors,
       organizations,
       avatarPreview,
+      isDragOver,
       getUserInitials,
       handleFileChange,
+      handleDragEnter,
+      handleDragOver,
+      handleDragLeave,
+      handleDrop,
       handleSubmit
     }
   }

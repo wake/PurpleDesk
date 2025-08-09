@@ -18,7 +18,7 @@ Route::get('/organizations', [OrganizationController::class, 'index']);
 Route::apiResource('organizations', OrganizationController::class)->except(['index'])->middleware('auth:sanctum');
 
 // 管理員路由
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::get('/users', [AdminController::class, 'users']);
     Route::get('/organizations', [AdminController::class, 'organizations']);
     Route::get('/stats', [AdminController::class, 'systemStats']);

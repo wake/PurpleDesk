@@ -8,10 +8,7 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum');
-    }
+    // 認證已在路由中處理，無需在 constructor 中重複設定
     
     public function users()
     {

@@ -1,32 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- 導航欄 -->
-    <nav class="bg-white shadow">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex items-center">
-            <router-link to="/dashboard" class="flex-shrink-0 flex items-center">
-              <div class="h-8 w-8 bg-primary-600 rounded-full flex items-center justify-center">
-                <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.93 10.7a.75.75 0 00-1.06 1.061l1.5 1.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <span class="ml-2 text-xl font-bold text-gray-900">PurpleDesk</span>
-              <span class="ml-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">管理員</span>
-            </router-link>
-          </div>
-          
-          <div class="flex items-center space-x-4">
-            <router-link
-              to="/dashboard"
-              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              返回儀表板
-            </router-link>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <AppNavbar />
 
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <div class="px-4 py-6 sm:px-0">
@@ -90,7 +65,12 @@
 </template>
 
 <script>
+import AppNavbar from '../AppNavbar.vue'
+
 export default {
-  name: 'AdminLayout'
+  name: 'AdminLayout',
+  components: {
+    AppNavbar
+  }
 }
 </script>
