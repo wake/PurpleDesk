@@ -13,6 +13,8 @@ app.use(router);
 
 // 初始化認證狀態
 const authStore = useAuthStore();
-authStore.initializeAuth();
 
-app.mount('#app');
+// 等待認證初始化完成後再掛載應用
+authStore.initializeAuth().then(() => {
+  app.mount('#app');
+});

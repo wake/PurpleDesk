@@ -32,8 +32,8 @@
               <!-- 使用者頭像 -->
               <div class="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden">
                 <img
-                  v-if="user?.avatar"
-                  :src="user.avatar"
+                  v-if="user?.avatar_url"
+                  :src="user.avatar_url"
                   :alt="user.name"
                   class="h-full w-full object-cover"
                 />
@@ -59,8 +59,8 @@
                 <div class="flex items-center space-x-3">
                   <div class="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden">
                     <img
-                      v-if="user?.avatar"
-                      :src="user.avatar"
+                      v-if="user?.avatar_url"
+                      :src="user.avatar_url"
                       :alt="user.name"
                       class="h-full w-full object-cover"
                     />

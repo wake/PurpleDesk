@@ -39,6 +39,13 @@ class User extends Authenticatable
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['avatar_url'];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -49,6 +56,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * 取得頭像完整 URL
+     */
+    public function getAvatarUrlAttribute()
+    {
+        if (!$this->avatar) {
+            return null;
+        }
+        
+        return asset('storage/' . $this->avatar);
     }
 
     public function organization(): BelongsTo

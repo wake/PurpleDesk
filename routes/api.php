@@ -20,6 +20,8 @@ Route::apiResource('organizations', OrganizationController::class)->except(['ind
 // 管理員路由
 Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::get('/users', [AdminController::class, 'users']);
+    Route::post('/users', [AdminController::class, 'createUser']);
+    Route::put('/users/{user}', [AdminController::class, 'updateUser']);
     Route::get('/organizations', [AdminController::class, 'organizations']);
     Route::get('/stats', [AdminController::class, 'systemStats']);
 });

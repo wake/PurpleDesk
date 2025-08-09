@@ -53,8 +53,14 @@
           <tr v-for="org in filteredOrganizations" :key="org.id">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded bg-primary-100 flex items-center justify-center">
-                  <svg class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="h-10 w-10 rounded bg-primary-100 flex items-center justify-center overflow-hidden">
+                  <img
+                    v-if="org.logo_url"
+                    :src="org.logo_url"
+                    :alt="org.name"
+                    class="h-full w-full object-cover"
+                  />
+                  <svg v-else class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                   </svg>
                 </div>
@@ -96,8 +102,8 @@
     </div>
 
     <!-- 載入狀態 -->
-    <div v-if="isLoading" class="text-center py-12">
-      <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-primary-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
+      <svg class="animate-spin h-8 w-8 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
@@ -127,6 +133,57 @@
             </h3>
             
             <div class="space-y-4">
+              <!-- Logo 上傳 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">組織 Logo</label>
+                <div class="flex items-start space-x-4">
+                  <div class="h-16 w-16 bg-primary-100 rounded flex items-center justify-center overflow-hidden">
+                    <img
+                      v-if="logoPreview || (editingOrganization?.logo_url)"
+                      :src="logoPreview || editingOrganization.logo_url"
+                      :alt="formData.name"
+                      class="h-full w-full object-cover"
+                    />
+                    <svg v-else class="h-8 w-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                  </div>
+                  
+                  <div class="flex-1">
+                    <div
+                      ref="logoDropZone"
+                      @drop="handleLogoDrop"
+                      @dragover="handleLogoDragOver"
+                      @dragenter="handleLogoDragEnter"
+                      @dragleave="handleLogoDragLeave"
+                      :class="{
+                        'border-primary-500 bg-primary-50': isLogoDragOver,
+                        'border-gray-300': !isLogoDragOver
+                      }"
+                      class="border-2 border-dashed rounded-lg p-3 text-center transition-colors cursor-pointer hover:border-primary-400 hover:bg-primary-25"
+                      @click="$refs.logoFileInput.click()"
+                    >
+                      <svg class="mx-auto h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                      </svg>
+                      <p class="mt-1 text-xs text-gray-600">
+                        <span class="font-medium text-primary-500">點擊上傳</span>
+                        或拖曳檔案至此
+                      </p>
+                      <p class="text-xs text-gray-500">支援 JPG, PNG 格式，檔案大小不超過 2MB</p>
+                    </div>
+                    
+                    <input
+                      ref="logoFileInput"
+                      type="file"
+                      accept="image/*"
+                      @change="handleLogoFileChange"
+                      class="hidden"
+                    />
+                  </div>
+                </div>
+              </div>
+              
               <div>
                 <label class="block text-sm font-medium text-gray-700">單位名稱</label>
                 <input
@@ -180,6 +237,9 @@ export default {
     const searchQuery = ref('')
     const showCreateModal = ref(false)
     const editingOrganization = ref(null)
+    const logoPreview = ref(null)
+    const isLogoDragOver = ref(false)
+    const logoFile = ref(null)
     
     const formData = reactive({
       name: '',
@@ -217,10 +277,70 @@ export default {
       }
     }
     
+    const validateAndProcessLogoFile = (file) => {
+      // 驗證檔案大小 (2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        alert('檔案大小不能超過 2MB')
+        return false
+      }
+      
+      // 驗證檔案類型
+      if (!file.type.startsWith('image/')) {
+        alert('請選擇圖片檔案')
+        return false
+      }
+      
+      logoFile.value = file
+      
+      // 產生預覽圖
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        logoPreview.value = e.target.result
+      }
+      reader.readAsDataURL(file)
+      
+      return true
+    }
+    
+    const handleLogoFileChange = (event) => {
+      const file = event.target.files[0]
+      if (file) {
+        validateAndProcessLogoFile(file)
+      }
+    }
+    
+    // Logo 拖曳事件處理
+    const handleLogoDragEnter = (e) => {
+      e.preventDefault()
+      isLogoDragOver.value = true
+    }
+    
+    const handleLogoDragOver = (e) => {
+      e.preventDefault()
+      isLogoDragOver.value = true
+    }
+    
+    const handleLogoDragLeave = (e) => {
+      e.preventDefault()
+      isLogoDragOver.value = false
+    }
+    
+    const handleLogoDrop = (e) => {
+      e.preventDefault()
+      isLogoDragOver.value = false
+      
+      const files = e.dataTransfer.files
+      if (files.length > 0) {
+        validateAndProcessLogoFile(files[0])
+      }
+    }
+
     const editOrganization = (org) => {
       editingOrganization.value = org
       formData.name = org.name
       formData.description = org.description || ''
+      logoPreview.value = null
+      logoFile.value = null
     }
     
     const cancelEdit = () => {
@@ -228,16 +348,31 @@ export default {
       editingOrganization.value = null
       formData.name = ''
       formData.description = ''
+      logoPreview.value = null
+      logoFile.value = null
     }
     
     const saveOrganization = async () => {
       try {
+        const formDataToSend = new FormData()
+        formDataToSend.append('name', formData.name)
+        formDataToSend.append('description', formData.description || '')
+        
+        if (logoFile.value) {
+          formDataToSend.append('avatar', logoFile.value)
+        }
+        
         if (editingOrganization.value) {
           // 更新
-          await axios.put(`/api/organizations/${editingOrganization.value.id}`, formData)
+          await axios.post(`/api/organizations/${editingOrganization.value.id}`, formDataToSend, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            params: { '_method': 'PUT' }
+          })
         } else {
           // 新增
-          await axios.post('/api/organizations', formData)
+          await axios.post('/api/organizations', formDataToSend, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
         }
         
         await fetchOrganizations()
@@ -271,12 +406,19 @@ export default {
       showCreateModal,
       editingOrganization,
       formData,
+      logoPreview,
+      isLogoDragOver,
       filteredOrganizations,
       formatDate,
       editOrganization,
       cancelEdit,
       saveOrganization,
-      deleteOrganization
+      deleteOrganization,
+      handleLogoFileChange,
+      handleLogoDragEnter,
+      handleLogoDragOver,
+      handleLogoDragLeave,
+      handleLogoDrop
     }
   }
 }

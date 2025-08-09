@@ -20,8 +20,8 @@
               <div class="flex items-start space-x-6">
                 <div class="h-20 w-20 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden">
                   <img
-                    v-if="form.avatar || user?.avatar"
-                    :src="avatarPreview || user.avatar"
+                    v-if="form.avatar || user?.avatar_url"
+                    :src="avatarPreview || user.avatar_url"
                     :alt="user?.name"
                     class="h-full w-full object-cover"
                   />

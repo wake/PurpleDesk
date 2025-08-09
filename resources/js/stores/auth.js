@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     getUser: (state) => state.user,
-    isLoggedIn: (state) => state.isAuthenticated && !!state.token
+    isLoggedIn: (state) => !!state.token
   },
 
   actions: {
@@ -98,17 +98,20 @@ export const useAuthStore = defineStore('auth', {
       delete axios.defaults.headers.common['Authorization']
     },
 
-    initializeAuth() {
+    async initializeAuth() {
       const token = localStorage.getItem('auth_token')
       
       if (token) {
         this.token = token
+        this.isAuthenticated = true
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         
         // 嘗試取得使用者資訊
-        this.fetchUser().catch(() => {
+        try {
+          await this.fetchUser()
+        } catch (error) {
           this.clearAuth()
-        })
+        }
       }
     }
   }
