@@ -77,7 +77,7 @@ class AdminController extends Controller
 
         return response()->json([
             'message' => '使用者建立成功',
-            'user' => $user->load('organization'),
+            'user' => $user->load('organizations', 'teams'),
         ], 201);
     }
     
@@ -103,7 +103,7 @@ class AdminController extends Controller
 
         return response()->json([
             'message' => '使用者更新成功',
-            'user' => $user->load('organization'),
+            'user' => $user->load('organizations', 'teams'),
         ]);
     }
 }

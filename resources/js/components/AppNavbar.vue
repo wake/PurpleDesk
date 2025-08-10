@@ -75,8 +75,11 @@
                     <p class="text-sm text-gray-500 truncate">
                       {{ user?.email }}
                     </p>
-                    <p v-if="user?.organization" class="text-xs text-gray-400 truncate">
-                      {{ user.organization.name }}
+                    <p v-if="user?.organizations?.length > 0" class="text-xs text-gray-400 truncate">
+                      {{ user.organizations[0].name }}
+                      <span v-if="user.organizations.length > 1" class="text-gray-300">
+                        +{{ user.organizations.length - 1 }} 個組織
+                      </span>
                     </p>
                   </div>
                 </div>

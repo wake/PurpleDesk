@@ -103,18 +103,16 @@
                 <span v-if="errors.email" class="text-sm text-red-600">{{ errors.email[0] }}</span>
               </div>
 
-              <div class="md:col-span-2">
-                <label for="organization_id" class="block text-sm font-medium text-gray-700">所屬組織</label>
-                <select
-                  id="organization_id"
-                  v-model="form.organization_id"
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                >
-                  <option value="">請選擇組織</option>
-                  <option v-for="org in organizations" :key="org.id" :value="org.id">
-                    {{ org.name }}
-                  </option>
-                </select>
+              <div class="md:col-span-2" v-if="user?.organizations?.length > 0">
+                <label class="block text-sm font-medium text-gray-700">所屬組織</label>
+                <div class="mt-1 space-y-2">
+                  <div v-for="org in user.organizations" :key="org.id" class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span class="text-sm">{{ org.name }}</span>
+                    <span class="text-xs text-gray-500 px-2 py-1 bg-white rounded">
+                      {{ org.pivot.role === 'owner' ? '擁有者' : org.pivot.role === 'admin' ? '管理員' : '成員' }}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -243,7 +241,6 @@ export default {
       name: '',
       display_name: '',
       email: '',
-      organization_id: '',
       current_password: '',
       password: '',
       password_confirmation: '',
@@ -336,7 +333,6 @@ export default {
         formData.append('name', form.name || '')
         formData.append('display_name', form.display_name)
         formData.append('email', form.email)
-        formData.append('organization_id', form.organization_id || '')
         
         if (form.current_password) {
           formData.append('current_password', form.current_password)
@@ -391,7 +387,6 @@ export default {
         form.name = user.value.name || ''
         form.display_name = user.value.display_name || ''
         form.email = user.value.email || ''
-        form.organization_id = user.value.organization_id || ''
       }
     })
     

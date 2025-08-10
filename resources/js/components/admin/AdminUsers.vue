@@ -85,9 +85,18 @@
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-              <span v-if="user.organization" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                {{ user.organization.name }}
-              </span>
+              <div v-if="user.organizations && user.organizations.length > 0" class="space-y-1">
+                <span 
+                  v-for="org in user.organizations.slice(0, 2)" 
+                  :key="org.id" 
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 mr-1"
+                >
+                  {{ org.name }}
+                </span>
+                <span v-if="user.organizations.length > 2" class="text-xs text-gray-500">
+                  +{{ user.organizations.length - 2 }} 個組織
+                </span>
+              </div>
               <span v-else class="text-gray-500">無</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -175,18 +184,7 @@
                 <span v-if="userFormErrors.email" class="text-sm text-red-600">{{ userFormErrors.email[0] }}</span>
               </div>
               
-              <div>
-                <label class="block text-sm font-medium text-gray-700">所屬組織</label>
-                <select
-                  v-model="userForm.organization_id"
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                >
-                  <option value="">請選擇組織</option>
-                  <option v-for="org in organizations" :key="org.id" :value="org.id">
-                    {{ org.name }}
-                  </option>
-                </select>
-              </div>
+              <!-- 暫時移除組織選擇，待實作多選功能 -->
               
               <div v-if="!editingUser">
                 <label class="block text-sm font-medium text-gray-700">密碼 *</label>
@@ -289,7 +287,7 @@ export default {
       // 依組織篩選
       if (selectedOrganization.value) {
         filtered = filtered.filter(user => 
-          user.organization_id == selectedOrganization.value
+          user.organizations && user.organizations.some(org => org.id == selectedOrganization.value)
         )
       }
       
@@ -343,7 +341,7 @@ export default {
         email: user.email,
         password: '',
         password_confirmation: '',
-        organization_id: user.organization_id || ''
+        organization_ids: user.organizations?.map(org => org.id) || []
       }
       userFormErrors.value = {}
     }
