@@ -14,8 +14,8 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'display_name' => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
+            'display_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'organization_id' => 'nullable|exists:organizations,id',
@@ -80,10 +80,12 @@ class AuthController extends Controller
         $user = $request->user();
         
         $rules = [
-            'name' => 'required|string|max:255',
-            'display_name' => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
+            'display_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'organization_id' => 'nullable|exists:organizations,id',
+            'locale' => 'nullable|string|max:10',
+            'timezone' => 'nullable|string|max:50',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
         
@@ -109,6 +111,8 @@ class AuthController extends Controller
             'display_name' => $request->display_name,
             'email' => $request->email,
             'organization_id' => $request->organization_id,
+            'locale' => $request->locale,
+            'timezone' => $request->timezone,
         ];
         
         // 更新密碼
