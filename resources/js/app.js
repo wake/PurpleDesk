@@ -5,6 +5,9 @@ import router from './router';
 import App from './components/App.vue';
 import { useAuthStore } from './stores/auth';
 
+// Bootstrap Icons CSS
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 const app = createApp(App);
 const pinia = createPinia();
 

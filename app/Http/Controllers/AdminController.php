@@ -19,7 +19,7 @@ class AdminController extends Controller
             abort(403, '無權限存取');
         }
         
-        $users = User::with('organization')
+        $users = User::with('organizations', 'teams')
             ->orderBy('created_at', 'desc')
             ->get();
             
@@ -53,6 +53,38 @@ class AdminController extends Controller
         ]);
     }
     
+    public function searchUsers(Request $request)
+    {
+        if (request()->user()->email !== 'admin@purpledesk.com') {
+            abort(403, '無權限存取');
+        }
+        
+        $query = $request->get('q', '');
+        $excludeOrganization = $request->get('exclude_organization');
+        
+        if (strlen($query) < 2) {
+            return response()->json(['users' => []]);
+        }
+        
+        $usersQuery = User::where(function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('display_name', 'like', "%{$query}%")
+                  ->orWhere('email', 'like', "%{$query}%");
+            })
+            ->with('organizations', 'teams');
+        
+        // 排除已在指定組織中的用戶
+        if ($excludeOrganization) {
+            $usersQuery->whereDoesntHave('organizations', function($q) use ($excludeOrganization) {
+                $q->where('organizations.id', $excludeOrganization);
+            });
+        }
+        
+        $users = $usersQuery->limit(20)->get();
+        
+        return response()->json(['users' => $users]);
+    }
+    
     public function createUser(Request $request)
     {
         if (request()->user()->email !== 'admin@purpledesk.com') {
@@ -64,7 +96,6 @@ class AdminController extends Controller
             'display_name' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'organization_id' => 'nullable|exists:organizations,id',
         ]);
 
         $user = User::create([
@@ -72,12 +103,11 @@ class AdminController extends Controller
             'display_name' => $request->display_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'organization_id' => $request->organization_id,
         ]);
 
         return response()->json([
             'message' => '使用者建立成功',
-            'user' => $user->load('organization'),
+            'user' => $user->load('organizations', 'teams'),
         ], 201);
     }
     
@@ -91,19 +121,17 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'display_name' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'organization_id' => 'nullable|exists:organizations,id',
         ]);
 
         $user->update([
             'name' => $request->name,
             'display_name' => $request->display_name,
             'email' => $request->email,
-            'organization_id' => $request->organization_id,
         ]);
 
         return response()->json([
             'message' => '使用者更新成功',
-            'user' => $user->load('organization'),
+            'user' => $user->load('organizations', 'teams'),
         ]);
     }
 }

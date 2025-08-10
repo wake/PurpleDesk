@@ -31,7 +31,7 @@
           v-model="selectedOrganization"
           class="px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
         >
-          <option value="">所有單位</option>
+          <option value="">所有組織</option>
           <option v-for="org in organizations" :key="org.id" :value="org.id">
             {{ org.name }}
           </option>
@@ -48,7 +48,7 @@
               使用者
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              所屬單位
+              所屬組織
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               註冊時間
@@ -85,9 +85,18 @@
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-              <span v-if="user.organization" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                {{ user.organization.name }}
-              </span>
+              <div v-if="user.organizations && user.organizations.length > 0" class="space-y-1">
+                <span 
+                  v-for="org in user.organizations.slice(0, 2)" 
+                  :key="org.id" 
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 mr-1"
+                >
+                  {{ org.name }}
+                </span>
+                <span v-if="user.organizations.length > 2" class="text-xs text-gray-500">
+                  +{{ user.organizations.length - 2 }} 個組織
+                </span>
+              </div>
               <span v-else class="text-gray-500">無</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -114,18 +123,13 @@
 
     <!-- 載入狀態 -->
     <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
-      <svg class="animate-spin h-8 w-8 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
+      <RefreshIcon class="animate-spin h-8 w-8 text-primary-600" />
       <p class="text-gray-500 mt-2">載入中...</p>
     </div>
 
     <!-- 空狀態 -->
     <div v-else-if="filteredUsers.length === 0" class="text-center py-12">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-      </svg>
+      <i class="bi bi-people-fill mx-auto text-5xl text-gray-400"></i>
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到使用者</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件</p>
     </div>
@@ -175,18 +179,7 @@
                 <span v-if="userFormErrors.email" class="text-sm text-red-600">{{ userFormErrors.email[0] }}</span>
               </div>
               
-              <div>
-                <label class="block text-sm font-medium text-gray-700">所屬單位</label>
-                <select
-                  v-model="userForm.organization_id"
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                >
-                  <option value="">請選擇單位</option>
-                  <option v-for="org in organizations" :key="org.id" :value="org.id">
-                    {{ org.name }}
-                  </option>
-                </select>
-              </div>
+              <!-- 暫時移除組織選擇，待實作多選功能 -->
               
               <div v-if="!editingUser">
                 <label class="block text-sm font-medium text-gray-700">密碼 *</label>
@@ -235,9 +228,13 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import { RefreshIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'AdminUsers',
+  components: {
+    RefreshIcon
+  },
   setup() {
     const users = ref([])
     const organizations = ref([])
@@ -286,10 +283,10 @@ export default {
         )
       }
       
-      // 依單位篩選
+      // 依組織篩選
       if (selectedOrganization.value) {
         filtered = filtered.filter(user => 
-          user.organization_id == selectedOrganization.value
+          user.organizations && user.organizations.some(org => org.id == selectedOrganization.value)
         )
       }
       
@@ -343,7 +340,7 @@ export default {
         email: user.email,
         password: '',
         password_confirmation: '',
-        organization_id: user.organization_id || ''
+        organization_ids: user.organizations?.map(org => org.id) || []
       }
       userFormErrors.value = {}
     }

@@ -12,9 +12,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <svg class="h-8 w-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                  </svg>
+                  <i class="bi bi-people-fill text-3xl text-primary-600"></i>
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -30,13 +28,11 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                  </svg>
+                  <OfficeBuildingIcon class="h-8 w-8 text-green-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">總單位數</dt>
+                    <dt class="text-sm font-medium text-gray-500 truncate">總組織數</dt>
                     <dd class="text-3xl font-semibold text-gray-900">{{ stats.total_organizations || 0 }}</dd>
                   </dl>
                 </div>
@@ -48,9 +44,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                  </svg>
+                  <i class="bi bi-person-fill text-3xl text-blue-600"></i>
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -66,13 +60,11 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <svg class="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                  </svg>
+                  <ChartBarIcon class="h-8 w-8 text-purple-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">本月新增單位</dt>
+                    <dt class="text-sm font-medium text-gray-500 truncate">本月新增組織</dt>
                     <dd class="text-3xl font-semibold text-gray-900">{{ stats.organizations_this_month || 0 }}</dd>
                   </dl>
                 </div>
@@ -194,9 +186,14 @@
 <script>
 import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
+import { OfficeBuildingIcon, ChartBarIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'AdminSystem',
+  components: {
+    OfficeBuildingIcon,
+    ChartBarIcon
+  },
   setup() {
     const stats = ref({})
     const isLoading = ref(true)
