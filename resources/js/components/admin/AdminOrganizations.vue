@@ -60,7 +60,7 @@
                     :alt="org.name"
                     class="h-full w-full object-cover"
                   />
-                  <Building v-else class="h-6 w-6 text-primary-600" />
+                  <font-awesome-icon v-else icon="building" class="h-6 w-6 text-primary-600" />
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
@@ -101,13 +101,13 @@
 
     <!-- 載入狀態 -->
     <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
-      <Loader2 class="animate-spin h-8 w-8 text-primary-600" />
+      <font-awesome-icon icon="spinner" class="animate-spin h-8 w-8 text-primary-600" />
       <p class="text-gray-500 mt-2">載入中...</p>
     </div>
 
     <!-- 空狀態 -->
     <div v-else-if="filteredOrganizations.length === 0" class="text-center py-12">
-      <Building class="mx-auto h-12 w-12 text-gray-400" />
+      <font-awesome-icon icon="building" class="mx-auto h-12 w-12 text-gray-400" />
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到組織</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或新增組織</p>
     </div>
@@ -137,7 +137,7 @@
                       :alt="formData.name"
                       class="h-full w-full object-cover"
                     />
-                    <Building v-else class="h-8 w-8 text-primary-600" />
+                    <font-awesome-icon v-else icon="building" class="h-8 w-8 text-primary-600" />
                   </div>
                   
                   <div class="flex-1">
@@ -218,16 +218,10 @@
 
 <script>
 import { ref, computed, onMounted, reactive } from 'vue'
-import { Building, Loader2, Plus } from 'lucide-vue-next'
 import axios from 'axios'
 
 export default {
   name: 'AdminOrganizations',
-  components: {
-    Building,
-    Loader2,
-    Plus
-  },
   setup() {
     const organizations = ref([])
     const isLoading = ref(true)

@@ -40,7 +40,7 @@
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               ]"
             >
-              <UserCheck class="h-4 w-4 mr-1.5" />
+              <font-awesome-icon icon="user-check" class="h-4 w-4 mr-1.5" />
               成員管理
             </button>
             <button
@@ -52,7 +52,7 @@
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               ]"
             >
-              <Users class="h-4 w-4 mr-1.5" />
+              <font-awesome-icon icon="users" class="h-4 w-4 mr-1.5" />
               團隊管理
             </button>
             <button
@@ -64,7 +64,7 @@
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               ]"
             >
-              <Settings class="h-4 w-4 mr-1.5" />
+              <font-awesome-icon icon="cog" class="h-4 w-4 mr-1.5" />
               組織設定
             </button>
           </div>
@@ -120,7 +120,6 @@ import { useAuthStore } from '../../stores/auth'
 import OrganizationMembers from './organization/OrganizationMembers.vue'
 import OrganizationTeams from './organization/OrganizationTeams.vue'
 import OrganizationSettings from './organization/OrganizationSettings.vue'
-import { UserCheck, Users, Settings } from 'lucide-vue-next'
 import axios from 'axios'
 
 export default {
@@ -128,10 +127,7 @@ export default {
   components: {
     OrganizationMembers,
     OrganizationTeams,
-    OrganizationSettings,
-    UserCheck,
-    Users,
-    Settings
+    OrganizationSettings
   },
   setup() {
     const route = useRoute()

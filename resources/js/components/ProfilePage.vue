@@ -45,7 +45,7 @@
                     class="border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer hover:border-primary-400 hover:bg-primary-25"
                     @click="$refs.fileInput.click()"
                   >
-                    <Upload class="mx-auto h-8 w-8 text-gray-400" />
+                    <font-awesome-icon icon="upload" class="mx-auto h-8 w-8 text-gray-400" />
                     <p class="mt-2 text-sm text-gray-600">
                       <span class="font-medium text-primary-500">點擊上傳</span>
                       或拖曳檔案至此
@@ -179,7 +179,7 @@
             <div class="bg-red-50 border border-red-200 rounded-md p-4">
               <div class="flex">
                 <div class="flex-shrink-0">
-                  <XCircle class="h-5 w-5 text-red-400" />
+                  <font-awesome-icon icon="times-circle" class="h-5 w-5 text-red-400" />
                 </div>
                 <div class="ml-3">
                   <h3 class="text-sm font-medium text-red-800">
@@ -200,7 +200,7 @@
     <div v-if="successMessage" class="fixed bottom-4 right-4 z-50">
       <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg max-w-sm">
         <div class="flex items-center">
-          <CheckCircle class="h-5 w-5 text-green-500 mr-2" />
+          <font-awesome-icon icon="check-circle" class="h-5 w-5 text-green-500 mr-2" />
           <span class="text-sm font-medium">{{ successMessage }}</span>
         </div>
       </div>
@@ -212,16 +212,12 @@
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import AppNavbar from './AppNavbar.vue'
-import { Upload, XCircle, CheckCircle } from 'lucide-vue-next'
 import axios from 'axios'
 
 export default {
   name: 'ProfilePage',
   components: {
-    AppNavbar,
-    Upload,
-    XCircle,
-    CheckCircle
+    AppNavbar
   },
   setup() {
     const authStore = useAuthStore()

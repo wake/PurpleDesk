@@ -12,7 +12,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <Users class="h-8 w-8 text-primary-600" />
+                  <font-awesome-icon icon="users" class="h-8 w-8 text-primary-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -28,7 +28,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <Building class="h-8 w-8 text-green-600" />
+                  <font-awesome-icon icon="building" class="h-8 w-8 text-green-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -44,7 +44,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <User class="h-8 w-8 text-blue-600" />
+                  <font-awesome-icon icon="user" class="h-8 w-8 text-blue-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -60,7 +60,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <BarChart3 class="h-8 w-8 text-purple-600" />
+                  <font-awesome-icon icon="chart-bar" class="h-8 w-8 text-purple-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -185,17 +185,10 @@
 
 <script>
 import { ref, reactive, onMounted } from 'vue'
-import { Users, Building, User, BarChart3 } from 'lucide-vue-next'
 import axios from 'axios'
 
 export default {
   name: 'AdminSystem',
-  components: {
-    Users,
-    Building,
-    User,
-    BarChart3
-  },
   setup() {
     const stats = ref({})
     const isLoading = ref(true)

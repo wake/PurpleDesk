@@ -123,13 +123,13 @@
 
     <!-- 載入狀態 -->
     <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
-      <Loader2 class="animate-spin h-8 w-8 text-primary-600" />
+      <font-awesome-icon icon="spinner" class="animate-spin h-8 w-8 text-primary-600" />
       <p class="text-gray-500 mt-2">載入中...</p>
     </div>
 
     <!-- 空狀態 -->
     <div v-else-if="filteredUsers.length === 0" class="text-center py-12">
-      <Users class="mx-auto h-12 w-12 text-gray-400" />
+      <font-awesome-icon icon="users" class="mx-auto h-12 w-12 text-gray-400" />
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到使用者</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件</p>
     </div>
@@ -227,15 +227,10 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
-import { Loader2, Users } from 'lucide-vue-next'
 import axios from 'axios'
 
 export default {
   name: 'AdminUsers',
-  components: {
-    Loader2,
-    Users
-  },
   setup() {
     const users = ref([])
     const organizations = ref([])
