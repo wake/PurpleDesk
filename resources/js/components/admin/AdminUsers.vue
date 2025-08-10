@@ -123,18 +123,13 @@
 
     <!-- 載入狀態 -->
     <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
-      <svg class="animate-spin h-8 w-8 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
+      <Loader2 class="animate-spin h-8 w-8 text-primary-600" />
       <p class="text-gray-500 mt-2">載入中...</p>
     </div>
 
     <!-- 空狀態 -->
     <div v-else-if="filteredUsers.length === 0" class="text-center py-12">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-      </svg>
+      <Users class="mx-auto h-12 w-12 text-gray-400" />
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到使用者</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件</p>
     </div>
@@ -232,10 +227,15 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
+import { Loader2, Users } from 'lucide-vue-next'
 import axios from 'axios'
 
 export default {
   name: 'AdminUsers',
+  components: {
+    Loader2,
+    Users
+  },
   setup() {
     const users = ref([])
     const organizations = ref([])

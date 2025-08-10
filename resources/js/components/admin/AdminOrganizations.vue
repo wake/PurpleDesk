@@ -60,9 +60,7 @@
                     :alt="org.name"
                     class="h-full w-full object-cover"
                   />
-                  <svg v-else class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                  </svg>
+                  <Building v-else class="h-6 w-6 text-primary-600" />
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
@@ -103,18 +101,13 @@
 
     <!-- 載入狀態 -->
     <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
-      <svg class="animate-spin h-8 w-8 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
+      <Loader2 class="animate-spin h-8 w-8 text-primary-600" />
       <p class="text-gray-500 mt-2">載入中...</p>
     </div>
 
     <!-- 空狀態 -->
     <div v-else-if="filteredOrganizations.length === 0" class="text-center py-12">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-      </svg>
+      <Building class="mx-auto h-12 w-12 text-gray-400" />
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到組織</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或新增組織</p>
     </div>
@@ -144,9 +137,7 @@
                       :alt="formData.name"
                       class="h-full w-full object-cover"
                     />
-                    <svg v-else class="h-8 w-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
+                    <Building v-else class="h-8 w-8 text-primary-600" />
                   </div>
                   
                   <div class="flex-1">
@@ -227,10 +218,16 @@
 
 <script>
 import { ref, computed, onMounted, reactive } from 'vue'
+import { Building, Loader2, Plus } from 'lucide-vue-next'
 import axios from 'axios'
 
 export default {
   name: 'AdminOrganizations',
+  components: {
+    Building,
+    Loader2,
+    Plus
+  },
   setup() {
     const organizations = ref([])
     const isLoading = ref(true)

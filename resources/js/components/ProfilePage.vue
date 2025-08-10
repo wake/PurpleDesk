@@ -45,9 +45,7 @@
                     class="border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer hover:border-primary-400 hover:bg-primary-25"
                     @click="$refs.fileInput.click()"
                   >
-                    <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
+                    <Upload class="mx-auto h-8 w-8 text-gray-400" />
                     <p class="mt-2 text-sm text-gray-600">
                       <span class="font-medium text-primary-500">點擊上傳</span>
                       或拖曳檔案至此
@@ -181,9 +179,7 @@
             <div class="bg-red-50 border border-red-200 rounded-md p-4">
               <div class="flex">
                 <div class="flex-shrink-0">
-                  <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                  </svg>
+                  <XCircle class="h-5 w-5 text-red-400" />
                 </div>
                 <div class="ml-3">
                   <h3 class="text-sm font-medium text-red-800">
@@ -204,9 +200,7 @@
     <div v-if="successMessage" class="fixed bottom-4 right-4 z-50">
       <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg max-w-sm">
         <div class="flex items-center">
-          <svg class="h-5 w-5 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.93 10.7a.75.75 0 00-1.06 1.061l1.5 1.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-          </svg>
+          <CheckCircle class="h-5 w-5 text-green-500 mr-2" />
           <span class="text-sm font-medium">{{ successMessage }}</span>
         </div>
       </div>
@@ -218,12 +212,16 @@
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import AppNavbar from './AppNavbar.vue'
+import { Upload, XCircle, CheckCircle } from 'lucide-vue-next'
 import axios from 'axios'
 
 export default {
   name: 'ProfilePage',
   components: {
-    AppNavbar
+    AppNavbar,
+    Upload,
+    XCircle,
+    CheckCircle
   },
   setup() {
     const authStore = useAuthStore()
