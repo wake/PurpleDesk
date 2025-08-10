@@ -131,6 +131,9 @@ export default {
     watch(() => route.query.tab, (newTab) => {
       if (newTab && ['members', 'teams', 'settings'].includes(newTab)) {
         activeTab.value = newTab
+      } else if (!newTab) {
+        // 如果沒有 tab 參數，默認顯示 members
+        activeTab.value = 'members'
       }
     })
     
@@ -148,7 +151,16 @@ export default {
       isLoading.value = true
       try {
         const response = await axios.get(`/api/organizations/${organizationId.value}`)
-        organization.value = response.data
+        // 處理分頁回應格式
+        if (response.data.users && response.data.users.data) {
+          // 如果 users 是分頁格式，重新整理為簡單格式以兼容 OrganizationSettings
+          organization.value = {
+            ...response.data,
+            users: response.data.users.data || response.data.users
+          }
+        } else {
+          organization.value = response.data
+        }
       } catch (error) {
         console.error('Failed to fetch organization:', error)
       } finally {

@@ -112,6 +112,72 @@
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或新增組織</p>
     </div>
 
+    <!-- 分頁導航 -->
+    <div v-if="pagination.last_page > 1" class="px-6 py-4 border-t border-gray-200">
+      <div class="flex items-center justify-between">
+        <div class="flex-1 flex justify-between sm:hidden">
+          <button
+            @click="changePage(currentPage - 1)"
+            :disabled="currentPage <= 1"
+            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+          >
+            上一頁
+          </button>
+          <button
+            @click="changePage(currentPage + 1)"
+            :disabled="currentPage >= pagination.last_page"
+            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+          >
+            下一頁
+          </button>
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm text-gray-700">
+              顯示第
+              <span class="font-medium">{{ (currentPage - 1) * pagination.per_page + 1 }}</span>
+              到
+              <span class="font-medium">{{ Math.min(currentPage * pagination.per_page, pagination.total) }}</span>
+              筆，共
+              <span class="font-medium">{{ pagination.total }}</span>
+              筆結果
+            </p>
+          </div>
+          <div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              <button
+                @click="changePage(currentPage - 1)"
+                :disabled="currentPage <= 1"
+                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+              >
+                ‹
+              </button>
+              <button
+                v-for="page in Math.min(pagination.last_page, 5)"
+                :key="page"
+                @click="changePage(page)"
+                :class="[
+                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                  page === currentPage
+                    ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
+                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                ]"
+              >
+                {{ page }}
+              </button>
+              <button
+                @click="changePage(currentPage + 1)"
+                :disabled="currentPage >= pagination.last_page"
+                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+              >
+                ›
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 新增/編輯組織 Modal（簡化版） -->
     <div v-if="showCreateModal || editingOrganization" class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -229,6 +295,8 @@ export default {
   },
   setup() {
     const organizations = ref([])
+    const pagination = ref({})
+    const currentPage = ref(1)
     const isLoading = ref(true)
     const searchQuery = ref('')
     const showCreateModal = ref(false)
@@ -261,11 +329,18 @@ export default {
       })
     }
     
-    const fetchOrganizations = async () => {
+    const fetchOrganizations = async (page = 1) => {
       try {
         isLoading.value = true
-        const response = await axios.get('/api/admin/organizations')
-        organizations.value = response.data
+        const response = await axios.get(`/api/admin/organizations?page=${page}`)
+        organizations.value = response.data.data
+        pagination.value = {
+          current_page: response.data.current_page,
+          last_page: response.data.last_page,
+          per_page: response.data.per_page,
+          total: response.data.total
+        }
+        currentPage.value = response.data.current_page
       } catch (error) {
         console.error('Failed to fetch organizations:', error)
       } finally {
@@ -371,7 +446,7 @@ export default {
           })
         }
         
-        await fetchOrganizations()
+        await fetchOrganizations(currentPage.value)
         cancelEdit()
       } catch (error) {
         console.error('Failed to save organization:', error)
@@ -384,11 +459,15 @@ export default {
       
       try {
         await axios.delete(`/api/organizations/${org.id}`)
-        await fetchOrganizations()
+        await fetchOrganizations(currentPage.value)
       } catch (error) {
         console.error('Failed to delete organization:', error)
         alert('刪除失敗，請稍後再試')
       }
+    }
+    
+    const changePage = (page) => {
+      fetchOrganizations(page)
     }
     
     onMounted(() => {
@@ -414,7 +493,10 @@ export default {
       handleLogoDragEnter,
       handleLogoDragOver,
       handleLogoDragLeave,
-      handleLogoDrop
+      handleLogoDrop,
+      pagination,
+      currentPage,
+      changePage
     }
   }
 }

@@ -21,7 +21,7 @@ class AdminController extends Controller
         
         $users = User::with('organizations', 'teams')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10);
             
         return response()->json($users);
     }
@@ -34,7 +34,7 @@ class AdminController extends Controller
         
         $organizations = Organization::withCount('users')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10);
             
         return response()->json($organizations);
     }
@@ -68,7 +68,6 @@ class AdminController extends Controller
         
         $usersQuery = User::where(function($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('display_name', 'like', "%{$query}%")
                   ->orWhere('email', 'like', "%{$query}%");
             })
             ->with('organizations', 'teams');
@@ -92,15 +91,15 @@ class AdminController extends Controller
         }
         
         $request->validate([
-            'name' => 'required|string|max:255',
-            'display_name' => 'nullable|string|max:255',
+            'display_name' => 'required|string|max:255',
+            'full_name' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
             'display_name' => $request->display_name,
+            'full_name' => $request->full_name ?: $request->display_name, // 如果沒有提供 full_name，使用 display_name
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -118,14 +117,14 @@ class AdminController extends Controller
         }
         
         $request->validate([
-            'name' => 'required|string|max:255',
-            'display_name' => 'nullable|string|max:255',
+            'display_name' => 'required|string|max:255',
+            'full_name' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
         ]);
 
         $user->update([
-            'name' => $request->name,
             'display_name' => $request->display_name,
+            'full_name' => $request->full_name ?: $request->display_name, // 如果沒有提供 full_name，使用 display_name
             'email' => $request->email,
         ]);
 

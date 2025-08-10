@@ -144,6 +144,72 @@
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或建立新團隊</p>
     </div>
 
+    <!-- 分頁導航 -->
+    <div v-if="teamsPagination.last_page > 1" class="px-6 py-4 border-t border-gray-200">
+      <div class="flex items-center justify-between">
+        <div class="flex-1 flex justify-between sm:hidden">
+          <button
+            @click="changeTeamsPage(currentTeamsPage - 1)"
+            :disabled="currentTeamsPage <= 1"
+            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+          >
+            上一頁
+          </button>
+          <button
+            @click="changeTeamsPage(currentTeamsPage + 1)"
+            :disabled="currentTeamsPage >= teamsPagination.last_page"
+            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+          >
+            下一頁
+          </button>
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm text-gray-700">
+              顯示第
+              <span class="font-medium">{{ (currentTeamsPage - 1) * teamsPagination.per_page + 1 }}</span>
+              到
+              <span class="font-medium">{{ Math.min(currentTeamsPage * teamsPagination.per_page, teamsPagination.total) }}</span>
+              筆，共
+              <span class="font-medium">{{ teamsPagination.total }}</span>
+              筆團隊
+            </p>
+          </div>
+          <div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              <button
+                @click="changeTeamsPage(currentTeamsPage - 1)"
+                :disabled="currentTeamsPage <= 1"
+                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+              >
+                ‹
+              </button>
+              <button
+                v-for="page in Math.min(teamsPagination.last_page, 5)"
+                :key="page"
+                @click="changeTeamsPage(page)"
+                :class="[
+                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                  page === currentTeamsPage
+                    ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
+                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                ]"
+              >
+                {{ page }}
+              </button>
+              <button
+                @click="changeTeamsPage(currentTeamsPage + 1)"
+                :disabled="currentTeamsPage >= teamsPagination.last_page"
+                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+              >
+                ›
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 建立/編輯團隊 Modal -->
     <div v-if="showCreateModal || editingTeam" class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -263,6 +329,8 @@ export default {
     const isLoading = ref(false)
     const searchQuery = ref('')
     const teams = ref([])
+    const teamsPagination = ref({})
+    const currentTeamsPage = ref(1)
     const editingTeam = ref(null)
     const isSaving = ref(false)
     const avatarPreview = ref(null)
@@ -306,13 +374,27 @@ export default {
       return new Date(dateString).toLocaleDateString('zh-TW')
     }
     
-    const fetchTeams = async () => {
+    const fetchTeams = async (page = 1) => {
       if (!props.organization?.id) return
       
       isLoading.value = true
       try {
-        const response = await axios.get(`/api/organizations/${props.organization.id}/teams`)
-        teams.value = response.data.teams || []
+        const response = await axios.get(`/api/organizations/${props.organization.id}/teams?page=${page}`)
+        
+        // 處理分頁後的團隊數據
+        if (response.data.teams && response.data.teams.data) {
+          teams.value = response.data.teams.data
+          teamsPagination.value = {
+            current_page: response.data.teams.current_page,
+            last_page: response.data.teams.last_page,
+            per_page: response.data.teams.per_page,
+            total: response.data.teams.total
+          }
+          currentTeamsPage.value = response.data.teams.current_page
+        } else {
+          // 兼容舊版本的非分頁響應
+          teams.value = response.data.teams || []
+        }
       } catch (error) {
         console.error('Failed to fetch teams:', error)
       } finally {
@@ -394,7 +476,7 @@ export default {
         }
         
         closeModal()
-        await fetchTeams()
+        await fetchTeams(currentTeamsPage.value)
         emit('success', editingTeam.value ? '團隊已更新' : '團隊已建立')
         emit('refresh')
       } catch (error) {
@@ -413,7 +495,7 @@ export default {
       
       try {
         await axios.delete(`/api/organizations/${props.organization.id}/teams/${team.id}`)
-        await fetchTeams()
+        await fetchTeams(currentTeamsPage.value)
         emit('success', `團隊「${team.name}」已刪除`)
         emit('refresh')
       } catch (error) {
@@ -428,6 +510,10 @@ export default {
       editingTeam.value = null
       teamForm.value = { name: '', description: '', avatar: null }
       avatarPreview.value = null
+    }
+    
+    const changeTeamsPage = (page) => {
+      fetchTeams(page)
     }
     
     watch(() => props.organization, () => {
@@ -454,7 +540,10 @@ export default {
       manageTeam,
       saveTeam,
       deleteTeam,
-      closeModal
+      closeModal,
+      teamsPagination,
+      currentTeamsPage,
+      changeTeamsPage
     }
   }
 }

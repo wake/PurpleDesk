@@ -4,8 +4,9 @@ import axios from 'axios'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    token: localStorage.getItem('auth_token'),
-    isAuthenticated: false
+    token: null,
+    isAuthenticated: false,
+    isInitialized: false
   }),
 
   getters: {
@@ -103,16 +104,20 @@ export const useAuthStore = defineStore('auth', {
       
       if (token) {
         this.token = token
-        this.isAuthenticated = true
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         
         // 嘗試取得使用者資訊
         try {
           await this.fetchUser()
+          // 只有成功取得用戶資訊後才設置為已認證
+          this.isAuthenticated = true
         } catch (error) {
+          console.warn('Failed to initialize auth:', error.message)
           this.clearAuth()
         }
       }
+      
+      this.isInitialized = true
     }
   }
 })

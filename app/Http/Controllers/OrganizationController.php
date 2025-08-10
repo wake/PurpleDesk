@@ -37,9 +37,30 @@ class OrganizationController extends Controller
         return response()->json($organization->load('users', 'teams'), 201);
     }
 
-    public function show(Organization $organization)
+    public function show(Organization $organization, Request $request)
     {
-        return response()->json($organization->load('users', 'teams'));
+        $page = $request->get('page', 1);
+        $perPage = 10;
+        
+        // 分頁載入組織成員
+        $users = $organization->users()
+            ->with('teams')
+            ->paginate($perPage, ['*'], 'users_page', $page);
+            
+        // 載入所有團隊（通常團隊數量不會太多，所以不分頁）
+        $teams = $organization->teams()->with('users')->get();
+        
+        return response()->json([
+            'id' => $organization->id,
+            'name' => $organization->name,
+            'description' => $organization->description,
+            'avatar' => $organization->avatar,
+            'logo_url' => $organization->logo_url,
+            'created_at' => $organization->created_at,
+            'updated_at' => $organization->updated_at,
+            'users' => $users,
+            'teams' => $teams,
+        ]);
     }
 
     public function update(Request $request, Organization $organization)
@@ -157,6 +178,21 @@ class OrganizationController extends Controller
 
         return response()->json([
             'message' => '成員已移除'
+        ]);
+    }
+    
+    // 取得組織的團隊列表（支援分頁）
+    public function teams(Organization $organization, Request $request)
+    {
+        $page = $request->get('page', 1);
+        $perPage = 10;
+        
+        $teams = $organization->teams()
+            ->with('users')
+            ->paginate($perPage, ['*'], 'teams_page', $page);
+            
+        return response()->json([
+            'teams' => $teams
         ]);
     }
 }

@@ -78,7 +78,7 @@
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
-                    {{ user.display_name || user.name }}
+                    {{ user.display_name }}
                   </div>
                   <div class="text-sm text-gray-500">{{ user.email }}</div>
                 </div>
@@ -134,6 +134,72 @@
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件</p>
     </div>
 
+    <!-- 分頁導航 -->
+    <div v-if="pagination.last_page > 1" class="px-6 py-4 border-t border-gray-200">
+      <div class="flex items-center justify-between">
+        <div class="flex-1 flex justify-between sm:hidden">
+          <button
+            @click="changePage(currentPage - 1)"
+            :disabled="currentPage <= 1"
+            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+          >
+            上一頁
+          </button>
+          <button
+            @click="changePage(currentPage + 1)"
+            :disabled="currentPage >= pagination.last_page"
+            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+          >
+            下一頁
+          </button>
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm text-gray-700">
+              顯示第
+              <span class="font-medium">{{ (currentPage - 1) * pagination.per_page + 1 }}</span>
+              到
+              <span class="font-medium">{{ Math.min(currentPage * pagination.per_page, pagination.total) }}</span>
+              筆，共
+              <span class="font-medium">{{ pagination.total }}</span>
+              筆結果
+            </p>
+          </div>
+          <div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              <button
+                @click="changePage(currentPage - 1)"
+                :disabled="currentPage <= 1"
+                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+              >
+                ‹
+              </button>
+              <button
+                v-for="page in Math.min(pagination.last_page, 5)"
+                :key="page"
+                @click="changePage(page)"
+                :class="[
+                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                  page === currentPage
+                    ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
+                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                ]"
+              >
+                {{ page }}
+              </button>
+              <button
+                @click="changePage(currentPage + 1)"
+                :disabled="currentPage >= pagination.last_page"
+                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+              >
+                ›
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 新增/編輯使用者 Modal -->
     <div v-if="showCreateModal || editingUser" class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -141,45 +207,51 @@
           <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
 
-        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full max-h-[90vh] overflow-y-auto">
           <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
               {{ editingUser ? '編輯使用者' : '新增使用者' }}
             </h3>
             
             <div class="space-y-4">
+              <!-- 基本資訊 -->
               <div>
-                <label class="block text-sm font-medium text-gray-700">姓名 *</label>
-                <input
-                  v-model="userForm.name"
-                  type="text"
-                  required
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                />
-                <span v-if="userFormErrors.name" class="text-sm text-red-600">{{ userFormErrors.name[0] }}</span>
+                <div class="space-y-3">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">名稱 *</label>
+                    <input
+                      v-model="userForm.display_name"
+                      type="text"
+                      required
+                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                      placeholder="用於系統中顯示的名稱"
+                    />
+                    <span v-if="userFormErrors.display_name" class="text-sm text-red-600">{{ userFormErrors.display_name[0] }}</span>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">姓名</label>
+                    <input
+                      v-model="userForm.full_name"
+                      type="text"
+                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                      placeholder="完整姓名（選填）"
+                    />
+                    <span v-if="userFormErrors.full_name" class="text-sm text-red-600">{{ userFormErrors.full_name[0] }}</span>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">電子郵件 *</label>
+                    <input
+                      v-model="userForm.email"
+                      type="email"
+                      required
+                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    />
+                    <span v-if="userFormErrors.email" class="text-sm text-red-600">{{ userFormErrors.email[0] }}</span>
+                  </div>
+                </div>
               </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700">暱稱</label>
-                <input
-                  v-model="userForm.display_name"
-                  type="text"
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                />
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700">電子郵件 *</label>
-                <input
-                  v-model="userForm.email"
-                  type="email"
-                  required
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                />
-                <span v-if="userFormErrors.email" class="text-sm text-red-600">{{ userFormErrors.email[0] }}</span>
-              </div>
-              
-              <!-- 暫時移除組織選擇，待實作多選功能 -->
               
               <div v-if="!editingUser">
                 <label class="block text-sm font-medium text-gray-700">密碼 *</label>
@@ -207,7 +279,7 @@
           <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <button
               @click="saveUser"
-              :disabled="isCreatingUser || !userForm.name || !userForm.email || (!editingUser && (!userForm.password || !userForm.password_confirmation))"
+              :disabled="isCreatingUser || !userForm.display_name || !userForm.email || (!editingUser && (!userForm.password || !userForm.password_confirmation))"
               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
             >
               {{ isCreatingUser ? '處理中...' : (editingUser ? '更新' : '建立') }}
@@ -237,6 +309,8 @@ export default {
   },
   setup() {
     const users = ref([])
+    const pagination = ref({})
+    const currentPage = ref(1)
     const organizations = ref([])
     const isLoading = ref(true)
     const searchQuery = ref('')
@@ -247,17 +321,16 @@ export default {
     const userFormErrors = ref({})
     
     const userForm = ref({
-      name: '',
       display_name: '',
+      full_name: '',
       email: '',
       password: '',
-      password_confirmation: '',
-      organization_id: ''
+      password_confirmation: ''
     })
     
     const getUserInitials = (user) => {
       if (!user) return ''
-      const name = user.display_name || user.name
+      const name = user.display_name || user.full_name || user.email
       return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     }
     
@@ -277,9 +350,9 @@ export default {
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         filtered = filtered.filter(user => 
-          user.name.toLowerCase().includes(query) ||
-          user.email.toLowerCase().includes(query) ||
-          (user.display_name && user.display_name.toLowerCase().includes(query))
+          (user.display_name && user.display_name.toLowerCase().includes(query)) ||
+          (user.full_name && user.full_name.toLowerCase().includes(query)) ||
+          user.email.toLowerCase().includes(query)
         )
       }
       
@@ -293,11 +366,18 @@ export default {
       return filtered
     })
     
-    const fetchUsers = async () => {
+    const fetchUsers = async (page = 1) => {
       try {
         isLoading.value = true
-        const response = await axios.get('/api/admin/users')
-        users.value = response.data
+        const response = await axios.get(`/api/admin/users?page=${page}`)
+        users.value = response.data.data
+        pagination.value = {
+          current_page: response.data.current_page,
+          last_page: response.data.last_page,
+          per_page: response.data.per_page,
+          total: response.data.total
+        }
+        currentPage.value = response.data.current_page
       } catch (error) {
         console.error('Failed to fetch users:', error)
       } finally {
@@ -316,12 +396,11 @@ export default {
     
     const resetUserForm = () => {
       userForm.value = {
-        name: '',
         display_name: '',
+        full_name: '',
         email: '',
         password: '',
-        password_confirmation: '',
-        organization_id: ''
+        password_confirmation: ''
       }
       userFormErrors.value = {}
     }
@@ -335,12 +414,11 @@ export default {
     const editUser = (user) => {
       editingUser.value = user
       userForm.value = {
-        name: user.name,
         display_name: user.display_name || '',
-        email: user.email,
+        full_name: user.full_name || '',
+        email: user.email || '',
         password: '',
-        password_confirmation: '',
-        organization_ids: user.organizations?.map(org => org.id) || []
+        password_confirmation: ''
       }
       userFormErrors.value = {}
     }
@@ -355,10 +433,9 @@ export default {
         if (editingUser.value) {
           // 更新使用者
           const updateData = {
-            name: userForm.value.name,
             display_name: userForm.value.display_name,
-            email: userForm.value.email,
-            organization_id: userForm.value.organization_id || null
+            full_name: userForm.value.full_name,
+            email: userForm.value.email
           }
           
           await axios.put(`/api/admin/users/${editingUser.value.id}`, updateData)
@@ -381,6 +458,10 @@ export default {
       }
     }
     
+    const changePage = (page) => {
+      fetchUsers(page)
+    }
+    
     onMounted(async () => {
       await Promise.all([fetchUsers(), fetchOrganizations()])
     })
@@ -397,11 +478,14 @@ export default {
       isCreatingUser,
       userForm,
       userFormErrors,
+      pagination,
+      currentPage,
       getUserInitials,
       formatDate,
       editUser,
       saveUser,
-      cancelUserEdit
+      cancelUserEdit,
+      changePage
     }
   }
 }
