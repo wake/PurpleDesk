@@ -183,7 +183,7 @@ export default {
       if (newId && newId !== organizationId.value) {
         fetchOrganization()
       }
-    })
+    }, { immediate: true })
     
     onMounted(() => {
       fetchOrganization()

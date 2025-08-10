@@ -500,7 +500,10 @@ export default {
       updateMemberRole,
       removeMember,
       sendInvite,
-      editMember
+      editMember,
+      searchUsersForInvite,
+      selectUser,
+      hideUserDropdown
     }
   }
 }
