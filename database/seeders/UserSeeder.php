@@ -16,38 +16,46 @@ class UserSeeder extends Seeder
         $designOrg = Organization::where('name', '紫色設計工作室')->first();
 
         // 管理員用戶
-        User::create([
-            'name' => '王小明',
+        $admin = User::create([
+            'full_name' => '王小明',
             'display_name' => 'Ming',
             'email' => 'admin@purpledesk.com',
             'password' => Hash::make('password'),
-            'organization_id' => $prototypeOrg?->id,
         ]);
+        
+        if ($prototypeOrg) {
+            $admin->organizations()->attach($prototypeOrg->id);
+        }
 
         // 一般用戶
-        User::create([
-            'name' => '李美華',
+        $user1 = User::create([
+            'full_name' => '李美華',
             'display_name' => 'Lily',
             'email' => 'user1@purpledesk.com',
             'password' => Hash::make('password'),
-            'organization_id' => $prototypeOrg?->id,
         ]);
+        
+        if ($prototypeOrg) {
+            $user1->organizations()->attach($prototypeOrg->id);
+        }
 
-        User::create([
-            'name' => '張志傑',
+        $designer = User::create([
+            'full_name' => '張志傑',
             'display_name' => 'Jack',
             'email' => 'designer@purpledesk.com',
             'password' => Hash::make('password'),
-            'organization_id' => $designOrg?->id,
         ]);
+        
+        if ($designOrg) {
+            $designer->organizations()->attach($designOrg->id);
+        }
 
         // 獨立用戶（沒有所屬單位）
         User::create([
-            'name' => '陳自由',
+            'full_name' => '陳自由',
             'display_name' => 'Free',
             'email' => 'freelancer@purpledesk.com',
             'password' => Hash::make('password'),
-            'organization_id' => null,
         ]);
     }
 }

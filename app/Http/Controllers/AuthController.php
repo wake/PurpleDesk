@@ -103,9 +103,9 @@ class AuthController extends Controller
         }
         
         $data = [
-            'full_name' => $request->full_name,
             'display_name' => $request->display_name,
             'email' => $request->email,
+            'full_name' => $request->full_name, // full_name 現在可以是 null
         ];
         
         // 更新密碼
