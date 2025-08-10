@@ -203,17 +203,6 @@
       </div>
     </div>
 
-    <!-- 成功訊息 Toast -->
-    <div v-if="successMessage" class="fixed bottom-4 right-4 z-50">
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg max-w-sm">
-        <div class="flex items-center">
-          <svg class="h-5 w-5 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.93 10.7a.75.75 0 00-1.06 1.061l1.5 1.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-          </svg>
-          <span class="text-sm font-medium">{{ successMessage }}</span>
-        </div>
-      </div>
-    </div>
 
     <!-- 刪除確認 Modal -->
     <div v-if="showDeleteConfirm" class="fixed inset-0 z-50 overflow-y-auto">
@@ -275,7 +264,7 @@ export default {
       required: true
     }
   },
-  emits: ['refresh'],
+  emits: ['refresh', 'success'],
   setup(props, { emit }) {
     const router = useRouter()
     const isSaving = ref(false)
@@ -381,11 +370,7 @@ export default {
           }
         })
         
-        successMessage.value = '組織設定已成功更新'
-        
-        setTimeout(() => {
-          successMessage.value = ''
-        }, 3000)
+        emit('success', '組織設定已成功更新')
         
         form.avatar = null
         logoPreview.value = null
@@ -412,6 +397,7 @@ export default {
         router.push('/admin/organizations')
       } catch (error) {
         console.error('Failed to delete organization:', error)
+        // TODO: 改用統一的錯誤提示
         alert('刪除組織失敗')
       } finally {
         isDeleting.value = false

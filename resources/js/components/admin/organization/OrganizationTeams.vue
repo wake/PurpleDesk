@@ -259,7 +259,7 @@ export default {
       required: true
     }
   },
-  emits: ['refresh'],
+  emits: ['refresh', 'success'],
   setup(props, { emit }) {
     const isLoading = ref(false)
     const searchQuery = ref('')
@@ -327,11 +327,13 @@ export default {
       if (file) {
         // 驗證檔案大小和類型
         if (file.size > 2 * 1024 * 1024) {
+          // TODO: 改用統一的錯誤提示
           alert('檔案大小不能超過 2MB')
           return
         }
         
         if (!file.type.startsWith('image/')) {
+          // TODO: 改用統一的錯誤提示
           alert('請選擇圖片檔案')
           return
         }
@@ -360,11 +362,13 @@ export default {
     const manageTeam = (team) => {
       // 實作團隊詳細管理功能
       console.log('Manage team:', team)
+      // TODO: 改用統一的提示
       alert('團隊詳細管理功能開發中...')
     }
     
     const saveTeam = async () => {
       if (!teamForm.value.name.trim()) {
+        // TODO: 改用統一的錯誤提示
         alert('請輸入團隊名稱')
         return
       }
@@ -393,9 +397,11 @@ export default {
         
         closeModal()
         await fetchTeams()
+        emit('success', editingTeam.value ? '團隊已更新' : '團隊已建立')
         emit('refresh')
       } catch (error) {
         console.error('Failed to save team:', error)
+        // TODO: 改用統一的錯誤提示
         alert(editingTeam.value ? '更新團隊失敗' : '建立團隊失敗')
       } finally {
         isSaving.value = false
@@ -410,9 +416,11 @@ export default {
       try {
         await axios.delete(`/api/organizations/${props.organization.id}/teams/${team.id}`)
         await fetchTeams()
+        emit('success', `團隊「${team.name}」已刪除`)
         emit('refresh')
       } catch (error) {
         console.error('Failed to delete team:', error)
+        // TODO: 改用統一的錯誤提示
         alert('刪除團隊失敗')
       }
     }

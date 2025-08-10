@@ -180,15 +180,62 @@
             </h3>
             
             <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700">電子郵件 *</label>
-                <input
-                  v-model="inviteForm.email"
-                  type="email"
-                  required
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                  placeholder="user@example.com"
-                />
+              <div class="relative">
+                <label class="block text-sm font-medium text-gray-700">選擇成員 *</label>
+                <div class="relative">
+                  <input
+                    v-model="inviteForm.email"
+                    @input="searchUsersForInvite"
+                    @focus="showUserDropdown = true"
+                    @blur="hideUserDropdown"
+                    type="text"
+                    required
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    placeholder="輸入名稱或郵件地址搜尋..."
+                    autocomplete="off"
+                  />
+                  
+                  <!-- 自動完成下拉清單 -->
+                  <div 
+                    v-if="showUserDropdown && (searchUsers.length > 0 || isSearching)"
+                    class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-300 max-h-60 overflow-auto"
+                  >
+                    <div v-if="isSearching" class="px-4 py-2 text-sm text-gray-500">
+                      搜尋中...
+                    </div>
+                    <div v-else-if="searchUsers.length === 0" class="px-4 py-2 text-sm text-gray-500">
+                      找不到符合的使用者
+                    </div>
+                    <div v-else>
+                      <button
+                        v-for="user in searchUsers"
+                        :key="user.id"
+                        @mousedown="selectUser(user)"
+                        class="w-full px-4 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
+                      >
+                        <div class="flex items-center">
+                          <div class="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden mr-3">
+                            <img
+                              v-if="user.avatar_url"
+                              :src="user.avatar_url"
+                              :alt="user.name"
+                              class="h-full w-full object-cover"
+                            />
+                            <span v-else class="text-white text-xs font-medium">
+                              {{ getUserInitials(user) }}
+                            </span>
+                          </div>
+                          <div>
+                            <div class="text-sm font-medium text-gray-900">
+                              {{ user.display_name || user.name }}
+                            </div>
+                            <div class="text-sm text-gray-500">{{ user.email }}</div>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <div>
@@ -237,7 +284,7 @@ export default {
       required: true
     }
   },
-  emits: ['refresh'],
+  emits: ['refresh', 'success'],
   setup(props, { emit }) {
     const isLoading = ref(false)
     const searchQuery = ref('')
@@ -247,6 +294,9 @@ export default {
     const teams = ref([])
     const showInviteModal = ref(false)
     const isInviting = ref(false)
+    const searchUsers = ref([])
+    const isSearching = ref(false)
+    const showUserDropdown = ref(false)
     
     const inviteForm = ref({
       email: '',
@@ -325,9 +375,11 @@ export default {
           member.pivot.role = newRole
         }
         
+        emit('success', '成員角色已更新')
         emit('refresh')
       } catch (error) {
         console.error('Failed to update member role:', error)
+        // TODO: 改用統一的錯誤提示
         alert('更新角色失敗')
       }
     }
@@ -339,26 +391,79 @@ export default {
       
       try {
         await axios.delete(`/api/admin/organizations/${props.organization.id}/members/${member.id}`)
+        emit('success', `已移除成員 ${member.display_name || member.name}`)
         await fetchMembers()
         emit('refresh')
       } catch (error) {
         console.error('Failed to remove member:', error)
+        // TODO: 改用統一的錯誤提示
         alert('移除成員失敗')
       }
     }
     
+    let searchTimeout = null
+    
+    const searchUsersForInvite = async () => {
+      const query = inviteForm.value.email.trim()
+      if (query.length < 2) {
+        searchUsers.value = []
+        return
+      }
+      
+      // 防抖動搜尋
+      if (searchTimeout) clearTimeout(searchTimeout)
+      
+      searchTimeout = setTimeout(async () => {
+        isSearching.value = true
+        try {
+          const response = await axios.get(`/api/admin/users/search?q=${encodeURIComponent(query)}&exclude_organization=${props.organization.id}`)
+          searchUsers.value = response.data.users || []
+        } catch (error) {
+          console.error('Failed to search users:', error)
+          searchUsers.value = []
+        } finally {
+          isSearching.value = false
+        }
+      }, 300)
+    }
+    
+    const selectUser = (user) => {
+      inviteForm.value.email = user.email
+      inviteForm.value.selectedUser = user
+      searchUsers.value = []
+      showUserDropdown.value = false
+    }
+    
+    const hideUserDropdown = () => {
+      setTimeout(() => {
+        showUserDropdown.value = false
+      }, 200)
+    }
+    
     const sendInvite = async () => {
+      if (!inviteForm.value.email) {
+        // TODO: 改用統一的錯誤提示
+        alert('請選擇要邀請的使用者')
+        return
+      }
+      
       isInviting.value = true
       try {
-        await axios.post(`/api/admin/organizations/${props.organization.id}/invites`, inviteForm.value)
+        await axios.post(`/api/admin/organizations/${props.organization.id}/invites`, {
+          email: inviteForm.value.email,
+          role: inviteForm.value.role
+        })
         showInviteModal.value = false
         inviteForm.value = { email: '', role: 'member' }
-        alert('邀請已發送')
+        searchUsers.value = []
+        emit('success', '成員邀請已發送')
         await fetchMembers()
         emit('refresh')
       } catch (error) {
         console.error('Failed to send invite:', error)
-        alert('發送邀請失敗')
+        const message = error.response?.data?.message || '發送邀請失敗'
+        // TODO: 改用統一的錯誤提示
+        alert(message)
       } finally {
         isInviting.value = false
       }
@@ -385,6 +490,9 @@ export default {
       filteredMembers,
       showInviteModal,
       isInviting,
+      searchUsers,
+      isSearching,
+      showUserDropdown,
       inviteForm,
       getUserInitials,
       getMemberTeams,

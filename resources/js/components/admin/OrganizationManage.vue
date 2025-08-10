@@ -1,57 +1,34 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- 導航欄 -->
-    <AppNavbar />
-    
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <div class="px-4 py-6 sm:px-0">
-        <!-- 頁面標題 -->
-        <div class="mb-6">
-          <nav class="flex" aria-label="Breadcrumb">
-            <ol class="flex items-center space-x-4">
-              <li>
-                <router-link to="/admin/organizations" class="text-gray-400 hover:text-gray-500">
-                  組織管理
-                </router-link>
-              </li>
-              <li>
-                <div class="flex items-center">
-                  <svg class="h-5 w-5 text-gray-300 mx-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-gray-500">{{ organization?.name }}</span>
-                </div>
-              </li>
-            </ol>
-          </nav>
-          
-          <div class="mt-2 md:flex md:items-center md:justify-between">
-            <div class="flex-1 min-w-0">
-              <h1 class="text-2xl font-bold text-gray-900">
-                {{ organization?.name }} 管理
-              </h1>
-              <p class="mt-1 text-sm text-gray-600">
-                管理組織設定、成員和團隊
-              </p>
-            </div>
-            <div v-if="organization" class="mt-4 flex md:mt-0 md:ml-4">
-              <div class="h-12 w-12 rounded bg-primary-100 flex items-center justify-center overflow-hidden">
-                <img
-                  v-if="organization.logo_url"
-                  :src="organization.logo_url"
-                  :alt="organization.name"
-                  class="h-full w-full object-cover"
-                />
-                <svg v-else class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
-              </div>
-            </div>
+  <div class="bg-white shadow rounded-lg">
+    <!-- 頁面標題 -->
+    <div class="px-6 py-4 border-b border-gray-200">
+      <div class="md:flex md:items-center md:justify-between">
+        <div class="flex-1 min-w-0">
+          <h1 class="text-2xl font-bold text-gray-900">
+            {{ organization?.name }} 管理
+          </h1>
+          <p class="mt-1 text-sm text-gray-600">
+            管理組織設定、成員和團隊
+          </p>
+        </div>
+        <div v-if="organization" class="mt-4 flex md:mt-0 md:ml-4">
+          <div class="h-12 w-12 rounded bg-primary-100 flex items-center justify-center overflow-hidden">
+            <img
+              v-if="organization.logo_url"
+              :src="organization.logo_url"
+              :alt="organization.name"
+              class="h-full w-full object-cover"
+            />
+            <svg v-else class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- 頁籤導航 -->
-        <div class="mb-6">
+    <!-- 頁籤導航 -->
+    <div class="border-b border-gray-200">
           <div class="sm:hidden">
             <select
               v-model="activeTab"
@@ -109,41 +86,53 @@
               </button>
             </nav>
           </div>
-        </div>
+    </div>
 
-        <!-- 內容區域 -->
-        <div class="bg-white shadow rounded-lg">
-          <!-- 成員管理頁籤 -->
-          <OrganizationMembers 
-            v-if="activeTab === 'members'"
-            :organization="organization"
-            @refresh="fetchOrganization"
-          />
-          
-          <!-- 團隊管理頁籤 -->
-          <OrganizationTeams 
-            v-if="activeTab === 'teams'"
-            :organization="organization"
-            @refresh="fetchOrganization"
-          />
-          
-          <!-- 組織設定頁籤 -->
-          <OrganizationSettings 
-            v-if="activeTab === 'settings'"
-            :organization="organization"
-            @refresh="fetchOrganization"
-          />
+    <!-- 內容區域 -->
+    <div>
+      <!-- 成員管理頁籤 -->
+      <OrganizationMembers 
+        v-if="activeTab === 'members'"
+        :organization="organization"
+        @refresh="fetchOrganization"
+        @success="showSuccessMessage"
+      />
+      
+      <!-- 團隊管理頁籤 -->
+      <OrganizationTeams 
+        v-if="activeTab === 'teams'"
+        :organization="organization"
+        @refresh="fetchOrganization"
+        @success="showSuccessMessage"
+      />
+      
+      <!-- 組織設定頁籤 -->
+      <OrganizationSettings 
+        v-if="activeTab === 'settings'"
+        :organization="organization"
+        @refresh="fetchOrganization"
+        @success="showSuccessMessage"
+      />
+    </div>
+    
+    <!-- 成功訊息 Toast -->
+    <div v-if="successMessage" class="fixed bottom-4 right-4 z-50">
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg max-w-sm">
+        <div class="flex items-center">
+          <svg class="h-5 w-5 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.93 10.7a.75.75 0 00-1.06 1.061l1.5 1.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          <span class="text-sm font-medium">{{ successMessage }}</span>
         </div>
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
-import AppNavbar from '../AppNavbar.vue'
 import OrganizationMembers from './organization/OrganizationMembers.vue'
 import OrganizationTeams from './organization/OrganizationTeams.vue'
 import OrganizationSettings from './organization/OrganizationSettings.vue'
@@ -152,17 +141,18 @@ import axios from 'axios'
 export default {
   name: 'OrganizationManage',
   components: {
-    AppNavbar,
     OrganizationMembers,
     OrganizationTeams,
     OrganizationSettings
   },
   setup() {
     const route = useRoute()
+    const router = useRouter()
     const authStore = useAuthStore()
     const activeTab = ref('members')
     const organization = ref(null)
     const isLoading = ref(false)
+    const successMessage = ref('')
     
     const user = computed(() => authStore.user)
     const organizationId = computed(() => route.params.id)
@@ -181,6 +171,20 @@ export default {
       }
     }
     
+    const showSuccessMessage = (message) => {
+      successMessage.value = message
+      setTimeout(() => {
+        successMessage.value = ''
+      }, 3000)
+    }
+    
+    // 監聽路由變化，防止重新整理時跳回 dashboard
+    watch(() => route.params.id, (newId) => {
+      if (newId && newId !== organizationId.value) {
+        fetchOrganization()
+      }
+    })
+    
     onMounted(() => {
       fetchOrganization()
       // 從 query 參數中讀取活動頁籤
@@ -194,7 +198,9 @@ export default {
       activeTab,
       organization,
       isLoading,
-      fetchOrganization
+      successMessage,
+      fetchOrganization,
+      showSuccessMessage
     }
   }
 }

@@ -38,8 +38,14 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::get('/users', [AdminController::class, 'users']);
     Route::post('/users', [AdminController::class, 'createUser']);
     Route::put('/users/{user}', [AdminController::class, 'updateUser']);
+    Route::get('/users/search', [AdminController::class, 'searchUsers']);
     Route::get('/organizations', [AdminController::class, 'organizations']);
     Route::get('/stats', [AdminController::class, 'systemStats']);
+    
+    // 組織成員管理
+    Route::post('/organizations/{organization}/invites', [OrganizationController::class, 'inviteMember']);
+    Route::put('/organizations/{organization}/members/{user}', [OrganizationController::class, 'updateMemberRole']);
+    Route::delete('/organizations/{organization}/members/{user}', [OrganizationController::class, 'removeMember']);
 });
 
 Route::get('/user', function (Request $request) {
