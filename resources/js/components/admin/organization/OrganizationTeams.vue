@@ -12,7 +12,8 @@
           />
         </div>
         <button 
-          @click="showCreateModal = true"
+          v-if="showCreateButton"
+          @click="$emit('show-create')"
           class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap"
         >
           建立團隊
@@ -247,14 +248,21 @@ export default {
     organization: {
       type: Object,
       required: true
+    },
+    showCreateButton: {
+      type: Boolean,
+      default: true
+    },
+    showCreateModal: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ['refresh', 'success'],
+  emits: ['refresh', 'success', 'show-create', 'close-create'],
   setup(props, { emit }) {
     const isLoading = ref(false)
     const searchQuery = ref('')
     const teams = ref([])
-    const showCreateModal = ref(false)
     const editingTeam = ref(null)
     const isSaving = ref(false)
     const avatarPreview = ref(null)
@@ -416,7 +424,7 @@ export default {
     }
     
     const closeModal = () => {
-      showCreateModal.value = false
+      emit('close-create')
       editingTeam.value = null
       teamForm.value = { name: '', description: '', avatar: null }
       avatarPreview.value = null
@@ -433,10 +441,10 @@ export default {
       searchQuery,
       teams,
       filteredTeams,
-      showCreateModal,
       editingTeam,
       isSaving,
       avatarPreview,
+      showCreateModal: computed(() => props.showCreateModal),
       teamForm,
       getUserInitials,
       getTeamLeaders,

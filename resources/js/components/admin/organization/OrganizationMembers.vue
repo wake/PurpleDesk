@@ -30,7 +30,8 @@
           <option value="member">成員</option>
         </select>
         <button 
-          @click="showInviteModal = true"
+          v-if="showInviteButton"
+          @click="$emit('show-invite')"
           class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap"
         >
           邀請成員
@@ -250,7 +251,7 @@
               {{ isInviting ? '發送中...' : '發送邀請' }}
             </button>
             <button
-              @click="showInviteModal = false"
+              @click="$emit('close-invite')"
               class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
             >
               取消
@@ -272,9 +273,17 @@ export default {
     organization: {
       type: Object,
       required: true
+    },
+    showInviteButton: {
+      type: Boolean,
+      default: true
+    },
+    showInviteModal: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ['refresh', 'success'],
+  emits: ['refresh', 'success', 'show-invite', 'close-invite'],
   setup(props, { emit }) {
     const isLoading = ref(false)
     const searchQuery = ref('')
@@ -282,7 +291,6 @@ export default {
     const selectedRole = ref('')
     const members = ref([])
     const teams = ref([])
-    const showInviteModal = ref(false)
     const isInviting = ref(false)
     const searchUsers = ref([])
     const isSearching = ref(false)
@@ -443,7 +451,7 @@ export default {
           email: inviteForm.value.email,
           role: inviteForm.value.role
         })
-        showInviteModal.value = false
+        emit('close-invite')
         inviteForm.value = { email: '', role: 'member' }
         searchUsers.value = []
         emit('success', '成員邀請已發送')
@@ -478,11 +486,11 @@ export default {
       members,
       teams,
       filteredMembers,
-      showInviteModal,
       isInviting,
       searchUsers,
       isSearching,
       showUserDropdown,
+      showInviteModal: computed(() => props.showInviteModal),
       inviteForm,
       getUserInitials,
       getMemberTeams,
