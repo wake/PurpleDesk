@@ -378,17 +378,30 @@ export default {
     const fetchOrganizations = async (page = 1) => {
       try {
         isLoading.value = true
+        console.log('AdminOrganizations: Fetching organizations, page:', page)
         const response = await axios.get(`/api/admin/organizations?page=${page}`)
-        organizations.value = response.data.data
-        pagination.value = {
-          current_page: response.data.current_page,
-          last_page: response.data.last_page,
-          per_page: response.data.per_page,
-          total: response.data.total
+        console.log('AdminOrganizations: API response:', response.data)
+        
+        // 處理回應資料
+        if (response.data && response.data.data) {
+          organizations.value = response.data.data
+          pagination.value = {
+            current_page: response.data.current_page,
+            last_page: response.data.last_page,
+            per_page: response.data.per_page,
+            total: response.data.total
+          }
+          currentPage.value = response.data.current_page
+          console.log('AdminOrganizations: Organizations loaded:', organizations.value.length)
+        } else {
+          console.warn('AdminOrganizations: Unexpected API response format:', response.data)
+          organizations.value = []
         }
-        currentPage.value = response.data.current_page
       } catch (error) {
-        console.error('Failed to fetch organizations:', error)
+        console.error('AdminOrganizations: Failed to fetch organizations:', error)
+        console.error('Error response:', error.response?.data)
+        console.error('Error status:', error.response?.status)
+        organizations.value = []
       } finally {
         isLoading.value = false
       }
@@ -606,7 +619,6 @@ export default {
       editOrganization,
       cancelEdit,
       saveOrganization,
-      deleteOrganization,
       handleLogoFileChange,
       handleLogoDragEnter,
       handleLogoDragOver,
