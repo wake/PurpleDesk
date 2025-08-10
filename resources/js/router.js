@@ -80,14 +80,9 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
-  // 如果有 token 但沒有用戶資訊，等待初始化完成
-  if (authStore.isLoggedIn && !authStore.user) {
-    try {
-      await authStore.fetchUser()
-    } catch (error) {
-      // 如果取得用戶資訊失敗，清除認證狀態
-      authStore.clearAuth()
-    }
+  // 等待認證初始化完成
+  if (!authStore.isInitialized) {
+    await authStore.initializeAuth()
   }
   
   // 需要認證的頁面

@@ -15,57 +15,22 @@
           </div>
         </div>
 
-        <!-- 頁籤導航 - 緊湊按鈕組 -->
+        <!-- 動作按鈕組 -->
         <div class="mt-4 lg:mt-0 lg:ml-6">
-          <!-- 行動裝置下拉選單 -->
-          <div class="sm:hidden">
-            <select
-              v-model="activeTab"
-              class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+          <div class="flex space-x-3">
+            <button 
+              v-if="activeTab === 'members'"
+              @click="showInviteModal = true"
+              class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium"
             >
-              <option value="members">成員管理</option>
-              <option value="teams">團隊管理</option>
-              <option value="settings">組織設定</option>
-            </select>
-          </div>
-          
-          <!-- 桌面版按鈕組 -->
-          <div class="hidden sm:flex rounded-lg border border-gray-200 bg-gray-50 p-1">
-            <button
-              @click="activeTab = 'members'"
-              :class="[
-                'relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200',
-                activeTab === 'members'
-                  ? 'bg-white text-primary-700 shadow-sm border border-gray-200'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              ]"
-            >
-              <i class="bi bi-person-check text-base mr-1.5"></i>
-              成員管理
+              邀請成員
             </button>
-            <button
-              @click="activeTab = 'teams'"
-              :class="[
-                'relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200',
-                activeTab === 'teams'
-                  ? 'bg-white text-primary-700 shadow-sm border border-gray-200'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              ]"
+            <button 
+              v-if="activeTab === 'teams'"
+              @click="showCreateTeamModal = true"
+              class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium"
             >
-              <i class="bi bi-people-fill text-base mr-1.5"></i>
-              團隊管理
-            </button>
-            <button
-              @click="activeTab = 'settings'"
-              :class="[
-                'relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200',
-                activeTab === 'settings'
-                  ? 'bg-white text-primary-700 shadow-sm border border-gray-200'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              ]"
-            >
-              <CogIcon class="h-4 w-4 mr-1.5" />
-              組織設定
+              建立團隊
             </button>
           </div>
         </div>
@@ -78,16 +43,24 @@
       <OrganizationMembers 
         v-if="activeTab === 'members'"
         :organization="organization"
+        :showInviteButton="false"
+        :showInviteModal="showInviteModal"
         @refresh="fetchOrganization"
         @success="showSuccessMessage"
+        @show-invite="showInviteModal = true"
+        @close-invite="showInviteModal = false"
       />
       
       <!-- 團隊管理頁籤 -->
       <OrganizationTeams 
         v-if="activeTab === 'teams'"
         :organization="organization"
+        :showCreateButton="false"
+        :showCreateModal="showCreateTeamModal"
         @refresh="fetchOrganization"
         @success="showSuccessMessage"
+        @show-create="showCreateTeamModal = true"
+        @close-create="showCreateTeamModal = false"
       />
       
       <!-- 組織設定頁籤 -->
@@ -135,23 +108,64 @@ export default {
     const route = useRoute()
     const router = useRouter()
     const authStore = useAuthStore()
-    const activeTab = ref('members')
+    const activeTab = ref(route.query.tab || 'members')
     const organization = ref(null)
     const isLoading = ref(false)
     const successMessage = ref('')
+    const showInviteModal = ref(false)
+    const showCreateTeamModal = ref(false)
     
     const user = computed(() => authStore.user)
     const organizationId = computed(() => route.params.id)
     
+    // 讓 AdminLayout 可以調用這個方法
+    const setActiveTab = (tab) => {
+      activeTab.value = tab
+      router.push({
+        path: route.path,
+        query: { ...route.query, tab }
+      })
+    }
+    
+    // 監聽 URL 查詢參數變化
+    watch(() => route.query.tab, (newTab) => {
+      if (newTab && ['members', 'teams', 'settings'].includes(newTab)) {
+        activeTab.value = newTab
+      } else if (!newTab) {
+        // 如果沒有 tab 參數，默認顯示 members
+        activeTab.value = 'members'
+      }
+    })
+    
     const fetchOrganization = async () => {
-      if (!organizationId.value) return
+      if (!organizationId.value) {
+        console.warn('No organization ID available')
+        return
+      }
       
       isLoading.value = true
+      organization.value = null // 重置狀態
+      
       try {
+        console.log('Fetching organization:', organizationId.value)
         const response = await axios.get(`/api/organizations/${organizationId.value}`)
-        organization.value = response.data
+        console.log('Organization response:', response.data)
+        
+        // 處理分頁回應格式
+        if (response.data.users && response.data.users.data) {
+          // 如果 users 是分頁格式，重新整理為簡單格式以兼容 OrganizationSettings
+          organization.value = {
+            ...response.data,
+            users: response.data.users.data || response.data.users
+          }
+        } else {
+          organization.value = response.data
+        }
+        
+        console.log('Organization loaded:', organization.value?.name)
       } catch (error) {
         console.error('Failed to fetch organization:', error)
+        organization.value = null
       } finally {
         isLoading.value = false
       }
@@ -172,12 +186,20 @@ export default {
     }, { immediate: true })
     
     onMounted(() => {
-      fetchOrganization()
-      // 從 query 參數中讀取活動頁籤
-      if (route.query.tab && ['members', 'teams', 'settings'].includes(route.query.tab)) {
-        activeTab.value = route.query.tab
-      }
+      // 確保在 DOM 渲染完成後執行
+      setTimeout(() => {
+        fetchOrganization()
+      }, 100)
     })
+    
+    // 全局暴露實例方法和數據供 AdminLayout 使用
+    if (typeof window !== 'undefined') {
+      window.organizationManageInstance = {
+        setActiveTab,
+        organization: organization,
+        fetchOrganization: fetchOrganization
+      }
+    }
     
     return {
       user,
@@ -185,6 +207,8 @@ export default {
       organization,
       isLoading,
       successMessage,
+      showInviteModal,
+      showCreateTeamModal,
       fetchOrganization,
       showSuccessMessage
     }

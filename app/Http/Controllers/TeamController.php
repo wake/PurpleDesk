@@ -10,14 +10,21 @@ use Illuminate\Support\Facades\Storage;
 class TeamController extends Controller
 {
     /**
-     * 取得組織的所有團隊
+     * 取得組織的所有團隊（支援分頁）
      */
-    public function index($organizationId)
+    public function index(Request $request, $organizationId)
     {
         $organization = Organization::findOrFail($organizationId);
         
+        $page = $request->get('page', 1);
+        $perPage = 10;
+        
+        $teams = $organization->teams()
+            ->with('users')
+            ->paginate($perPage, ['*'], 'teams_page', $page);
+        
         return response()->json([
-            'teams' => $organization->teams()->with('users')->get()
+            'teams' => $teams
         ]);
     }
 

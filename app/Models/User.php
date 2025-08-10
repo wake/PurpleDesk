@@ -20,7 +20,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'full_name',
         'display_name',
         'email',
         'password',
@@ -61,6 +61,9 @@ class User extends Authenticatable
             'password' => 'hashed',
             'email_notifications' => 'boolean',
             'browser_notifications' => 'boolean',
+            'is_admin' => 'boolean',
+            'birth_date' => 'date',
+            'last_login_at' => 'datetime',
         ];
     }
 
