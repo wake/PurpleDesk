@@ -15,26 +15,31 @@ import {
   faSignOutAlt, faTimesCircle, faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
 
-// Regular Icons (外框線)
+// Regular Icons (外框線) - 僅導入確實存在的圖示
 import {
-  faUser, faUsers, faBell, faCog, faBuilding, faHome, 
-  faFileText, faClipboardList, faSearch, faEdit, faTrash, 
-  faEye, faEyeSlash, faEnvelope, faPhone, faMapMarkerAlt, 
-  faCalendar, faShieldAlt, faExclamationCircle, faDownload, 
-  faImage, faUserCheck, faUserPlus, faUserCircle, faBars
+  faUser, faBell, faBuilding, faHome, 
+  faFileAlt as faFileText, faEdit, faEye, faEyeSlash, 
+  faEnvelope, faCalendar, faImage, faUserCircle
 } from '@fortawesome/free-regular-svg-icons';
+
+// 從 Solid 導入 Regular 版本不存在的圖示
+import {
+  faUsers, faCog, faClipboardList, faSearch, faShieldAlt, 
+  faExclamationCircle, faDownload, faUserCheck, faUserPlus, faBars,
+  faTrash, faPhone, faMapMarkerAlt
+} from '@fortawesome/free-solid-svg-icons';
 
 // 將圖示添加到 Font Awesome 庫
 library.add(
-  // Solid icons
+  // Solid icons (功能性圖示)
   faSpinner, faChevronDown, faPlus, faUpload, faChartBar,
   faSignOutAlt, faTimesCircle, faCheckCircle,
-  // Regular icons  
-  faUser, faUsers, faBell, faCog, faBuilding, faHome,
-  faFileText, faClipboardList, faSearch, faEdit, faTrash,
-  faEye, faEyeSlash, faEnvelope, faPhone, faMapMarkerAlt,
-  faCalendar, faShieldAlt, faExclamationCircle, faDownload,
-  faImage, faUserCheck, faUserPlus, faUserCircle, faBars
+  faUsers, faCog, faClipboardList, faSearch, faShieldAlt,
+  faExclamationCircle, faDownload, faUserCheck, faUserPlus, faBars,
+  faTrash, faPhone, faMapMarkerAlt,
+  // Regular icons (裝飾性圖示)  
+  faUser, faBell, faBuilding, faHome, faFileText, faEdit,
+  faEye, faEyeSlash, faEnvelope, faCalendar, faImage, faUserCircle
 );
 
 const app = createApp(App);

@@ -42,7 +42,7 @@
                   ? 'bg-primary-100 text-primary-900' 
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
               >
-                <font-awesome-icon :icon="['far', 'cog']" class="mr-3 h-5 w-5" />
+                <font-awesome-icon icon="cog" class="mr-3 h-5 w-5" />
                 系統設定
               </router-link>
             </nav>

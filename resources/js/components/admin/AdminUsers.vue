@@ -129,7 +129,7 @@
 
     <!-- 空狀態 -->
     <div v-else-if="filteredUsers.length === 0" class="text-center py-12">
-      <font-awesome-icon :icon="['far', 'users']" class="mx-auto h-12 w-12 text-gray-400" />
+      <font-awesome-icon icon="users" class="mx-auto h-12 w-12 text-gray-400" />
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到使用者</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件</p>
     </div>

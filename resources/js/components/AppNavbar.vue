@@ -99,7 +99,7 @@
                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   @click="showUserMenu = false"
                 >
-                  <font-awesome-icon :icon="['far', 'cog']" class="mr-3 h-4 w-4 text-gray-400" />
+                  <font-awesome-icon icon="cog" class="mr-3 h-4 w-4 text-gray-400" />
                   設定
                 </router-link>
 
@@ -112,7 +112,7 @@
                     class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     @click="showUserMenu = false"
                   >
-                    <font-awesome-icon :icon="['far', 'users']" class="mr-3 h-4 w-4 text-gray-400" />
+                    <font-awesome-icon icon="users" class="mr-3 h-4 w-4 text-gray-400" />
                     使用者管理
                   </router-link>
                   
@@ -130,7 +130,7 @@
                     class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     @click="showUserMenu = false"
                   >
-                    <font-awesome-icon :icon="['far', 'cog']" class="mr-3 h-4 w-4 text-gray-400" />
+                    <font-awesome-icon icon="cog" class="mr-3 h-4 w-4 text-gray-400" />
                     系統設定
                   </router-link>
                 </template>
