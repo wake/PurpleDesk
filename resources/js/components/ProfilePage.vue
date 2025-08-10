@@ -118,41 +118,6 @@
               </div>
             </div>
 
-            <!-- 個人設定 -->
-            <div class="border-t border-gray-200 pt-6">
-              <h3 class="text-lg font-medium text-gray-900 mb-4">個人設定</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label for="locale" class="block text-sm font-medium text-gray-700">語系</label>
-                  <select
-                    id="locale"
-                    v-model="form.locale"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                  >
-                    <option value="zh_TW">繁體中文</option>
-                    <option value="en">English</option>
-                    <option value="ja">日本語</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label for="timezone" class="block text-sm font-medium text-gray-700">時區</label>
-                  <select
-                    id="timezone"
-                    v-model="form.timezone"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                  >
-                    <option value="Asia/Taipei">台北 (UTC+8)</option>
-                    <option value="Asia/Tokyo">東京 (UTC+9)</option>
-                    <option value="Asia/Shanghai">上海 (UTC+8)</option>
-                    <option value="America/New_York">紐約 (UTC-5)</option>
-                    <option value="America/Los_Angeles">洛杉磯 (UTC-8)</option>
-                    <option value="Europe/London">倫敦 (UTC+0)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
             <!-- 密碼更改 -->
             <div class="border-t border-gray-200 pt-6">
               <h3 class="text-lg font-medium text-gray-900 mb-4">更改密碼</h3>
@@ -279,8 +244,6 @@ export default {
       display_name: '',
       email: '',
       organization_id: '',
-      locale: 'zh_TW',
-      timezone: 'Asia/Taipei',
       current_password: '',
       password: '',
       password_confirmation: '',
@@ -374,8 +337,6 @@ export default {
         formData.append('display_name', form.display_name)
         formData.append('email', form.email)
         formData.append('organization_id', form.organization_id || '')
-        formData.append('locale', form.locale)
-        formData.append('timezone', form.timezone)
         
         if (form.current_password) {
           formData.append('current_password', form.current_password)
@@ -431,8 +392,6 @@ export default {
         form.display_name = user.value.display_name || ''
         form.email = user.value.email || ''
         form.organization_id = user.value.organization_id || ''
-        form.locale = user.value.locale || 'zh_TW'
-        form.timezone = user.value.timezone || 'Asia/Taipei'
       }
     })
     

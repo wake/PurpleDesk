@@ -84,8 +84,6 @@ class AuthController extends Controller
             'display_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'organization_id' => 'nullable|exists:organizations,id',
-            'locale' => 'nullable|string|max:10',
-            'timezone' => 'nullable|string|max:50',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
         
@@ -111,8 +109,6 @@ class AuthController extends Controller
             'display_name' => $request->display_name,
             'email' => $request->email,
             'organization_id' => $request->organization_id,
-            'locale' => $request->locale,
-            'timezone' => $request->timezone,
         ];
         
         // 更新密碼
@@ -134,6 +130,32 @@ class AuthController extends Controller
         
         return response()->json([
             'message' => '個人資料已成功更新',
+            'user' => $user->load('organization'),
+        ]);
+    }
+    
+    public function updateSettings(Request $request)
+    {
+        $user = $request->user();
+        
+        $request->validate([
+            'locale' => 'nullable|string|max:10',
+            'timezone' => 'nullable|string|max:50',
+            'email_notifications' => 'nullable|boolean',
+            'browser_notifications' => 'nullable|boolean',
+            'theme' => 'nullable|string|in:light,dark,auto',
+        ]);
+        
+        $user->update([
+            'locale' => $request->locale ?? $user->locale,
+            'timezone' => $request->timezone ?? $user->timezone,
+            'email_notifications' => $request->email_notifications ?? $user->email_notifications,
+            'browser_notifications' => $request->browser_notifications ?? $user->browser_notifications,
+            'theme' => $request->theme ?? $user->theme,
+        ]);
+        
+        return response()->json([
+            'message' => '設定已成功更新',
             'user' => $user->load('organization'),
         ]);
     }
