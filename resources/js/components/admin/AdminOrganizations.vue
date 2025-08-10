@@ -86,7 +86,7 @@
                 管理
               </router-link>
               <button 
-                @click="deleteOrganization(org)"
+                @click="showDeleteDialog(org)"
                 class="text-red-600 hover:text-red-900"
                 :disabled="org.users_count > 0"
                 :class="{ 'opacity-50 cursor-not-allowed': org.users_count > 0 }"
@@ -237,6 +237,18 @@
                       @change="handleLogoFileChange"
                       class="hidden"
                     />
+                    
+                    <!-- 移除 Logo 按鈕 -->
+                    <div v-if="logoPreview || editingOrganization?.logo_url" class="mt-3">
+                      <button
+                        type="button"
+                        @click="showRemoveLogoDialog"
+                        class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                      >
+                        <i class="bi bi-trash mr-2"></i>
+                        移除 Logo
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -279,6 +291,32 @@
         </div>
       </div>
     </div>
+    
+    <!-- 移除 Logo 確認對話框 -->
+    <ConfirmDialog
+      :show="showRemoveLogoConfirm"
+      type="danger"
+      title="移除組織 Logo"
+      message="確定要移除組織 Logo 嗎？此操作無法復原。"
+      confirm-text="移除"
+      cancel-text="取消"
+      :loading="isRemovingLogo"
+      @confirm="confirmRemoveLogo"
+      @cancel="cancelRemoveLogo"
+    />
+    
+    <!-- 刪除組織確認對話框 -->
+    <ConfirmDialog
+      :show="showDeleteConfirm"
+      type="danger"
+      title="刪除組織"
+      :message="`確定要刪除組織「${deleteTarget?.name}」嗎？此操作無法復原。`"
+      confirm-text="刪除"
+      cancel-text="取消"
+      :loading="isDeleting"
+      @confirm="confirmDeleteOrganization"
+      @cancel="cancelDeleteOrganization"
+    />
   </div>
 </template>
 
@@ -286,12 +324,14 @@
 import { ref, computed, onMounted, reactive } from 'vue'
 import axios from 'axios'
 import { RefreshIcon, OfficeBuildingIcon } from '@heroicons/vue/outline'
+import ConfirmDialog from '../common/ConfirmDialog.vue'
 
 export default {
   name: 'AdminOrganizations',
   components: {
     RefreshIcon,
-    OfficeBuildingIcon
+    OfficeBuildingIcon,
+    ConfirmDialog
   },
   setup() {
     const organizations = ref([])
@@ -304,10 +344,16 @@ export default {
     const logoPreview = ref(null)
     const isLogoDragOver = ref(false)
     const logoFile = ref(null)
+    const showRemoveLogoConfirm = ref(false)
+    const isRemovingLogo = ref(false)
+    const showDeleteConfirm = ref(false)
+    const isDeleting = ref(false)
+    const deleteTarget = ref(null)
     
     const formData = reactive({
       name: '',
-      description: ''
+      description: '',
+      remove_avatar: false
     })
     
     const filteredOrganizations = computed(() => {
@@ -405,6 +451,58 @@ export default {
         validateAndProcessLogoFile(files[0])
       }
     }
+    
+    const showRemoveLogoDialog = () => {
+      showRemoveLogoConfirm.value = true
+    }
+    
+    const confirmRemoveLogo = async () => {
+      isRemovingLogo.value = true
+      
+      try {
+        // 如果正在編輯現有組織，立即移除 Logo
+        if (editingOrganization.value) {
+          // 立即發送請求到後端移除 Logo
+          const formDataToSend = new FormData()
+          formDataToSend.append('name', formData.name)
+          formDataToSend.append('description', formData.description || '')
+          formDataToSend.append('remove_avatar', '1')
+          
+          await axios.post(`/api/organizations/${editingOrganization.value.id}`, formDataToSend, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            params: { '_method': 'PUT' }
+          })
+          
+          // 刷新組織列表
+          await fetchOrganizations()
+        }
+        
+        // 清空本地狀態
+        logoFile.value = null
+        formData.remove_avatar = false
+        logoPreview.value = null
+        
+        // 清空檔案輸入
+        const fileInput = document.querySelector('input[type="file"][accept="image/*"]')
+        if (fileInput) {
+          fileInput.value = ''
+        }
+        
+        // 關閉對話框
+        showRemoveLogoConfirm.value = false
+        
+      } catch (error) {
+        console.error('移除 Logo 失敗:', error)
+        const errorMsg = error.response?.data?.message || '移除 Logo 失敗，請稍後再試'
+        alert(errorMsg)
+      } finally {
+        isRemovingLogo.value = false
+      }
+    }
+    
+    const cancelRemoveLogo = () => {
+      showRemoveLogoConfirm.value = false
+    }
 
     const editOrganization = (org) => {
       editingOrganization.value = org
@@ -419,6 +517,7 @@ export default {
       editingOrganization.value = null
       formData.name = ''
       formData.description = ''
+      formData.remove_avatar = false
       logoPreview.value = null
       logoFile.value = null
     }
@@ -431,6 +530,9 @@ export default {
         
         if (logoFile.value) {
           formDataToSend.append('avatar', logoFile.value)
+        }
+        if (formData.remove_avatar) {
+          formDataToSend.append('remove_avatar', '1')
         }
         
         if (editingOrganization.value) {
@@ -454,16 +556,32 @@ export default {
       }
     }
     
-    const deleteOrganization = async (org) => {
-      if (!confirm(`確定要刪除「${org.name}」嗎？`)) return
+    const showDeleteDialog = (org) => {
+      deleteTarget.value = org
+      showDeleteConfirm.value = true
+    }
+    
+    const confirmDeleteOrganization = async () => {
+      if (!deleteTarget.value) return
+      
+      isDeleting.value = true
       
       try {
-        await axios.delete(`/api/organizations/${org.id}`)
+        await axios.delete(`/api/organizations/${deleteTarget.value.id}`)
         await fetchOrganizations(currentPage.value)
+        showDeleteConfirm.value = false
+        deleteTarget.value = null
       } catch (error) {
         console.error('Failed to delete organization:', error)
         alert('刪除失敗，請稍後再試')
+      } finally {
+        isDeleting.value = false
       }
+    }
+    
+    const cancelDeleteOrganization = () => {
+      showDeleteConfirm.value = false
+      deleteTarget.value = null
     }
     
     const changePage = (page) => {
@@ -494,6 +612,17 @@ export default {
       handleLogoDragOver,
       handleLogoDragLeave,
       handleLogoDrop,
+      showRemoveLogoDialog,
+      confirmRemoveLogo,
+      cancelRemoveLogo,
+      showRemoveLogoConfirm,
+      isRemovingLogo,
+      showDeleteDialog,
+      confirmDeleteOrganization,
+      cancelDeleteOrganization,
+      showDeleteConfirm,
+      isDeleting,
+      deleteTarget,
       pagination,
       currentPage,
       changePage

@@ -84,6 +84,7 @@ class AuthController extends Controller
             'display_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'remove_avatar' => 'nullable|string',
         ];
         
         // 如果有提供目前密碼，則驗證密碼相關欄位
@@ -114,8 +115,16 @@ class AuthController extends Controller
             $data['password'] = Hash::make($request->password);
         }
         
+        // 處理移除頭像
+        if ($request->input('remove_avatar') === '1') {
+            // 刪除舊頭像檔案
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+            $data['avatar'] = null;
+        }
         // 處理頭像上傳
-        if ($request->hasFile('avatar')) {
+        elseif ($request->hasFile('avatar')) {
             // 刪除舊頭像
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);

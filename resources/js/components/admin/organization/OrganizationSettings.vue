@@ -49,6 +49,18 @@
               @change="handleFileChange"
               class="hidden"
             />
+            
+            <!-- 移除 Logo 按鈕 -->
+            <div v-if="logoPreview || organization?.logo_url" class="mt-3">
+              <button
+                type="button"
+                @click="removeLogo"
+                class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              >
+                <i class="bi bi-trash mr-2"></i>
+                移除 Logo
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -240,6 +252,19 @@
         </div>
       </div>
     </div>
+    
+    <!-- 移除 Logo 確認對話框 -->
+    <ConfirmDialog
+      :show="showRemoveLogoConfirm"
+      type="danger"
+      title="移除組織 Logo"
+      message="確定要移除組織 Logo 嗎？此操作無法復原。"
+      confirm-text="移除"
+      cancel-text="取消"
+      :loading="isRemovingLogo"
+      @confirm="confirmRemoveLogo"
+      @cancel="cancelRemoveLogo"
+    />
   </div>
 </template>
 
@@ -247,9 +272,13 @@
 import { ref, reactive, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import ConfirmDialog from '../../common/ConfirmDialog.vue'
 
 export default {
   name: 'OrganizationSettings',
+  components: {
+    ConfirmDialog
+  },
   props: {
     organization: {
       type: Object,
@@ -267,11 +296,14 @@ export default {
     const logoPreview = ref(null)
     const isDragOver = ref(false)
     const showDeleteConfirm = ref(false)
+    const showRemoveLogoConfirm = ref(false)
+    const isRemovingLogo = ref(false)
     
     const form = reactive({
       name: '',
       description: '',
-      avatar: null
+      avatar: null,
+      remove_avatar: false
     })
     
     const stats = computed(() => {
@@ -339,6 +371,57 @@ export default {
       }
     }
     
+    const removeLogo = () => {
+      showRemoveLogoConfirm.value = true
+    }
+    
+    const confirmRemoveLogo = async () => {
+      isRemovingLogo.value = true
+      
+      try {
+        // 立即發送請求到後端移除 Logo
+        const formData = new FormData()
+        formData.append('name', form.name)
+        formData.append('description', form.description || '')
+        formData.append('remove_avatar', '1')
+        
+        const response = await axios.post(`/api/organizations/${props.organization.id}?_method=PUT`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        
+        // 清空本地狀態
+        form.avatar = null
+        form.remove_avatar = false
+        logoPreview.value = null
+        
+        // 清空檔案輸入
+        const fileInput = document.querySelector('input[type="file"]')
+        if (fileInput) {
+          fileInput.value = ''
+        }
+        
+        // 發送成功訊息和刷新事件
+        emit('success', 'Logo 已成功移除')
+        emit('refresh')
+        
+        // 關閉對話框
+        showRemoveLogoConfirm.value = false
+        
+      } catch (error) {
+        console.error('移除 Logo 失敗:', error)
+        const errorMsg = error.response?.data?.message || '移除 Logo 失敗，請稍後再試'
+        errorMessage.value = errorMsg
+      } finally {
+        isRemovingLogo.value = false
+      }
+    }
+    
+    const cancelRemoveLogo = () => {
+      showRemoveLogoConfirm.value = false
+    }
+    
     const saveSettings = async () => {
       if (isSaving.value || !props.organization?.id) return
       
@@ -355,6 +438,9 @@ export default {
         if (form.avatar) {
           formData.append('avatar', form.avatar)
         }
+        if (form.remove_avatar) {
+          formData.append('remove_avatar', '1')
+        }
         
         const response = await axios.post(`/api/organizations/${props.organization.id}?_method=PUT`, formData, {
           headers: {
@@ -365,6 +451,7 @@ export default {
         emit('success', '組織設定已成功更新')
         
         form.avatar = null
+        form.remove_avatar = false
         logoPreview.value = null
         
         emit('refresh')
@@ -415,12 +502,17 @@ export default {
       logoPreview,
       isDragOver,
       showDeleteConfirm,
+      showRemoveLogoConfirm,
+      isRemovingLogo,
       validateAndProcessFile,
       handleFileChange,
       handleDragEnter,
       handleDragOver,
       handleDragLeave,
       handleDrop,
+      removeLogo,
+      confirmRemoveLogo,
+      cancelRemoveLogo,
       saveSettings,
       deleteOrganization
     }
