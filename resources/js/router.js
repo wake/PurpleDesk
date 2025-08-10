@@ -59,6 +59,11 @@ const routes = [
         component: () => import('./components/admin/AdminOrganizations.vue')
       },
       {
+        path: 'organizations/:id/manage',
+        name: 'admin-organization-manage',
+        component: () => import('./components/admin/OrganizationManage.vue')
+      },
+      {
         path: 'system',
         name: 'admin-system',
         component: () => import('./components/admin/AdminSystem.vue')

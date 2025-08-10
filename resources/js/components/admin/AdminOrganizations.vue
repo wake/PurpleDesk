@@ -81,12 +81,12 @@
               {{ formatDate(org.created_at) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <button 
-                @click="editOrganization(org)"
+              <router-link
+                :to="`/admin/organizations/${org.id}/manage`"
                 class="text-primary-600 hover:text-primary-900 mr-3"
               >
-                編輯
-              </button>
+                管理
+              </router-link>
               <button 
                 @click="deleteOrganization(org)"
                 class="text-red-600 hover:text-red-900"
