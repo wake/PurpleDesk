@@ -12,7 +12,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <font-awesome-icon icon="users" class="h-8 w-8 text-primary-600" />
+                  <IconUsers class="h-8 w-8 text-primary-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -28,7 +28,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <font-awesome-icon :icon="['far', 'building']" class="h-8 w-8 text-green-600" />
+                  <IconBuilding class="h-8 w-8 text-green-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -44,7 +44,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <font-awesome-icon :icon="['far', 'user']" class="h-8 w-8 text-blue-600" />
+                  <IconUser class="h-8 w-8 text-blue-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -60,7 +60,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <font-awesome-icon icon="chart-bar" class="h-8 w-8 text-purple-600" />
+                  <IconChartBar class="h-8 w-8 text-purple-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -185,10 +185,18 @@
 
 <script>
 import { ref, reactive, onMounted } from 'vue'
+// Tabler Icons
+import { IconUsers, IconBuilding, IconUser, IconChartBar } from '@tabler/icons-vue'
 import axios from 'axios'
 
 export default {
   name: 'AdminSystem',
+  components: {
+    IconUsers,
+    IconBuilding,
+    IconUser,
+    IconChartBar
+  },
   setup() {
     const stats = ref({})
     const isLoading = ref(true)

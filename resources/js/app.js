@@ -5,48 +5,11 @@ import router from './router';
 import App from './components/App.vue';
 import { useAuthStore } from './stores/auth';
 
-// Font Awesome 配置
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-
-// Solid Icons (實心)
-import { 
-  faSpinner, faChevronDown, faPlus, faUpload, faChartBar,
-  faSignOutAlt, faTimesCircle, faCheckCircle
-} from '@fortawesome/free-solid-svg-icons';
-
-// Regular Icons (外框線) - 僅導入確實存在的圖示
-import {
-  faUser, faBell, faBuilding, faHome, 
-  faFileAlt as faFileText, faEdit, faEye, faEyeSlash, 
-  faEnvelope, faCalendar, faImage, faUserCircle
-} from '@fortawesome/free-regular-svg-icons';
-
-// 從 Solid 導入 Regular 版本不存在的圖示
-import {
-  faUsers, faCog, faClipboardList, faSearch, faShieldAlt, 
-  faExclamationCircle, faDownload, faUserCheck, faUserPlus, faBars,
-  faTrash, faPhone, faMapMarkerAlt
-} from '@fortawesome/free-solid-svg-icons';
-
-// 將圖示添加到 Font Awesome 庫
-library.add(
-  // Solid icons (功能性圖示)
-  faSpinner, faChevronDown, faPlus, faUpload, faChartBar,
-  faSignOutAlt, faTimesCircle, faCheckCircle,
-  faUsers, faCog, faClipboardList, faSearch, faShieldAlt,
-  faExclamationCircle, faDownload, faUserCheck, faUserPlus, faBars,
-  faTrash, faPhone, faMapMarkerAlt,
-  // Regular icons (裝飾性圖示)  
-  faUser, faBell, faBuilding, faHome, faFileText, faEdit,
-  faEye, faEyeSlash, faEnvelope, faCalendar, faImage, faUserCircle
-);
+// 已移除 Font Awesome，改用 Tabler Icons
+// Tabler Icons 採用按需導入，不需要全域配置
 
 const app = createApp(App);
 const pinia = createPinia();
-
-// 註冊 Font Awesome 組件
-app.component('font-awesome-icon', FontAwesomeIcon);
 
 app.use(pinia);
 app.use(router);
