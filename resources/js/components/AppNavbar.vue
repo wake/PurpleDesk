@@ -43,9 +43,7 @@
               </div>
               
               <!-- 下拉箭頭 -->
-              <svg class="h-4 w-4 text-gray-500" :class="{ 'rotate-180': showUserMenu }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
+              <ChevronDown class="h-4 w-4 text-gray-500" :class="{ 'rotate-180': showUserMenu }" />
             </button>
 
             <!-- 下拉選單 -->
