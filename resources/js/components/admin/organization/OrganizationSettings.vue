@@ -1,13 +1,5 @@
 <template>
   <div>
-    <!-- 標題 -->
-    <div class="px-6 py-4 border-b border-gray-200">
-      <div>
-        <h2 class="text-lg font-medium text-gray-900">組織設定</h2>
-        <p class="mt-1 text-sm text-gray-600">管理組織的基本資訊和設定</p>
-      </div>
-    </div>
-
     <form @submit.prevent="saveSettings" class="space-y-6 p-6">
       <!-- Logo 上傳 -->
       <div>

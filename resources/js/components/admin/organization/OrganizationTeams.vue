@@ -1,21 +1,5 @@
 <template>
   <div>
-    <!-- 標題和操作 -->
-    <div class="px-6 py-4 border-b border-gray-200">
-      <div class="flex justify-between items-center">
-        <div>
-          <h2 class="text-lg font-medium text-gray-900">團隊管理</h2>
-          <p class="mt-1 text-sm text-gray-600">管理組織中的所有團隊</p>
-        </div>
-        <button 
-          @click="showCreateModal = true"
-          class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-        >
-          建立團隊
-        </button>
-      </div>
-    </div>
-
     <!-- 搜尋欄 -->
     <div class="px-6 py-4 border-b border-gray-200">
       <div class="flex space-x-4">
@@ -27,6 +11,12 @@
             class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
           />
         </div>
+        <button 
+          @click="showCreateModal = true"
+          class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap"
+        >
+          建立團隊
+        </button>
       </div>
     </div>
 
