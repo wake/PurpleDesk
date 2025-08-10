@@ -163,6 +163,13 @@ export default {
         }
         
         console.log('Organization loaded:', organization.value?.name)
+        
+        // 通知 AdminLayout 更新其快取的組織資料
+        if (window.adminLayoutInstance && window.adminLayoutInstance.fetchCurrentOrganization) {
+          console.log('Notifying AdminLayout to refresh current organization')
+          await window.adminLayoutInstance.fetchCurrentOrganization()
+        }
+        
       } catch (error) {
         console.error('Failed to fetch organization:', error)
         organization.value = null

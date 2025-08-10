@@ -244,6 +244,18 @@ export default {
           currentOrganization.value = response.data
         }
         
+        // 同時更新 availableOrganizations 陣列中對應的組織資料
+        if (availableOrganizations.value.length > 0 && currentOrganization.value) {
+          const index = availableOrganizations.value.findIndex(org => org.id == currentOrganizationId.value)
+          if (index !== -1) {
+            console.log('AdminLayout: Updating organization in available list')
+            availableOrganizations.value[index] = {
+              ...availableOrganizations.value[index],
+              ...currentOrganization.value
+            }
+          }
+        }
+        
         console.log('AdminLayout: Organization loaded:', currentOrganization.value?.name)
       } catch (error) {
         console.error('AdminLayout: Failed to fetch current organization:', error)
@@ -338,10 +350,22 @@ export default {
     
     onMounted(() => {
       document.addEventListener('click', handleClickOutside)
+      
+      // 全局暴露方法供子組件使用
+      if (typeof window !== 'undefined') {
+        window.adminLayoutInstance = {
+          fetchCurrentOrganization
+        }
+      }
     })
     
     onUnmounted(() => {
       document.removeEventListener('click', handleClickOutside)
+      
+      // 清理全局引用
+      if (typeof window !== 'undefined') {
+        delete window.adminLayoutInstance
+      }
     })
     
     return {
