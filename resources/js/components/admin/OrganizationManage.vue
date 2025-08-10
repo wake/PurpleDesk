@@ -137,20 +137,20 @@ export default {
       }
     })
     
-    // 全局暴露實例方法和數據供 AdminLayout 使用
-    if (typeof window !== 'undefined') {
-      window.organizationManageInstance = {
-        setActiveTab,
-        organization: organization
-      }
-    }
-    
     const fetchOrganization = async () => {
-      if (!organizationId.value) return
+      if (!organizationId.value) {
+        console.warn('No organization ID available')
+        return
+      }
       
       isLoading.value = true
+      organization.value = null // 重置狀態
+      
       try {
+        console.log('Fetching organization:', organizationId.value)
         const response = await axios.get(`/api/organizations/${organizationId.value}`)
+        console.log('Organization response:', response.data)
+        
         // 處理分頁回應格式
         if (response.data.users && response.data.users.data) {
           // 如果 users 是分頁格式，重新整理為簡單格式以兼容 OrganizationSettings
@@ -161,8 +161,11 @@ export default {
         } else {
           organization.value = response.data
         }
+        
+        console.log('Organization loaded:', organization.value?.name)
       } catch (error) {
         console.error('Failed to fetch organization:', error)
+        organization.value = null
       } finally {
         isLoading.value = false
       }
@@ -183,8 +186,20 @@ export default {
     }, { immediate: true })
     
     onMounted(() => {
-      fetchOrganization()
+      // 確保在 DOM 渲染完成後執行
+      setTimeout(() => {
+        fetchOrganization()
+      }, 100)
     })
+    
+    // 全局暴露實例方法和數據供 AdminLayout 使用
+    if (typeof window !== 'undefined') {
+      window.organizationManageInstance = {
+        setActiveTab,
+        organization: organization,
+        fetchOrganization: fetchOrganization
+      }
+    }
     
     return {
       user,

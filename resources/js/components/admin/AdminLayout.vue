@@ -163,7 +163,7 @@
 </template>
 
 <script>
-import { computed, inject, ref, onMounted, onUnmounted } from 'vue'
+import { computed, inject, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import AppNavbar from '../AppNavbar.vue'
@@ -193,13 +193,47 @@ export default {
       return route.params.id
     })
     
-    // 獲取組織名稱（從全局狀態或 OrganizationManage 組件獲取）
+    // 獲取組織資訊和名稱
+    const currentOrganization = ref(null)
+    const isLoadingCurrentOrg = ref(false)
+    
     const organizationName = computed(() => {
-      if (window.organizationManageInstance && window.organizationManageInstance.organization && window.organizationManageInstance.organization.value) {
-        return window.organizationManageInstance.organization.value.name
-      }
-      return null
+      return currentOrganization.value?.name || null
     })
+    
+    // 獲取當前組織資訊
+    const fetchCurrentOrganization = async () => {
+      if (!currentOrganizationId.value) {
+        console.warn('AdminLayout: No organization ID available')
+        return
+      }
+      
+      isLoadingCurrentOrg.value = true
+      currentOrganization.value = null // 重置狀態
+      
+      try {
+        console.log('AdminLayout: Fetching organization:', currentOrganizationId.value)
+        const response = await axios.get(`/api/organizations/${currentOrganizationId.value}`)
+        console.log('AdminLayout: Organization response:', response.data)
+        
+        // 處理分頁和非分頁格式
+        if (response.data.users && response.data.users.data) {
+          currentOrganization.value = {
+            ...response.data,
+            users: response.data.users.data || response.data.users
+          }
+        } else {
+          currentOrganization.value = response.data
+        }
+        
+        console.log('AdminLayout: Organization loaded:', currentOrganization.value?.name)
+      } catch (error) {
+        console.error('AdminLayout: Failed to fetch current organization:', error)
+        currentOrganization.value = null
+      } finally {
+        isLoadingCurrentOrg.value = false
+      }
+    }
     
     // 從組織管理組件獲取和設置 activeTab
     const activeTab = computed(() => {
@@ -246,12 +280,17 @@ export default {
       }
     }
     
-    const switchToOrganization = (organization) => {
+    const switchToOrganization = async (organization) => {
       showOrganizationDropdown.value = false
+      
+      // 先檢查是否真的要切換到不同組織
+      if (organization.id == currentOrganizationId.value) {
+        return
+      }
       
       // 切換到新組織的管理頁面
       const currentTab = route.query.tab || 'members'
-      router.push({
+      await router.push({
         path: `/admin/organizations/${organization.id}/manage`,
         query: { tab: currentTab }
       })
@@ -263,6 +302,21 @@ export default {
         showOrganizationDropdown.value = false
       }
     }
+    
+    // 監聽路由變更，當 ID 變更時重新獲取組織資訊
+    watch(
+      () => currentOrganizationId.value,
+      async (newId, oldId) => {
+        if (newId && isOrganizationManagePage.value && newId !== oldId) {
+          await fetchCurrentOrganization()
+          // 通知子組件重新載入數據
+          if (window.organizationManageInstance) {
+            window.organizationManageInstance.fetchOrganization()
+          }
+        }
+      },
+      { immediate: true }
+    )
     
     onMounted(() => {
       document.addEventListener('click', handleClickOutside)
@@ -280,9 +334,12 @@ export default {
       showOrganizationDropdown,
       availableOrganizations,
       isLoadingOrganizations,
+      currentOrganization,
+      isLoadingCurrentOrg,
       setActiveTab,
       toggleOrganizationDropdown,
-      switchToOrganization
+      switchToOrganization,
+      fetchCurrentOrganization
     }
   }
 }
