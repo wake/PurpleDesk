@@ -150,9 +150,9 @@
 
     <!-- 空狀態 -->
     <div v-else-if="filteredMembers.length === 0" class="text-center py-12">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-      </svg>
+      <div class="mx-auto h-12 w-12 text-gray-400 flex items-center justify-center">
+        <i class="bi bi-person-x-fill text-4xl"></i>
+      </div>
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到成員</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整篩選條件或邀請新成員</p>
     </div>

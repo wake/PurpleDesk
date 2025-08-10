@@ -66,7 +66,7 @@
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   ]"
                 >
-                  <i class="bi bi-person-check text-base mr-3"></i>
+                  <i class="bi bi-person-check-fill text-base mr-3"></i>
                   成員管理
                 </button>
                 <button
