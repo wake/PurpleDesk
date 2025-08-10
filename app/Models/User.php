@@ -4,7 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -25,7 +25,6 @@ class User extends Authenticatable
         'email',
         'password',
         'avatar',
-        'organization_id',
         'locale',
         'timezone',
         'email_notifications',
@@ -77,8 +76,47 @@ class User extends Authenticatable
         return asset('storage/' . $this->avatar);
     }
 
-    public function organization(): BelongsTo
+    /**
+     * 使用者所屬的組織
+     */
+    public function organizations(): BelongsToMany
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsToMany(Organization::class, 'user_organizations')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * 使用者所屬的團隊
+     */
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class, 'user_teams')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * 取得使用者的主要組織（第一個加入的）
+     */
+    public function primaryOrganization()
+    {
+        return $this->organizations()->oldest('user_organizations.created_at')->first();
+    }
+
+    /**
+     * 檢查使用者是否屬於特定組織
+     */
+    public function belongsToOrganization($organizationId): bool
+    {
+        return $this->organizations()->where('organization_id', $organizationId)->exists();
+    }
+
+    /**
+     * 檢查使用者是否屬於特定團隊
+     */
+    public function belongsToTeam($teamId): bool
+    {
+        return $this->teams()->where('team_id', $teamId)->exists();
     }
 }

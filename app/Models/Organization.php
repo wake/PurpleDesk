@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Organization extends Model
 {
@@ -35,8 +36,45 @@ class Organization extends Model
         return asset('storage/' . $this->avatar);
     }
 
-    public function users(): HasMany
+    /**
+     * 組織的成員
+     */
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class, 'user_organizations')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * 組織的團隊
+     */
+    public function teams(): HasMany
+    {
+        return $this->hasMany(Team::class);
+    }
+
+    /**
+     * 組織的擁有者
+     */
+    public function owners()
+    {
+        return $this->users()->wherePivot('role', 'owner');
+    }
+
+    /**
+     * 組織的管理員
+     */
+    public function admins()
+    {
+        return $this->users()->wherePivot('role', 'admin');
+    }
+
+    /**
+     * 組織的一般成員
+     */
+    public function members()
+    {
+        return $this->users()->wherePivot('role', 'member');
     }
 }

@@ -36,7 +36,7 @@
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">總單位數</dt>
+                    <dt class="text-sm font-medium text-gray-500 truncate">總組織數</dt>
                     <dd class="text-3xl font-semibold text-gray-900">{{ stats.total_organizations || 0 }}</dd>
                   </dl>
                 </div>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">本月新增單位</dt>
+                    <dt class="text-sm font-medium text-gray-500 truncate">本月新增組織</dt>
                     <dd class="text-3xl font-semibold text-gray-900">{{ stats.organizations_this_month || 0 }}</dd>
                   </dl>
                 </div>

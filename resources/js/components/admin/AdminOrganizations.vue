@@ -4,14 +4,14 @@
     <div class="px-6 py-4 border-b border-gray-200">
       <div class="flex justify-between items-center">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">單位管理</h1>
-          <p class="mt-1 text-sm text-gray-600">管理系統中的所有組織單位</p>
+          <h1 class="text-2xl font-bold text-gray-900">組織管理</h1>
+          <p class="mt-1 text-sm text-gray-600">管理系統中的所有組織組織</p>
         </div>
         <button 
           @click="showCreateModal = true"
           class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium"
         >
-          新增單位
+          新增組織
         </button>
       </div>
     </div>
@@ -23,20 +23,20 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="搜尋單位..."
+            placeholder="搜尋組織..."
             class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
           />
         </div>
       </div>
     </div>
 
-    <!-- 單位列表 -->
+    <!-- 組織列表 -->
     <div class="overflow-hidden">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              單位資訊
+              組織資訊
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               成員數量
@@ -115,11 +115,11 @@
       <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
       </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到單位</h3>
-      <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或新增單位</p>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到組織</h3>
+      <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或新增組織</p>
     </div>
 
-    <!-- 新增/編輯單位 Modal（簡化版） -->
+    <!-- 新增/編輯組織 Modal（簡化版） -->
     <div v-if="showCreateModal || editingOrganization" class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div class="fixed inset-0 transition-opacity" aria-hidden="true">
@@ -129,7 +129,7 @@
         <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
           <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-              {{ editingOrganization ? '編輯單位' : '新增單位' }}
+              {{ editingOrganization ? '編輯組織' : '新增組織' }}
             </h3>
             
             <div class="space-y-4">
@@ -185,7 +185,7 @@
               </div>
               
               <div>
-                <label class="block text-sm font-medium text-gray-700">單位名稱</label>
+                <label class="block text-sm font-medium text-gray-700">組織名稱</label>
                 <input
                   v-model="formData.name"
                   type="text"

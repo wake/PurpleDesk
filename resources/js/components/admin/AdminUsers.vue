@@ -31,7 +31,7 @@
           v-model="selectedOrganization"
           class="px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
         >
-          <option value="">所有單位</option>
+          <option value="">所有組織</option>
           <option v-for="org in organizations" :key="org.id" :value="org.id">
             {{ org.name }}
           </option>
@@ -48,7 +48,7 @@
               使用者
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              所屬單位
+              所屬組織
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               註冊時間
@@ -176,12 +176,12 @@
               </div>
               
               <div>
-                <label class="block text-sm font-medium text-gray-700">所屬單位</label>
+                <label class="block text-sm font-medium text-gray-700">所屬組織</label>
                 <select
                   v-model="userForm.organization_id"
                   class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 >
-                  <option value="">請選擇單位</option>
+                  <option value="">請選擇組織</option>
                   <option v-for="org in organizations" :key="org.id" :value="org.id">
                     {{ org.name }}
                   </option>
@@ -286,7 +286,7 @@ export default {
         )
       }
       
-      // 依單位篩選
+      // 依組織篩選
       if (selectedOrganization.value) {
         filtered = filtered.filter(user => 
           user.organization_id == selectedOrganization.value
