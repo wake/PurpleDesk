@@ -17,26 +17,24 @@ class AuthTest extends TestCase
         $organization = Organization::factory()->create();
         
         $userData = [
-            'name' => $this->faker->name,
+            'full_name' => $this->faker->name,
             'display_name' => $this->faker->firstName,
             'email' => $this->faker->unique()->safeEmail,
             'password' => 'password123',
             'password_confirmation' => 'password123',
-            'organization_id' => $organization->id,
         ];
 
         $response = $this->postJson('/api/register', $userData);
 
         $response->assertStatus(201)
             ->assertJsonStructure([
-                'user' => ['id', 'name', 'display_name', 'email', 'organization_id'],
+                'user' => ['id', 'full_name', 'display_name', 'email'],
                 'token'
             ]);
 
         $this->assertDatabaseHas('users', [
-            'name' => $userData['name'],
+            'full_name' => $userData['full_name'],
             'email' => $userData['email'],
-            'organization_id' => $organization->id,
         ]);
     }
 
@@ -54,7 +52,7 @@ class AuthTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'user' => ['id', 'name', 'email'],
+                'user' => ['id', 'full_name', 'display_name', 'email'],
                 'token'
             ]);
     }

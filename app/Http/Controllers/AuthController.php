@@ -14,19 +14,17 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'nullable|string|max:255',
+            'full_name' => 'nullable|string|max:255',
             'display_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'organization_id' => 'nullable|exists:organizations,id',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
+            'full_name' => $request->full_name,
             'display_name' => $request->display_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'organization_id' => $request->organization_id,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -80,7 +78,7 @@ class AuthController extends Controller
         $user = $request->user();
         
         $rules = [
-            'name' => 'nullable|string|max:255',
+            'full_name' => 'nullable|string|max:255',
             'display_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -105,7 +103,7 @@ class AuthController extends Controller
         }
         
         $data = [
-            'name' => $request->name,
+            'full_name' => $request->full_name,
             'display_name' => $request->display_name,
             'email' => $request->email,
         ];
