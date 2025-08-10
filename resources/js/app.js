@@ -5,8 +5,8 @@ import router from './router';
 import App from './components/App.vue';
 import { useAuthStore } from './stores/auth';
 
-// 已移除 Font Awesome，改用 Tabler Icons
-// Tabler Icons 採用按需導入，不需要全域配置
+// Bootstrap Icons CSS
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const app = createApp(App);
 const pinia = createPinia();

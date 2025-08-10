@@ -40,7 +40,7 @@
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               ]"
             >
-              <IconUserCheck class="h-4 w-4 mr-1.5" />
+              <i class="bi bi-person-check text-base mr-1.5"></i>
               成員管理
             </button>
             <button
@@ -52,7 +52,7 @@
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               ]"
             >
-              <IconUsers class="h-4 w-4 mr-1.5" />
+              <i class="bi bi-people-fill text-base mr-1.5"></i>
               團隊管理
             </button>
             <button
@@ -64,7 +64,7 @@
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               ]"
             >
-              <IconSettings class="h-4 w-4 mr-1.5" />
+              <CogIcon class="h-4 w-4 mr-1.5" />
               組織設定
             </button>
           </div>
@@ -120,9 +120,8 @@ import { useAuthStore } from '../../stores/auth'
 import OrganizationMembers from './organization/OrganizationMembers.vue'
 import OrganizationTeams from './organization/OrganizationTeams.vue'
 import OrganizationSettings from './organization/OrganizationSettings.vue'
-// Tabler Icons
-import { IconUserCheck, IconUsers, IconSettings } from '@tabler/icons-vue'
 import axios from 'axios'
+import { CogIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'OrganizationManage',
@@ -130,9 +129,7 @@ export default {
     OrganizationMembers,
     OrganizationTeams,
     OrganizationSettings,
-    IconUserCheck,
-    IconUsers,
-    IconSettings
+    CogIcon
   },
   setup() {
     const route = useRoute()

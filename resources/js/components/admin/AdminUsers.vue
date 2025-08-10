@@ -123,13 +123,13 @@
 
     <!-- 載入狀態 -->
     <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
-      <IconLoader2 class="animate-spin h-8 w-8 text-primary-600" />
+      <RefreshIcon class="animate-spin h-8 w-8 text-primary-600" />
       <p class="text-gray-500 mt-2">載入中...</p>
     </div>
 
     <!-- 空狀態 -->
     <div v-else-if="filteredUsers.length === 0" class="text-center py-12">
-      <IconUsers class="mx-auto h-12 w-12 text-gray-400" />
+      <i class="bi bi-people-fill mx-auto text-5xl text-gray-400"></i>
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到使用者</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件</p>
     </div>
@@ -227,15 +227,13 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
-// Tabler Icons
-import { IconLoader2, IconUsers } from '@tabler/icons-vue'
 import axios from 'axios'
+import { RefreshIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'AdminUsers',
   components: {
-    IconLoader2,
-    IconUsers
+    RefreshIcon
   },
   setup() {
     const users = ref([])

@@ -45,7 +45,7 @@
                     class="border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer hover:border-primary-400 hover:bg-primary-25"
                     @click="$refs.fileInput.click()"
                   >
-                    <IconUpload class="mx-auto h-8 w-8 text-gray-400" />
+                    <CloudUploadIcon class="mx-auto h-8 w-8 text-gray-400" />
                     <p class="mt-2 text-sm text-gray-600">
                       <span class="font-medium text-primary-500">點擊上傳</span>
                       或拖曳檔案至此
@@ -179,7 +179,7 @@
             <div class="bg-red-50 border border-red-200 rounded-md p-4">
               <div class="flex">
                 <div class="flex-shrink-0">
-                  <IconX class="h-5 w-5 text-red-400" />
+                  <XCircleIcon class="h-5 w-5 text-red-400" />
                 </div>
                 <div class="ml-3">
                   <h3 class="text-sm font-medium text-red-800">
@@ -200,7 +200,7 @@
     <div v-if="successMessage" class="fixed bottom-4 right-4 z-50">
       <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg max-w-sm">
         <div class="flex items-center">
-          <IconCheck class="h-5 w-5 text-green-500 mr-2" />
+          <CheckCircleIcon class="h-5 w-5 text-green-500 mr-2" />
           <span class="text-sm font-medium">{{ successMessage }}</span>
         </div>
       </div>
@@ -212,17 +212,16 @@
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import AppNavbar from './AppNavbar.vue'
-// Tabler Icons
-import { IconUpload, IconX, IconCheck } from '@tabler/icons-vue'
 import axios from 'axios'
+import { CloudUploadIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'ProfilePage',
   components: {
     AppNavbar,
-    IconUpload,
-    IconX,
-    IconCheck
+    CloudUploadIcon,
+    XCircleIcon,
+    CheckCircleIcon
   },
   setup() {
     const authStore = useAuthStore()

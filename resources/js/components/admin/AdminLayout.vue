@@ -20,7 +20,7 @@
                   ? 'bg-primary-100 text-primary-900' 
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
               >
-                <IconUser class="mr-3 h-5 w-5" />
+                <i class="bi bi-person-fill mr-3 text-xl"></i>
                 使用者管理
               </router-link>
               
@@ -31,7 +31,7 @@
                   ? 'bg-primary-100 text-primary-900' 
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
               >
-                <IconBuilding class="mr-3 h-5 w-5" />
+                <OfficeBuildingIcon class="mr-3 h-5 w-5" />
                 組織管理
               </router-link>
               
@@ -42,7 +42,7 @@
                   ? 'bg-primary-100 text-primary-900' 
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
               >
-                <IconSettings class="mr-3 h-5 w-5" />
+                <CogIcon class="mr-3 h-5 w-5" />
                 系統設定
               </router-link>
             </nav>
@@ -60,16 +60,14 @@
 
 <script>
 import AppNavbar from '../AppNavbar.vue'
-// Tabler Icons
-import { IconUser, IconBuilding, IconSettings } from '@tabler/icons-vue'
+import { OfficeBuildingIcon, CogIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'AdminLayout',
   components: {
     AppNavbar,
-    IconUser,
-    IconBuilding,
-    IconSettings
+    OfficeBuildingIcon,
+    CogIcon
   }
 }
 </script>

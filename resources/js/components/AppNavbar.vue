@@ -18,7 +18,7 @@
         <div class="flex items-center space-x-4">
           <!-- 通知圖示 -->
           <button class="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100">
-            <IconBell class="h-5 w-5" />
+            <BellIcon class="h-5 w-5" />
           </button>
 
           <!-- 個人選單下拉 -->
@@ -41,7 +41,7 @@
               </div>
               
               <!-- 下拉箭頭 -->
-              <IconChevronDown class="h-4 w-4 text-gray-500" :class="{ 'rotate-180': showUserMenu }" />
+              <ChevronDownIcon class="h-4 w-4 text-gray-500" :class="{ 'rotate-180': showUserMenu }" />
             </button>
 
             <!-- 下拉選單 -->
@@ -89,7 +89,7 @@
                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   @click="showUserMenu = false"
                 >
-                  <IconUser class="mr-3 h-4 w-4 text-gray-400" />
+                  <i class="bi bi-person-fill mr-3 text-base text-gray-400"></i>
                   個人資料
                 </router-link>
 
@@ -99,7 +99,7 @@
                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   @click="showUserMenu = false"
                 >
-                  <IconSettings class="mr-3 h-4 w-4 text-gray-400" />
+                  <CogIcon class="mr-3 h-4 w-4 text-gray-400" />
                   設定
                 </router-link>
 
@@ -112,7 +112,7 @@
                     class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     @click="showUserMenu = false"
                   >
-                    <IconUsers class="mr-3 h-4 w-4 text-gray-400" />
+                    <i class="bi bi-people-fill mr-3 text-base text-gray-400"></i>
                     使用者管理
                   </router-link>
                   
@@ -121,7 +121,7 @@
                     class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     @click="showUserMenu = false"
                   >
-                    <IconBuilding class="mr-3 h-4 w-4 text-gray-400" />
+                    <OfficeBuildingIcon class="mr-3 h-4 w-4 text-gray-400" />
                     組織管理
                   </router-link>
                   
@@ -130,7 +130,7 @@
                     class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     @click="showUserMenu = false"
                   >
-                    <IconSettings class="mr-3 h-4 w-4 text-gray-400" />
+                    <CogIcon class="mr-3 h-4 w-4 text-gray-400" />
                     系統設定
                   </router-link>
                 </template>
@@ -142,7 +142,7 @@
                   @click="handleLogout"
                   class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
                 >
-                  <IconLogout class="mr-3 h-4 w-4 text-gray-400" />
+                  <LogoutIcon class="mr-3 h-4 w-4 text-gray-400" />
                   登出
                 </button>
               </div>
@@ -158,19 +158,16 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-// Tabler Icons
-import { IconBell, IconUser, IconSettings, IconUsers, IconBuilding, IconLogout, IconChevronDown } from '@tabler/icons-vue'
+import { BellIcon, ChevronDownIcon, CogIcon, OfficeBuildingIcon, LogoutIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'AppNavbar',
   components: {
-    IconBell,
-    IconUser, 
-    IconSettings,
-    IconUsers,
-    IconBuilding,
-    IconLogout,
-    IconChevronDown
+    BellIcon,
+    ChevronDownIcon, 
+    CogIcon,
+    OfficeBuildingIcon,
+    LogoutIcon
   },
   setup() {
     const router = useRouter()
