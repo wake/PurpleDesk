@@ -60,6 +60,18 @@
                     @change="handleFileChange"
                     class="hidden"
                   />
+                  
+                  <!-- 移除頭像按鈕 -->
+                  <div v-if="form.avatar || user?.avatar_url" class="mt-3">
+                    <button
+                      type="button"
+                      @click="showRemoveAvatarDialog"
+                      class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    >
+                      <i class="bi bi-trash mr-2"></i>
+                      移除頭像
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -205,6 +217,19 @@
         </div>
       </div>
     </div>
+    
+    <!-- 移除頭像確認對話框 -->
+    <ConfirmDialog
+      :show="showRemoveAvatarConfirm"
+      type="danger"
+      title="移除頭像"
+      message="確定要移除頭像嗎？此操作無法復原。"
+      confirm-text="移除"
+      cancel-text="取消"
+      :loading="isRemovingAvatar"
+      @confirm="confirmRemoveAvatar"
+      @cancel="cancelRemoveAvatar"
+    />
   </div>
 </template>
 
@@ -214,6 +239,7 @@ import { useAuthStore } from '../stores/auth'
 import AppNavbar from './AppNavbar.vue'
 import axios from 'axios'
 import { CloudUploadIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
+import ConfirmDialog from './common/ConfirmDialog.vue'
 
 export default {
   name: 'ProfilePage',
@@ -221,7 +247,8 @@ export default {
     AppNavbar,
     CloudUploadIcon,
     XCircleIcon,
-    CheckCircleIcon
+    CheckCircleIcon,
+    ConfirmDialog
   },
   setup() {
     const authStore = useAuthStore()
@@ -232,6 +259,8 @@ export default {
     const organizations = ref([])
     const avatarPreview = ref(null)
     const isDragOver = ref(false)
+    const showRemoveAvatarConfirm = ref(false)
+    const isRemovingAvatar = ref(false)
     
     const user = computed(() => authStore.user)
     
@@ -242,7 +271,8 @@ export default {
       current_password: '',
       password: '',
       password_confirmation: '',
-      avatar: null
+      avatar: null,
+      remove_avatar: false
     })
     
     const getUserInitials = (user) => {
@@ -318,6 +348,64 @@ export default {
       }
     }
     
+    const showRemoveAvatarDialog = () => {
+      showRemoveAvatarConfirm.value = true
+    }
+    
+    const confirmRemoveAvatar = async () => {
+      isRemovingAvatar.value = true
+      
+      try {
+        // 立即發送請求到後端移除頭像
+        const formData = new FormData()
+        formData.append('name', form.name || '')
+        formData.append('display_name', form.display_name)
+        formData.append('email', form.email)
+        formData.append('remove_avatar', '1')
+        
+        const response = await axios.post('/api/profile', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        
+        // 清空本地狀態
+        form.avatar = null
+        form.remove_avatar = false
+        avatarPreview.value = null
+        
+        // 清空檔案輸入
+        const fileInput = document.querySelector('input[type="file"]')
+        if (fileInput) {
+          fileInput.value = ''
+        }
+        
+        // 更新本地用戶資料
+        await authStore.fetchUser()
+        
+        successMessage.value = '頭像已成功移除'
+        
+        // 關閉對話框
+        showRemoveAvatarConfirm.value = false
+        
+        // 3秒後清除成功訊息
+        setTimeout(() => {
+          successMessage.value = ''
+        }, 3000)
+        
+      } catch (error) {
+        console.error('移除頭像失敗:', error)
+        const errorMsg = error.response?.data?.message || '移除頭像失敗，請稍後再試'
+        errorMessage.value = errorMsg
+      } finally {
+        isRemovingAvatar.value = false
+      }
+    }
+    
+    const cancelRemoveAvatar = () => {
+      showRemoveAvatarConfirm.value = false
+    }
+    
     const handleSubmit = async () => {
       if (isLoading.value) return
       
@@ -342,6 +430,9 @@ export default {
         if (form.avatar) {
           formData.append('avatar', form.avatar)
         }
+        if (form.remove_avatar) {
+          formData.append('remove_avatar', '1')
+        }
         
         const response = await axios.post('/api/profile', formData, {
           headers: {
@@ -359,11 +450,12 @@ export default {
           successMessage.value = ''
         }, 3000)
         
-        // 清空密碼欄位
+        // 清空密碼欄位和頭像相關狀態
         form.current_password = ''
         form.password = ''
         form.password_confirmation = ''
         form.avatar = null
+        form.remove_avatar = false
         avatarPreview.value = null
         
       } catch (error) {
@@ -404,6 +496,11 @@ export default {
       handleDragOver,
       handleDragLeave,
       handleDrop,
+      showRemoveAvatarDialog,
+      confirmRemoveAvatar,
+      cancelRemoveAvatar,
+      showRemoveAvatarConfirm,
+      isRemovingAvatar,
       handleSubmit
     }
   }

@@ -69,6 +69,7 @@ class OrganizationController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'remove_avatar' => 'nullable|string',
         ]);
 
         $data = [
@@ -76,7 +77,16 @@ class OrganizationController extends Controller
             'description' => $request->description,
         ];
 
-        if ($request->hasFile('avatar')) {
+        // 處理移除頭像
+        if ($request->input('remove_avatar') === '1') {
+            // 刪除舊頭像檔案
+            if ($organization->avatar) {
+                Storage::disk('public')->delete($organization->avatar);
+            }
+            $data['avatar'] = null;
+        }
+        // 處理上傳新頭像
+        elseif ($request->hasFile('avatar')) {
             // 刪除舊頭像
             if ($organization->avatar) {
                 Storage::disk('public')->delete($organization->avatar);
