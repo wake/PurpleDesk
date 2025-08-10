@@ -122,10 +122,7 @@
     </div>
 
     <!-- 載入狀態 -->
-    <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
-      <RefreshIcon class="animate-spin h-8 w-8 text-primary-600" />
-      <p class="text-gray-500 mt-2">載入中...</p>
-    </div>
+    <LoadingSpinner v-if="isLoading" />
 
     <!-- 空狀態 -->
     <div v-else-if="filteredUsers.length === 0" class="text-center py-12">
@@ -300,12 +297,12 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
-import { RefreshIcon } from '@heroicons/vue/outline'
+import LoadingSpinner from '../common/LoadingSpinner.vue'
 
 export default {
   name: 'AdminUsers',
   components: {
-    RefreshIcon
+    LoadingSpinner
   },
   setup() {
     const users = ref([])
