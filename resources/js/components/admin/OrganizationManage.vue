@@ -3,22 +3,7 @@
     <!-- 頁面標題 -->
     <div class="px-6 py-4 border-b border-gray-200">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-        <div class="flex items-center space-x-4">
-          <!-- 組織 Logo -->
-          <div v-if="organization" class="flex-shrink-0">
-            <div class="h-12 w-12 rounded bg-primary-100 flex items-center justify-center overflow-hidden">
-              <img
-                v-if="organization.logo_url"
-                :src="organization.logo_url"
-                :alt="organization.name"
-                class="h-full w-full object-cover"
-              />
-              <svg v-else class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-              </svg>
-            </div>
-          </div>
-          
+        <div class="flex items-center">
           <!-- 組織標題 -->
           <div class="flex-1 min-w-0">
             <h1 class="text-2xl font-bold text-gray-900">
