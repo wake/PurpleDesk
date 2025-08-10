@@ -60,7 +60,7 @@
                     :alt="org.name"
                     class="h-full w-full object-cover"
                   />
-                  <font-awesome-icon v-else icon="building" class="h-6 w-6 text-primary-600" />
+                  <font-awesome-icon v-else :icon="['far', 'building']" class="h-6 w-6 text-primary-600" />
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
@@ -107,7 +107,7 @@
 
     <!-- 空狀態 -->
     <div v-else-if="filteredOrganizations.length === 0" class="text-center py-12">
-      <font-awesome-icon icon="building" class="mx-auto h-12 w-12 text-gray-400" />
+      <font-awesome-icon :icon="['far', 'building']" class="mx-auto h-12 w-12 text-gray-400" />
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到組織</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或新增組織</p>
     </div>
@@ -137,7 +137,7 @@
                       :alt="formData.name"
                       class="h-full w-full object-cover"
                     />
-                    <font-awesome-icon v-else icon="building" class="h-8 w-8 text-primary-600" />
+                    <font-awesome-icon v-else :icon="['far', 'building']" class="h-8 w-8 text-primary-600" />
                   </div>
                   
                   <div class="flex-1">

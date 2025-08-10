@@ -40,7 +40,7 @@
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               ]"
             >
-              <font-awesome-icon icon="user-check" class="h-4 w-4 mr-1.5" />
+              <font-awesome-icon :icon="['far', 'user-check']" class="h-4 w-4 mr-1.5" />
               成員管理
             </button>
             <button
@@ -52,7 +52,7 @@
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               ]"
             >
-              <font-awesome-icon icon="users" class="h-4 w-4 mr-1.5" />
+              <font-awesome-icon :icon="['far', 'users']" class="h-4 w-4 mr-1.5" />
               團隊管理
             </button>
             <button
@@ -64,7 +64,7 @@
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               ]"
             >
-              <font-awesome-icon icon="cog" class="h-4 w-4 mr-1.5" />
+              <font-awesome-icon :icon="['far', 'cog']" class="h-4 w-4 mr-1.5" />
               組織設定
             </button>
           </div>

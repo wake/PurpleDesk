@@ -8,25 +8,33 @@ import { useAuthStore } from './stores/auth';
 // Font Awesome 配置
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+// Solid Icons (實心)
 import { 
-  faUser, faUsers, faBell, faCog, faSignOutAlt, faChevronDown,
-  faBuilding, faHome, faFileText, faClipboardList, faUpload,
-  faTimesCircle, faCheckCircle, faSpinner, faPlus, faSearch,
-  faEdit, faTrash, faEye, faEyeSlash, faEnvelope, faPhone,
-  faMapMarkerAlt, faCalendar, faShieldAlt, faExclamationCircle,
-  faDownload, faImage, faUserCheck, faUserPlus, faUserCircle,
-  faBars, faChartBar
+  faSpinner, faChevronDown, faPlus, faUpload, faChartBar,
+  faSignOutAlt, faTimesCircle, faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
+
+// Regular Icons (外框線)
+import {
+  faUser, faUsers, faBell, faCog, faBuilding, faHome, 
+  faFileText, faClipboardList, faSearch, faEdit, faTrash, 
+  faEye, faEyeSlash, faEnvelope, faPhone, faMapMarkerAlt, 
+  faCalendar, faShieldAlt, faExclamationCircle, faDownload, 
+  faImage, faUserCheck, faUserPlus, faUserCircle, faBars
+} from '@fortawesome/free-regular-svg-icons';
 
 // 將圖示添加到 Font Awesome 庫
 library.add(
-  faUser, faUsers, faBell, faCog, faSignOutAlt, faChevronDown,
-  faBuilding, faHome, faFileText, faClipboardList, faUpload,
-  faTimesCircle, faCheckCircle, faSpinner, faPlus, faSearch,
-  faEdit, faTrash, faEye, faEyeSlash, faEnvelope, faPhone,
-  faMapMarkerAlt, faCalendar, faShieldAlt, faExclamationCircle,
-  faDownload, faImage, faUserCheck, faUserPlus, faUserCircle,
-  faBars, faChartBar
+  // Solid icons
+  faSpinner, faChevronDown, faPlus, faUpload, faChartBar,
+  faSignOutAlt, faTimesCircle, faCheckCircle,
+  // Regular icons  
+  faUser, faUsers, faBell, faCog, faBuilding, faHome,
+  faFileText, faClipboardList, faSearch, faEdit, faTrash,
+  faEye, faEyeSlash, faEnvelope, faPhone, faMapMarkerAlt,
+  faCalendar, faShieldAlt, faExclamationCircle, faDownload,
+  faImage, faUserCheck, faUserPlus, faUserCircle, faBars
 );
 
 const app = createApp(App);

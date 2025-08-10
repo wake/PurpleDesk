@@ -12,7 +12,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <font-awesome-icon icon="users" class="h-8 w-8 text-primary-600" />
+                  <font-awesome-icon :icon="['far', 'users']" class="h-8 w-8 text-primary-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -28,7 +28,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <font-awesome-icon icon="building" class="h-8 w-8 text-green-600" />
+                  <font-awesome-icon :icon="['far', 'building']" class="h-8 w-8 text-green-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
@@ -44,7 +44,7 @@
             <div class="p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <font-awesome-icon icon="user" class="h-8 w-8 text-blue-600" />
+                  <font-awesome-icon :icon="['far', 'user']" class="h-8 w-8 text-blue-600" />
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
