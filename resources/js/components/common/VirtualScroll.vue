@@ -157,7 +157,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 0.5rem;
-  padding: 0 0.25rem;
-  height: 48px;
+  padding: 0.25rem;
+  min-height: 48px;
 }
 </style>
