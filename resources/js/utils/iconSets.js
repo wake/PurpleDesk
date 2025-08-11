@@ -1,10 +1,10 @@
 // 匯入完整的圖標列表
 import { allBootstrapIcons } from './allBootstrapIcons.js'
-import { compatibleEmojis } from './compatibleEmojis.js'
+import { cleanEmojis } from './cleanEmojis.js'
 
 // 匯出完整列表
 export const bootstrapIcons = allBootstrapIcons
-export const emojis = compatibleEmojis
+export const emojis = cleanEmojis
 
 // 保留精選列表供快速訪問
 export const featuredBootstrapIcons = [
@@ -25,10 +25,10 @@ export const featuredEmojis = [
   { name: '大笑', emoji: '😂', category: '表情' },
   { name: '愛心眼', emoji: '😍', category: '表情' },
   { name: '讚', emoji: '👍', category: '手勢' },
-  { name: '愛心', emoji: '❤️', category: '符號' },
+  { name: '愛心', emoji: '❤', category: '符號' },
   { name: '火', emoji: '🔥', category: '符號' },
   { name: '星星', emoji: '⭐', category: '符號' },
   { name: '聚會', emoji: '🎉', category: '物品' },
   { name: '彩虹', emoji: '🌈', category: '符號' },
-  { name: '太陽', emoji: '☀️', category: '符號' },
+  { name: '太陽', emoji: '☀', category: '符號' },
 ]
