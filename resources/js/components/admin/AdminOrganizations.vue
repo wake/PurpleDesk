@@ -35,11 +35,11 @@
       <table class="w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
-            <th class="w-1/2 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-2/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               組織資訊
             </th>
-            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              成員數量
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              成員
             </th>
             <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               建立時間
@@ -51,7 +51,7 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="org in filteredOrganizations" :key="org.id">
-            <td class="w-1/2 px-6 py-4">
+            <td class="w-2/5 px-6 py-4">
               <div class="flex items-center">
                 <div class="h-10 w-10 rounded bg-primary-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
@@ -72,10 +72,8 @@
                 </div>
               </div>
             </td>
-            <td class="w-1/6 px-6 py-4 whitespace-nowrap">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                {{ org.users_count || 0 }} 位成員
-              </span>
+            <td class="w-1/4 px-6 py-4 whitespace-nowrap">
+              <UserAvatarGroup :users="org.users" />
             </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(org.created_at) }}
@@ -266,6 +264,7 @@ import { OfficeBuildingIcon } from '@heroicons/vue/outline'
 import ConfirmDialog from '../common/ConfirmDialog.vue'
 import LoadingSpinner from '../common/LoadingSpinner.vue'
 import PaginationControl from '../common/PaginationControl.vue'
+import UserAvatarGroup from '../common/UserAvatarGroup.vue'
 
 export default {
   name: 'AdminOrganizations',
@@ -273,7 +272,8 @@ export default {
     OfficeBuildingIcon,
     ConfirmDialog,
     LoadingSpinner,
-    PaginationControl
+    PaginationControl,
+    UserAvatarGroup
   },
   setup() {
     const organizations = ref([])
@@ -317,6 +317,7 @@ export default {
         day: '2-digit'
       })
     }
+    
     
     const fetchOrganizations = async (page = 1) => {
       try {

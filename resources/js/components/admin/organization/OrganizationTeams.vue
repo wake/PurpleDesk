@@ -26,26 +26,26 @@
       <table class="w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
-            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/3 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               團隊資訊
             </th>
-            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              成員數量
+            <th class="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              管理者
             </th>
-            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              領導者
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              成員
             </th>
             <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               建立時間
             </th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
             </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="team in filteredTeams" :key="team.id">
-            <td class="w-1/4 px-6 py-4">
+            <td class="w-1/3 px-6 py-4">
               <div class="flex items-center">
                 <div class="h-10 w-10 rounded bg-blue-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
@@ -66,40 +66,21 @@
                 </div>
               </div>
             </td>
-            <td class="w-1/6 px-6 py-4 whitespace-nowrap">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                {{ team.users?.length || 0 }} 位成員
-              </span>
+            <td class="w-1/5 px-6 py-4">
+              <UserAvatarGroup 
+                :users="getTeamLeaders(team)" 
+                theme="admin"
+                member-text="個管理者"
+                empty-text="無管理者"
+              />
             </td>
-            <td class="w-1/4 px-6 py-4">
-              <div class="flex space-x-2 overflow-hidden">
-                <div
-                  v-for="leader in getTeamLeaders(team)" 
-                  :key="leader.id"
-                  class="flex items-center min-w-0"
-                >
-                  <div class="h-6 w-6 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    <img
-                      v-if="leader.avatar_url"
-                      :src="leader.avatar_url"
-                      :alt="leader.name"
-                      class="h-full w-full object-cover"
-                    />
-                    <span v-else class="text-white text-xs">
-                      {{ getUserInitials(leader) }}
-                    </span>
-                  </div>
-                  <span class="ml-1 text-sm text-gray-900 truncate" :title="leader.display_name || leader.name">{{ leader.display_name || leader.name }}</span>
-                </div>
-                <span v-if="getTeamLeaders(team).length === 0" class="text-sm text-gray-400">
-                  無領導者
-                </span>
-              </div>
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap">
+              <UserAvatarGroup :users="getTeamMembers(team)" />
             </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(team.created_at) }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button 
                 @click="manageTeam(team)"
                 class="text-primary-600 hover:text-primary-900 mr-3"
@@ -243,12 +224,14 @@ import { ref, computed, watch } from 'vue'
 import axios from 'axios'
 import LoadingSpinner from '../../common/LoadingSpinner.vue'
 import PaginationControl from '../../common/PaginationControl.vue'
+import UserAvatarGroup from '../../common/UserAvatarGroup.vue'
 
 export default {
   name: 'OrganizationTeams',
   components: {
     LoadingSpinner,
-    PaginationControl
+    PaginationControl,
+    UserAvatarGroup
   },
   props: {
     organization: {
@@ -299,16 +282,16 @@ export default {
       return filtered
     })
     
-    const getUserInitials = (user) => {
-      if (!user) return ''
-      const name = user.display_name || user.name
-      return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-    }
-    
     const getTeamLeaders = (team) => {
       if (!team.users) return []
       return team.users.filter(user => user.pivot.role === 'lead')
     }
+    
+    const getTeamMembers = (team) => {
+      if (!team.users) return []
+      return team.users.filter(user => user.pivot.role !== 'lead')
+    }
+    
     
     const formatDate = (dateString) => {
       if (!dateString) return ''
@@ -479,8 +462,8 @@ export default {
       avatarPreview,
       showCreateModal: computed(() => props.showCreateModal),
       teamForm,
-      getUserInitials,
       getTeamLeaders,
+      getTeamMembers,
       formatDate,
       handleAvatarChange,
       editTeam,

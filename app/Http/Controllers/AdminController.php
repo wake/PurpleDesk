@@ -39,6 +39,9 @@ class AdminController extends Controller
         $perPage = min(max($perPage, 10), 100); // 限制在 10-100 之間
         
         $organizations = Organization::withCount('users')
+            ->with(['users' => function($query) {
+                $query->select('users.id', 'users.display_name', 'users.full_name', 'users.avatar');
+            }])
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
             
