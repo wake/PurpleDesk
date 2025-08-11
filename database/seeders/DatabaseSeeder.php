@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             OrganizationSeeder::class,
             UserSeeder::class,
+            CrossOrganizationSeeder::class,
         ]);
     }
 }

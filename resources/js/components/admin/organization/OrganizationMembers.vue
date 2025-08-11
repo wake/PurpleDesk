@@ -114,26 +114,22 @@
                 {{ member.pivot.role === 'owner' ? '擁有者' : member.pivot.role === 'admin' ? '管理員' : '成員' }}
               </span>
             </td>
-            <td class="w-1/4 px-6 py-4">
-              <div class="space-y-1">
+            <td class="w-1/4 px-6 py-4 text-sm text-gray-900">
+              <div v-if="getMemberTeams(member).length > 0" class="space-y-1">
                 <span 
-                  v-for="team in getMemberTeams(member)" 
-                  :key="team.id"
-                  :class="[
-                    'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mr-1 truncate',
-                    team.pivot.role === 'lead' 
-                      ? 'bg-yellow-100 text-yellow-800' 
-                      : 'bg-blue-100 text-blue-800'
-                  ]"
+                  v-for="team in getMemberTeams(member).slice(0, 2)" 
+                  :key="team.id" 
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-1 truncate"
                   :title="team.name"
                 >
                   {{ team.name }}
                   <span v-if="team.pivot.role === 'lead'" class="ml-1">👑</span>
                 </span>
-                <div v-if="getMemberTeams(member).length === 0" class="text-sm text-gray-400">
-                  無團隊
-                </div>
+                <span v-if="getMemberTeams(member).length > 2" class="text-xs text-gray-500">
+                  +{{ getMemberTeams(member).length - 2 }} 個團隊
+                </span>
               </div>
+              <span v-else class="text-gray-500">無</span>
             </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(member.pivot.created_at) }}
