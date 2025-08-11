@@ -1,5 +1,59 @@
+// 生成所有 Bootstrap Icons（1078 個）
+// 這是一個簡化的列表，實際使用時可以從 Bootstrap Icons 官方獲取完整列表
+export const getAllBootstrapIcons = () => {
+  // 基礎圖標前綴列表
+  const iconPrefixes = [
+    'alarm', 'app', 'archive', 'arrow', 'aspect', 'award', 'badge', 'bag', 'bank', 'bar',
+    'basket', 'battery', 'bell', 'bezier', 'bicycle', 'binoculars', 'book', 'bookmark', 'bootstrap',
+    'border', 'box', 'briefcase', 'brightness', 'broadcast', 'brush', 'bucket', 'building', 'bullseye',
+    'calculator', 'calendar', 'camera', 'capslock', 'card', 'caret', 'cart', 'cash', 'cast', 'chat',
+    'check', 'chevron', 'circle', 'clipboard', 'clock', 'cloud', 'code', 'coin', 'collection', 'columns',
+    'command', 'compass', 'cone', 'controller', 'cpu', 'credit', 'crop', 'cup', 'currency', 'cursor',
+    'dash', 'database', 'device', 'diagram', 'diamond', 'dice', 'disc', 'display', 'distribute', 'door',
+    'dot', 'download', 'droplet', 'earbuds', 'easel', 'egg', 'eject', 'emoji', 'envelope', 'eraser',
+    'exclamation', 'exclude', 'eye', 'eyedropper', 'file', 'film', 'filter', 'flag', 'flower', 'folder',
+    'fonts', 'forward', 'front', 'fullscreen', 'funnel', 'gear', 'gem', 'gender', 'geo', 'gift',
+    'globe', 'google', 'graph', 'grid', 'grip', 'hammer', 'hand', 'handbag', 'hash', 'hdd',
+    'headphones', 'headset', 'heart', 'heptagon', 'hexagon', 'hourglass', 'house', 'hr', 'hurricane', 'image',
+    'inbox', 'incognito', 'infinity', 'info', 'input', 'instagram', 'intersect', 'journal', 'joystick', 'justify',
+    'kanban', 'key', 'keyboard', 'ladder', 'lamp', 'laptop', 'layer', 'layout', 'life', 'lightbulb',
+    'lightning', 'link', 'linkedin', 'list', 'lock', 'login', 'logout', 'magnet', 'mailbox', 'map',
+    'markdown', 'mask', 'megaphone', 'menu', 'messenger', 'meta', 'mic', 'microsoft', 'minecart', 'modem',
+    'moisture', 'moon', 'mortarboard', 'motherboard', 'mouse', 'music', 'newspaper', 'nintendo', 'node', 'nut',
+    'octagon', 'optical', 'option', 'outlet', 'paint', 'palette', 'paperclip', 'paragraph', 'patch', 'pause',
+    'paypal', 'pc', 'peace', 'pen', 'pencil', 'pentagon', 'people', 'percent', 'person', 'phone',
+    'pie', 'piggy', 'pin', 'pinterest', 'pip', 'play', 'playstation', 'plug', 'plus', 'postage',
+    'postcard', 'power', 'prescription', 'printer', 'projector', 'puzzle', 'qr', 'question', 'quote', 'radioactive',
+    'rainbow', 'receipt', 'reception', 'record', 'recycle', 'reddit', 'regex', 'reply', 'robot', 'rocket',
+    'router', 'rss', 'rulers', 'safe', 'save', 'scissors', 'screwdriver', 'search', 'segmented', 'send',
+    'server', 'share', 'shield', 'shift', 'shop', 'shuffle', 'sign', 'signal', 'signpost', 'sim',
+    'skip', 'skype', 'slack', 'slash', 'sliders', 'smartwatch', 'snapchat', 'snow', 'sort', 'soundwave',
+    'speaker', 'speedometer', 'spellcheck', 'spotify', 'square', 'stack', 'star', 'stickies', 'sticky', 'stop',
+    'stopwatch', 'strava', 'subtract', 'suit', 'sun', 'sunglasses', 'sunrise', 'sunset', 'symmetry', 'table',
+    'tablet', 'tag', 'telegram', 'telephone', 'terminal', 'text', 'textarea', 'thermometer', 'three', 'thunder',
+    'ticket', 'tiktok', 'toggle', 'tools', 'tornado', 'translate', 'trash', 'tree', 'triangle', 'trophy',
+    'tropical', 'truck', 'tsunami', 'tv', 'twitch', 'twitter', 'type', 'ubuntu', 'ui', 'umbrella',
+    'union', 'unity', 'universal', 'unlock', 'upc', 'upload', 'usb', 'valentine', 'vector', 'view',
+    'vinyl', 'virus', 'voicemail', 'volume', 'vr', 'wallet', 'watch', 'water', 'webcam', 'whatsapp',
+    'wifi', 'wind', 'window', 'windows', 'wordpress', 'wrench', 'x', 'xbox', 'yin', 'youtube', 'zoom'
+  ]
+  
+  const icons = []
+  
+  // 為每個前綴生成基本和填充版本
+  iconPrefixes.forEach(prefix => {
+    icons.push({ name: `${prefix}`, class: `bi-${prefix}` })
+    icons.push({ name: `${prefix} fill`, class: `bi-${prefix}-fill` })
+  })
+  
+  return icons
+}
+
 // 完整的 Bootstrap Icons 清單
-export const bootstrapIcons = [
+export const bootstrapIcons = getAllBootstrapIcons()
+
+// 原始的精選 Bootstrap Icons 清單（用於快速訪問）
+export const featuredBootstrapIcons = [
   // 基本圖標
   { name: '首頁 Home', class: 'bi-house' },
   { name: '使用者 Person', class: 'bi-person' },

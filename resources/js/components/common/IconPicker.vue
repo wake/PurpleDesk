@@ -79,9 +79,9 @@
         </div>
 
         <!-- 圖標內容區域 -->
-        <div class="h-48 overflow-y-auto border border-gray-100 rounded-md p-2 bg-gray-50">
+        <div class="border border-gray-100 rounded-md bg-gray-50">
           <!-- Heroicons 標籤頁 -->
-          <div v-if="activeTab === 'heroicons'" class="grid grid-cols-6 gap-2">
+          <div v-if="activeTab === 'heroicons'" class="grid grid-cols-6 gap-2 p-2 h-48 overflow-y-auto">
             <button
               v-for="icon in filteredHeroicons"
               :key="icon.name"
@@ -95,32 +95,50 @@
           </div>
 
           <!-- Bootstrap Icons 標籤頁 -->
-          <div v-else-if="activeTab === 'bootstrap'" class="grid grid-cols-6 gap-2">
-            <button
-              v-for="icon in filteredBootstrapIcons"
-              :key="icon.name"
-              @click="selectIcon(icon.class, 'bootstrap')"
-              :class="selectedIcon === icon.class ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
-              class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-              :title="icon.name"
-            >
-              <i :class="`bi ${icon.class}`" class="text-gray-600 text-xl flex items-center justify-center" style="width: 20px; height: 20px;"></i>
-            </button>
-          </div>
+          <VirtualScroll
+            v-else-if="activeTab === 'bootstrap'"
+            :items="filteredBootstrapIcons"
+            :items-per-row="6"
+            :row-height="48"
+            :container-height="192"
+            :buffer="2"
+          >
+            <template #row="{ items }">
+              <button
+                v-for="icon in items"
+                :key="icon.name"
+                @click="selectIcon(icon.class, 'bootstrap')"
+                :class="selectedIcon === icon.class ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
+                class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all h-10"
+                :title="icon.name"
+              >
+                <i :class="`bi ${icon.class}`" class="text-gray-600 text-xl flex items-center justify-center" style="width: 20px; height: 20px;"></i>
+              </button>
+            </template>
+          </VirtualScroll>
 
           <!-- 表情符號標籤頁 -->
-          <div v-else-if="activeTab === 'emoji'" class="grid grid-cols-6 gap-2">
-            <button
-              v-for="emoji in filteredEmojis"
-              :key="emoji.name"
-              @click="selectIcon(emoji.emoji, 'emoji')"
-              :class="selectedIcon === emoji.emoji ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
-              class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-              :title="emoji.name"
-            >
-              <span class="flex items-center justify-center text-xl" style="width: 20px; height: 20px;">{{ emoji.emoji }}</span>
-            </button>
-          </div>
+          <VirtualScroll
+            v-else-if="activeTab === 'emoji'"
+            :items="filteredEmojis"
+            :items-per-row="6"
+            :row-height="48"
+            :container-height="192"
+            :buffer="2"
+          >
+            <template #row="{ items }">
+              <button
+                v-for="emoji in items"
+                :key="emoji.name"
+                @click="selectIcon(emoji.emoji, 'emoji')"
+                :class="selectedIcon === emoji.emoji ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
+                class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all h-10"
+                :title="emoji.name"
+              >
+                <span class="flex items-center justify-center text-xl" style="width: 20px; height: 20px;">{{ emoji.emoji }}</span>
+              </button>
+            </template>
+          </VirtualScroll>
         </div>
 
         <!-- 搜尋結果為空的提示 -->
@@ -151,8 +169,9 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
+import VirtualScroll from './VirtualScroll.vue'
 // Heroicons imports
 import { 
   HomeIcon, 
@@ -190,6 +209,7 @@ import {
 export default {
   name: 'IconPicker',
   components: {
+    VirtualScroll,
     HomeIcon, UserIcon, CogIcon, DocumentIcon, FolderIcon, HeartIcon, StarIcon, BellIcon, ChatIcon, PlusIcon, MinusIcon, XIcon,
     MailIcon, PhoneIcon, CalendarIcon, ClockIcon, SearchIcon, EyeIcon, PencilIcon, TrashIcon, DownloadIcon, UploadIcon,
     ShareIcon, BookmarkIcon, FlagIcon, GiftIcon, LightBulbIcon, FireIcon, ShieldCheckIcon, ExclamationIcon
@@ -214,6 +234,17 @@ export default {
     const panelPosition = ref({ top: '0px', left: '0px' })
     const selectedIcon = ref(props.modelValue)
     const iconType = ref(props.iconType || 'heroicons')
+    
+    // 監聽 props 變化
+    watch(() => props.modelValue, (newVal) => {
+      selectedIcon.value = newVal
+    })
+    
+    watch(() => props.iconType, (newVal) => {
+      if (newVal) {
+        iconType.value = newVal
+      }
+    })
     
     // Heroicons 圖標清單
     const heroicons = [
@@ -297,6 +328,14 @@ export default {
     const togglePicker = async () => {
       isOpen.value = !isOpen.value
       if (isOpen.value) {
+        // 打開時根據當前 iconType 設定正確的標籤頁
+        if (iconType.value === 'bootstrap') {
+          activeTab.value = 'bootstrap'
+        } else if (iconType.value === 'emoji') {
+          activeTab.value = 'emoji'
+        } else {
+          activeTab.value = 'heroicons'
+        }
         await nextTick()
         calculatePosition()
       }
