@@ -17,6 +17,10 @@
           v-for="(row, index) in visibleRows"
           :key="startIndex + index"
           class="grid-row"
+          :class="{
+            'first-row': startIndex + index === 0,
+            'last-row': startIndex + index === totalRows - 1
+          }"
         >
           <slot 
             name="row"
@@ -127,6 +131,7 @@ export default {
     return {
       scrollContainer,
       totalHeight,
+      totalRows,
       offsetY,
       visibleRows,
       startIndex,
@@ -157,7 +162,10 @@ export default {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 0.5rem;
-  padding: 0.25rem;
-  min-height: 48px;
+  padding: 0.25rem 0.5rem;
+}
+
+.virtual-scroll-container {
+  padding: 0.25rem 0;
 }
 </style>

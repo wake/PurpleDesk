@@ -87,6 +87,7 @@
         <!-- 模式切換按鈕 -->
         <div class="flex space-x-2">
           <button
+            type="button"
             @click="setMode('initials')"
             class="px-3 py-2 text-sm rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
             :class="mode === 'initials' 
@@ -96,6 +97,7 @@
             字母
           </button>
           <button
+            type="button"
             @click="setMode('icon')"
             class="px-3 py-2 text-sm rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
             :class="mode === 'icon' 
@@ -105,6 +107,7 @@
             圖標
           </button>
           <button
+            type="button"
             @click="setMode('upload')"
             class="px-3 py-2 text-sm rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
             :class="mode === 'upload' 
@@ -185,6 +188,7 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">顯示模式</label>
               <div class="grid grid-cols-3 gap-3">
                 <button
+                  type="button"
                   @click="setMode('initials')"
                   class="p-3 border-2 rounded-lg transition-colors focus:outline-none"
                   :class="mode === 'initials' 
@@ -200,6 +204,7 @@
                 </button>
                 
                 <button
+                  type="button"
                   @click="setMode('icon')"
                   class="p-3 border-2 rounded-lg transition-colors focus:outline-none"
                   :class="mode === 'icon' 
@@ -215,6 +220,7 @@
                 </button>
                 
                 <button
+                  type="button"
                   @click="setMode('upload')"
                   class="p-3 border-2 rounded-lg transition-colors focus:outline-none"
                   :class="mode === 'upload' 
@@ -307,12 +313,14 @@
           <!-- 彈窗底部按鈕 -->
           <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <button
+              type="button"
               @click="applySettings"
               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm"
             >
               確定
             </button>
             <button
+              type="button"
               @click="cancelSettings"
               class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
             >

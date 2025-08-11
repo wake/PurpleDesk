@@ -25,13 +25,37 @@
     
     <!-- 操作按鈕區域 -->
     <div v-if="showActions" class="mt-3 flex space-x-3">
-      <!-- 移除按鈕 -->
+      <!-- 儲存按鈕 -->
+      <button
+        v-if="showSaveButton && hasChanges"
+        type="button"
+        @click="handleSave"
+        :disabled="uploading || saving"
+        class="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <SaveIcon class="w-4 h-4 mr-2" />
+        {{ saving ? '儲存中...' : saveButtonText }}
+      </button>
+      
+      <!-- 清除按鈕 -->
+      <button
+        v-if="showClearButton"
+        type="button"
+        @click="showClearConfirm"
+        :disabled="uploading || clearing"
+        class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <XIcon class="w-4 h-4 mr-2" />
+        {{ clearing ? '清除中...' : clearButtonText }}
+      </button>
+      
+      <!-- 移除按鈕（保留原有功能） -->
       <button
         v-if="showRemoveButton && hasImage"
         type="button"
         @click="showRemoveConfirm"
         :disabled="uploading || removing"
-        class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <TrashIcon class="w-4 h-4 mr-2" />
         {{ removeButtonText }}
@@ -60,12 +84,25 @@
       @confirm="confirmRemove"
       @cancel="cancelRemove"
     />
+    
+    <!-- 清除確認對話框 -->
+    <ConfirmDialog
+      :show="showClearDialog"
+      type="warning"
+      title="清除頭像"
+      message="確定要清除當前的頭像設定嗎？此操作會立即生效。"
+      confirm-text="確定清除"
+      cancel-text="取消"
+      :loading="clearing"
+      @confirm="confirmClear"
+      @cancel="cancelClear"
+    />
   </div>
 </template>
 
 <script>
 import { ref, computed } from 'vue'
-import { TrashIcon } from '@heroicons/vue/outline'
+import { TrashIcon, SaveIcon, XIcon } from '@heroicons/vue/outline'
 import ImageSelector from './ImageSelector.vue'
 import ConfirmDialog from './ConfirmDialog.vue'
 
@@ -73,6 +110,8 @@ export default {
   name: 'ImageField',
   components: {
     TrashIcon,
+    SaveIcon,
+    XIcon,
     ImageSelector,
     ConfirmDialog
   },
@@ -148,9 +187,27 @@ export default {
       type: Boolean,
       default: true
     },
+    showSaveButton: {
+      type: Boolean,
+      default: true
+    },
+    showClearButton: {
+      type: Boolean,
+      default: true
+    },
     showActions: {
       type: Boolean,
       default: true
+    },
+    
+    // 按鈕文字配置
+    saveButtonText: {
+      type: String,
+      default: '儲存'
+    },
+    clearButtonText: {
+      type: String,
+      default: '清除'
     },
     
     // 載入狀態
@@ -161,6 +218,14 @@ export default {
     removing: {
       type: Boolean,
       default: false
+    },
+    saving: {
+      type: Boolean,
+      default: false
+    },
+    clearing: {
+      type: Boolean,
+      default: false
     }
   },
   emits: [
@@ -169,6 +234,8 @@ export default {
     'file-selected',
     'file-error',
     'remove',
+    'save',
+    'clear',
     'success',
     'error'
   ],
@@ -176,6 +243,8 @@ export default {
     const errorMessage = ref('')
     const successMessage = ref('')
     const showRemoveDialog = ref(false)
+    const showClearDialog = ref(false)
+    const hasChanges = ref(false)
     
     // 是否有圖片
     const hasImage = computed(() => {
@@ -185,16 +254,19 @@ export default {
     // 事件處理
     const handleModeChanged = (data) => {
       clearMessages()
+      hasChanges.value = true
       emit('mode-changed', data)
     }
     
     const handleSettingsChanged = (data) => {
       clearMessages()
+      hasChanges.value = true
       emit('settings-changed', data)
     }
     
     const handleFileSelected = (file) => {
       clearMessages()
+      hasChanges.value = true
       emit('file-selected', file)
     }
     
@@ -215,6 +287,27 @@ export default {
     
     const cancelRemove = () => {
       showRemoveDialog.value = false
+    }
+    
+    // 儲存功能
+    const handleSave = () => {
+      hasChanges.value = false
+      emit('save')
+    }
+    
+    // 清除功能
+    const showClearConfirm = () => {
+      showClearDialog.value = true
+    }
+    
+    const confirmClear = () => {
+      hasChanges.value = false
+      emit('clear')
+      showClearDialog.value = false
+    }
+    
+    const cancelClear = () => {
+      showClearDialog.value = false
     }
     
     // 訊息管理
@@ -243,6 +336,8 @@ export default {
     // 重置狀態
     const reset = () => {
       showRemoveDialog.value = false
+      showClearDialog.value = false
+      hasChanges.value = false
       clearMessages()
     }
     
@@ -250,7 +345,9 @@ export default {
       errorMessage,
       successMessage,
       showRemoveDialog,
+      showClearDialog,
       hasImage,
+      hasChanges,
       handleModeChanged,
       handleSettingsChanged,
       handleFileSelected,
@@ -258,6 +355,10 @@ export default {
       showRemoveConfirm,
       confirmRemove,
       cancelRemove,
+      handleSave,
+      showClearConfirm,
+      confirmClear,
+      cancelClear,
       clearMessages,
       showSuccess,
       showError,

@@ -23,15 +23,23 @@
               :initials="getUserInitials(user)"
               size="large"
               shape="circle"
+              :show-save-button="true"
+              :show-clear-button="true"
+              save-button-text="儲存頭像"
+              clear-button-text="清除頭像"
               remove-button-text="移除頭像"
               remove-confirm-title="移除頭像"
               remove-confirm-message="確定要移除頭像嗎？此操作無法復原。"
               :uploading="isLoading"
+              :saving="isSavingAvatar"
+              :clearing="isClearingAvatar"
               :removing="isRemovingAvatar"
               @mode-changed="handleModeChanged"
               @settings-changed="handleSettingsChanged"
               @file-selected="handleAvatarSelected"
               @file-error="handleFileError"
+              @save="handleAvatarSave"
+              @clear="handleAvatarClear"
               @remove="handleAvatarRemove"
               @success="handleSuccess"
               @error="handleError"
@@ -210,6 +218,8 @@ export default {
     const avatarPreview = ref(null)
     const showRemoveAvatarConfirm = ref(false)
     const isRemovingAvatar = ref(false)
+    const isSavingAvatar = ref(false)
+    const isClearingAvatar = ref(false)
     
     const user = computed(() => authStore.user)
     
@@ -221,6 +231,9 @@ export default {
       password: '',
       password_confirmation: '',
       avatar: null,
+      avatar_icon: null,
+      avatar_type: null,
+      avatar_settings: null,
       remove_avatar: false
     })
     
@@ -240,8 +253,15 @@ export default {
     }
     
     const handleAvatarSelected = (file) => {
-      form.avatar = file
-      errorMessage.value = '' // 清除任何現有錯誤訊息
+      console.log('handleAvatarSelected called with:', file)
+      if (file && file instanceof File) {
+        console.log('Valid file selected:', file.name, file.type, file.size)
+        form.avatar = file
+        errorMessage.value = '' // 清除任何現有錯誤訊息
+        // 注意：不再自動儲存，而是等待用戶點擊儲存按鈕
+      } else {
+        console.log('Invalid file or non-file data:', file)
+      }
     }
     
     const handleFileError = (error) => {
@@ -249,9 +269,9 @@ export default {
     }
     
     const handleAvatarUpload = async (file) => {
-      // 自動上傳功能（如果需要的話）
+      // 僅設定檔案到表單狀態，不自動儲存
       form.avatar = file
-      await handleSubmit()
+      console.log('File uploaded to form state, waiting for manual save')
     }
     
     const handleAvatarRemove = async () => {
@@ -269,16 +289,122 @@ export default {
       errorMessage.value = error
     }
     
+    const handleAvatarSave = async () => {
+      if (!form.avatar && !form.remove_avatar && !form.avatar_icon && !form.avatar_settings) {
+        errorMessage.value = '沒有需要儲存的頭像變更'
+        return
+      }
+      
+      isSavingAvatar.value = true
+      
+      try {
+        const formData = new FormData()
+        formData.append('account', user.value.account || '')
+        formData.append('full_name', form.name || '')
+        formData.append('display_name', form.display_name)
+        formData.append('email', form.email)
+        
+        if (form.avatar) {
+          formData.append('avatar', form.avatar)
+        }
+        if (form.avatar_icon) {
+          formData.append('avatar_icon', form.avatar_icon)
+          formData.append('avatar_type', 'icon')
+        }
+        if (form.avatar_settings) {
+          formData.append('avatar_settings', JSON.stringify(form.avatar_settings))
+          formData.append('avatar_type', 'initial')
+        }
+        if (form.remove_avatar) {
+          formData.append('remove_avatar', '1')
+        }
+        
+        const response = await axios.post('/api/profile', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        
+        // 更新本地用戶資料
+        await authStore.fetchUser()
+        
+        // 清空頭像相關狀態
+        form.avatar = null
+        form.avatar_icon = null
+        form.avatar_type = null
+        form.avatar_settings = null
+        form.remove_avatar = false
+        
+        successMessage.value = '頭像已成功儲存'
+        setTimeout(() => {
+          successMessage.value = ''
+        }, 3000)
+        
+      } catch (error) {
+        console.error('儲存頭像失敗:', error)
+        const errorMsg = error.response?.data?.message || '儲存頭像失敗，請稍後再試'
+        errorMessage.value = errorMsg
+      } finally {
+        isSavingAvatar.value = false
+      }
+    }
+    
+    const handleAvatarClear = async () => {
+      isClearingAvatar.value = true
+      
+      try {
+        const formData = new FormData()
+        formData.append('account', user.value.account || '')
+        formData.append('full_name', form.name || '')
+        formData.append('display_name', form.display_name)
+        formData.append('email', form.email)
+        formData.append('remove_avatar', '1')
+        
+        const response = await axios.post('/api/profile', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        
+        // 清空本地狀態
+        form.avatar = null
+        form.remove_avatar = false
+        
+        // 更新本地用戶資料
+        await authStore.fetchUser()
+        
+        successMessage.value = '頭像已成功清除'
+        setTimeout(() => {
+          successMessage.value = ''
+        }, 3000)
+        
+      } catch (error) {
+        console.error('清除頭像失敗:', error)
+        const errorMsg = error.response?.data?.message || '清除頭像失敗，請稍後再試'
+        errorMessage.value = errorMsg
+      } finally {
+        isClearingAvatar.value = false
+      }
+    }
+    
     const handleModeChanged = (data) => {
       // 處理模式變更 (字母/圖標/上傳)
       console.log('Mode changed:', data)
-      // 這裡可以保存用戶的偏好設定
+      // 注意：不再自動儲存，只記錄變更
     }
     
     const handleSettingsChanged = (data) => {
       // 處理設定變更 (顏色、圖標等)
       console.log('Settings changed:', data)
-      // 這裡可以保存用戶的自訂設定
+      // 儲存設定變更到表單狀態
+      if (data.type === 'icon' && data.icon) {
+        // 將圖標資訊存到表單中用於後續儲存
+        form.avatar_icon = data.icon
+        form.avatar_type = 'icon'
+      } else if (data.type === 'initial' && data.settings) {
+        form.avatar_settings = data.settings
+        form.avatar_type = 'initial'
+      }
     }
     
     const showRemoveAvatarDialog = () => {
@@ -291,7 +417,8 @@ export default {
       try {
         // 立即發送請求到後端移除頭像
         const formData = new FormData()
-        formData.append('name', form.name || '')
+        formData.append('account', user.value.account || '')
+        formData.append('full_name', form.name || '')
         formData.append('display_name', form.display_name)
         formData.append('email', form.email)
         formData.append('remove_avatar', '1')
@@ -334,7 +461,10 @@ export default {
     }
     
     const handleSubmit = async () => {
-      if (isLoading.value) return
+      if (isLoading.value) {
+        console.log('Already loading, skipping')
+        return
+      }
       
       isLoading.value = true
       errorMessage.value = ''
@@ -343,7 +473,8 @@ export default {
       
       try {
         const formData = new FormData()
-        formData.append('name', form.name || '')
+        formData.append('account', user.value.account || '')
+        formData.append('full_name', form.name || '')
         formData.append('display_name', form.display_name)
         formData.append('email', form.email)
         
@@ -382,6 +513,9 @@ export default {
         form.password = ''
         form.password_confirmation = ''
         form.avatar = null
+        form.avatar_icon = null
+        form.avatar_type = null
+        form.avatar_settings = null
         form.remove_avatar = false
         avatarPreview.value = null
         
@@ -416,10 +550,14 @@ export default {
       errors,
       organizations,
       avatarPreview,
+      isSavingAvatar,
+      isClearingAvatar,
       getUserInitials,
       handleAvatarSelected,
       handleFileError,
       handleAvatarUpload,
+      handleAvatarSave,
+      handleAvatarClear,
       handleAvatarRemove,
       handleSuccess,
       handleError,
