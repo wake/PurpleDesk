@@ -109,10 +109,10 @@
                 :key="icon.name"
                 @click="selectIcon(icon.class, 'bootstrap')"
                 :class="selectedIcon === icon.class ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
-                class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all h-10"
+                class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all h-10 flex items-center justify-center"
                 :title="icon.name"
               >
-                <i :class="`bi ${icon.class}`" class="text-gray-600 text-xl flex items-center justify-center" style="width: 20px; height: 20px;"></i>
+                <i :class="`bi ${icon.class}`" class="text-gray-600" style="font-size: 1.25rem; line-height: 1;"></i>
               </button>
             </template>
           </VirtualScroll>
@@ -132,10 +132,10 @@
                 :key="emoji.name"
                 @click="selectIcon(emoji.emoji, 'emoji')"
                 :class="selectedIcon === emoji.emoji ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
-                class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all h-10"
+                class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all h-10 flex items-center justify-center"
                 :title="emoji.name"
               >
-                <span class="flex items-center justify-center text-xl" style="width: 20px; height: 20px;">{{ emoji.emoji }}</span>
+                <span style="font-size: 1.25rem; line-height: 1;">{{ emoji.emoji }}</span>
               </button>
             </template>
           </VirtualScroll>
