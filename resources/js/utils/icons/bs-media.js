@@ -107,7 +107,58 @@ export const mediaIcons = [
   { name: 'Music Note Beamed', class: 'bi-music-note-beamed' },
   { name: 'Music Note List', class: 'bi-music-note-list' },
   { name: 'Music Player', class: 'bi-music-player' },
-  { name: 'Music Player Fill', class: 'bi-music-player-fill' }
+  { name: 'Music Player Fill', class: 'bi-music-player-fill' },
+  
+  // 相機與攝影（新增）
+  { name: 'Camera', class: 'bi-camera' },
+  { name: 'Camera2', class: 'bi-camera2' },
+  { name: 'Camera Fill', class: 'bi-camera-fill' },
+  { name: 'Camera Video', class: 'bi-camera-video' },
+  { name: 'Camera Video Fill', class: 'bi-camera-video-fill' },
+  { name: 'Camera Video Off', class: 'bi-camera-video-off' },
+  { name: 'Camera Video Off Fill', class: 'bi-camera-video-off-fill' },
+  
+  // 圖像處理（新增）
+  { name: 'Image', class: 'bi-image' },
+  { name: 'Image Alt', class: 'bi-image-alt' },
+  { name: 'Image Fill', class: 'bi-image-fill' },
+  { name: 'Images', class: 'bi-images' },
+  { name: 'File Image', class: 'bi-file-image' },
+  { name: 'File Image Fill', class: 'bi-file-image-fill' },
+  { name: 'Card Image', class: 'bi-card-image' },
+  { name: 'Aspect Ratio', class: 'bi-aspect-ratio' },
+  { name: 'Aspect Ratio Fill', class: 'bi-aspect-ratio-fill' },
+  
+  // 麥克風（新增）
+  { name: 'Mic', class: 'bi-mic' },
+  { name: 'Mic Fill', class: 'bi-mic-fill' },
+  { name: 'Mic Mute', class: 'bi-mic-mute' },
+  { name: 'Mic Mute Fill', class: 'bi-mic-mute-fill' },
+  
+  // 揚聲器（新增）
+  { name: 'Speaker', class: 'bi-speaker' },
+  { name: 'Speaker Fill', class: 'bi-speaker-fill' },
+  
+  // 播放列表與專輯（新增）
+  { name: 'Vinyl', class: 'bi-vinyl' },
+  { name: 'Vinyl Fill', class: 'bi-vinyl-fill' },
+  { name: 'Disc', class: 'bi-disc' },
+  { name: 'Disc Fill', class: 'bi-disc-fill' },
+  { name: 'Cassette', class: 'bi-cassette' },
+  { name: 'Cassette Fill', class: 'bi-cassette-fill' },
+  
+  // 影片控制（新增）
+  { name: 'Pip', class: 'bi-pip' },
+  { name: 'Pip Fill', class: 'bi-pip-fill' },
+  { name: 'Full Screen', class: 'bi-fullscreen' },
+  { name: 'Full Screen Exit', class: 'bi-fullscreen-exit' },
+  
+  // 直播與串流（新增）
+  { name: 'Cast', class: 'bi-cast' },
+  { name: 'Airplay', class: 'bi-airplay' },
+  
+  // 音訊波形（新增）
+  { name: 'Soundwave', class: 'bi-soundwave' }
 ]
 
 export const categoryInfo = {

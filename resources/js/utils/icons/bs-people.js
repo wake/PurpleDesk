@@ -83,7 +83,99 @@ export const peopleIcons = [
   
   // 社群媒體與網路形像
   { name: 'Incognito', class: 'bi-incognito' },
-  { name: 'Mask', class: 'bi-mask' }
+  { name: 'Mask', class: 'bi-mask' },
+  
+  // 人物動作與行為（新增）
+  { name: 'Person Add', class: 'bi-person-add' },
+  { name: 'Person Lock', class: 'bi-person-lock' },
+  { name: 'Person Slash', class: 'bi-person-slash' },
+  { name: 'Person Slash Fill', class: 'bi-person-slash-fill' },
+  { name: 'Person Up', class: 'bi-person-up' },
+  { name: 'Person Down', class: 'bi-person-down' },
+  { name: 'Person Standing', class: 'bi-person-standing' },
+  { name: 'Person Standing Dress', class: 'bi-person-standing-dress' },
+  { name: 'Person Walking', class: 'bi-person-walking' },
+  { name: 'Person Wheelchair', class: 'bi-person-wheelchair' },
+  { name: 'Person Arms Up', class: 'bi-person-arms-up' },
+  { name: 'Person Raised Hand', class: 'bi-person-raised-hand' },
+  
+  // 性別補充（新增）
+  { name: 'Gender Neuter', class: 'bi-gender-neuter' },
+  
+  // 身份與識別（新增）
+  { name: 'Fingerprint', class: 'bi-fingerprint' },
+  { name: 'Person Fill Gear', class: 'bi-person-fill-gear' },
+  { name: 'Person Fill Lock', class: 'bi-person-fill-lock' },
+  { name: 'Person Fill Slash', class: 'bi-person-fill-slash' },
+  { name: 'Person Fill Check', class: 'bi-person-fill-check' },
+  { name: 'Person Fill Dash', class: 'bi-person-fill-dash' },
+  { name: 'Person Fill Down', class: 'bi-person-fill-down' },
+  { name: 'Person Fill Up', class: 'bi-person-fill-up' },
+  { name: 'Person Fill X', class: 'bi-person-fill-x' },
+  { name: 'Person Fill Add', class: 'bi-person-fill-add' },
+  { name: 'Person Fill Exclamation', class: 'bi-person-fill-exclamation' },
+  
+  // 手勢補充（新增）
+  { name: 'Hand Thumbs Up', class: 'bi-hand-thumbs-up' },
+  { name: 'Hand Thumbs Up Fill', class: 'bi-hand-thumbs-up-fill' },
+  { name: 'Hand Thumbs Down', class: 'bi-hand-thumbs-down' },
+  { name: 'Hand Thumbs Down Fill', class: 'bi-hand-thumbs-down-fill' },
+  { name: 'Fist Raised', class: 'bi-fist-raised' },
+  { name: 'Universal Access', class: 'bi-universal-access' },
+  { name: 'Universal Access Circle', class: 'bi-universal-access-circle' },
+  
+  // 心臟與情感（新增）
+  { name: 'Heart', class: 'bi-heart' },
+  { name: 'Heart Fill', class: 'bi-heart-fill' },
+  { name: 'Heart Half', class: 'bi-heart-half' },
+  { name: 'Heart Pulse', class: 'bi-heart-pulse' },
+  { name: 'Heart Pulse Fill', class: 'bi-heart-pulse-fill' },
+  { name: 'Heartbreak', class: 'bi-heartbreak' },
+  { name: 'Heartbreak Fill', class: 'bi-heartbreak-fill' },
+  { name: 'Hearts', class: 'bi-hearts' },
+  { name: 'Heart Arrow', class: 'bi-heart-arrow' },
+  
+  // 肺與醫療（新增）
+  { name: 'Lungs', class: 'bi-lungs' },
+  { name: 'Lungs Fill', class: 'bi-lungs-fill' },
+  { name: 'Prescription', class: 'bi-prescription' },
+  { name: 'Prescription2', class: 'bi-prescription2' },
+  
+  // 其他表情相關（新增）
+  { name: 'Emoji Angry', class: 'bi-emoji-angry' },
+  { name: 'Emoji Angry Fill', class: 'bi-emoji-angry-fill' },
+  { name: 'Emoji Astonished', class: 'bi-emoji-astonished' },
+  { name: 'Emoji Astonished Fill', class: 'bi-emoji-astonished-fill' },
+  { name: 'Emoji Dizzy', class: 'bi-emoji-dizzy' },
+  { name: 'Emoji Dizzy Fill', class: 'bi-emoji-dizzy-fill' },
+  { name: 'Emoji Expressionless', class: 'bi-emoji-expressionless' },
+  { name: 'Emoji Expressionless Fill', class: 'bi-emoji-expressionless-fill' },
+  { name: 'Emoji Frown', class: 'bi-emoji-frown' },
+  { name: 'Emoji Frown Fill', class: 'bi-emoji-frown-fill' },
+  { name: 'Emoji Grimace', class: 'bi-emoji-grimace' },
+  { name: 'Emoji Grimace Fill', class: 'bi-emoji-grimace-fill' },
+  { name: 'Emoji Grin', class: 'bi-emoji-grin' },
+  { name: 'Emoji Grin Fill', class: 'bi-emoji-grin-fill' },
+  { name: 'Emoji Heart Eyes', class: 'bi-emoji-heart-eyes' },
+  { name: 'Emoji Heart Eyes Fill', class: 'bi-emoji-heart-eyes-fill' },
+  { name: 'Emoji Kiss', class: 'bi-emoji-kiss' },
+  { name: 'Emoji Kiss Fill', class: 'bi-emoji-kiss-fill' },
+  { name: 'Emoji Laughing', class: 'bi-emoji-laughing' },
+  { name: 'Emoji Laughing Fill', class: 'bi-emoji-laughing-fill' },
+  { name: 'Emoji Neutral', class: 'bi-emoji-neutral' },
+  { name: 'Emoji Neutral Fill', class: 'bi-emoji-neutral-fill' },
+  { name: 'Emoji Smile', class: 'bi-emoji-smile' },
+  { name: 'Emoji Smile Fill', class: 'bi-emoji-smile-fill' },
+  { name: 'Emoji Smile Upside Down', class: 'bi-emoji-smile-upside-down' },
+  { name: 'Emoji Smile Upside Down Fill', class: 'bi-emoji-smile-upside-down-fill' },
+  { name: 'Emoji Sunglasses', class: 'bi-emoji-sunglasses' },
+  { name: 'Emoji Sunglasses Fill', class: 'bi-emoji-sunglasses-fill' },
+  { name: 'Emoji Surprise', class: 'bi-emoji-surprise' },
+  { name: 'Emoji Surprise Fill', class: 'bi-emoji-surprise-fill' },
+  { name: 'Emoji Tear', class: 'bi-emoji-tear' },
+  { name: 'Emoji Tear Fill', class: 'bi-emoji-tear-fill' },
+  { name: 'Emoji Wink', class: 'bi-emoji-wink' },
+  { name: 'Emoji Wink Fill', class: 'bi-emoji-wink-fill' }
 ]
 
 export const categoryInfo = {
