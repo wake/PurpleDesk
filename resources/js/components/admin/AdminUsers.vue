@@ -129,9 +129,6 @@
       </table>
     </div>
 
-    <!-- 載入狀態 -->
-    <LoadingSpinner v-if="isLoading" />
-
     <!-- 空狀態 -->
     <div v-else-if="filteredUsers.length === 0" class="text-center py-12">
       <i class="bi bi-people-fill mx-auto text-5xl text-gray-400"></i>
@@ -143,6 +140,7 @@
     <PaginationControl 
       v-if="pagination.last_page > 1" 
       :pagination="pagination" 
+      :is-loading="isLoading"
       @page-changed="changePage" 
       @per-page-changed="changePerPage" 
     />

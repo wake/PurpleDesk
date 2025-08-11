@@ -126,9 +126,6 @@
       </table>
     </div>
 
-    <!-- 載入狀態 -->
-    <LoadingSpinner v-if="isLoading" />
-
     <!-- 空狀態 -->
     <div v-else-if="filteredTeams.length === 0" class="text-center py-12">
       <div class="mx-auto h-12 w-12 text-gray-400 flex items-center justify-center">
@@ -142,6 +139,7 @@
     <PaginationControl 
       v-if="teamsPagination.last_page > 1" 
       :pagination="teamsPagination" 
+      :is-loading="isLoading"
       @page-changed="changeTeamsPage" 
       @per-page-changed="changePerPage" 
     />

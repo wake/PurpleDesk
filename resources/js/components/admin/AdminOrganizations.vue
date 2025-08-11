@@ -99,9 +99,6 @@
       </table>
     </div>
 
-    <!-- 載入狀態 -->
-    <LoadingSpinner v-if="isLoading" />
-
     <!-- 空狀態 -->
     <div v-else-if="filteredOrganizations.length === 0" class="text-center py-12">
       <OfficeBuildingIcon class="mx-auto h-12 w-12 text-gray-400" />
@@ -113,6 +110,7 @@
     <PaginationControl 
       v-if="pagination.last_page > 1" 
       :pagination="pagination" 
+      :is-loading="isLoading"
       @page-changed="changePage" 
       @per-page-changed="changePerPage" 
     />
