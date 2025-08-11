@@ -127,7 +127,7 @@
     </div>
 
     <!-- 空狀態 -->
-    <div v-else-if="filteredTeams.length === 0" class="text-center py-12">
+    <div v-if="!isLoading && filteredTeams.length === 0" class="text-center py-12">
       <div class="mx-auto h-12 w-12 text-gray-400 flex items-center justify-center">
         <i class="bi bi-people-fill text-4xl opacity-50"></i>
       </div>

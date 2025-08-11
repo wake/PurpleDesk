@@ -100,7 +100,7 @@
     </div>
 
     <!-- 空狀態 -->
-    <div v-else-if="filteredOrganizations.length === 0" class="text-center py-12">
+    <div v-if="!isLoading && filteredOrganizations.length === 0" class="text-center py-12">
       <OfficeBuildingIcon class="mx-auto h-12 w-12 text-gray-400" />
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到組織</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或新增組織</p>

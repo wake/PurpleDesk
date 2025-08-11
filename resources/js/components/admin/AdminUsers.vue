@@ -130,7 +130,7 @@
     </div>
 
     <!-- 空狀態 -->
-    <div v-else-if="filteredUsers.length === 0" class="text-center py-12">
+    <div v-if="!isLoading && filteredUsers.length === 0" class="text-center py-12">
       <i class="bi bi-people-fill mx-auto text-5xl text-gray-400"></i>
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到使用者</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件</p>
