@@ -38,13 +38,14 @@
           <!-- Bootstrap Icons -->
           <i 
             v-else-if="iconType === 'bootstrap'" 
-            :class="[selectedIcon, iconSizeClass]"
+            :class="['bi', selectedIcon, bsIconSizeClass]"
             class="text-white"
           />
           <!-- Emoji -->
           <span 
             v-else-if="iconType === 'emoji'"
             :class="emojiSizeClass"
+            style="transform: translateY(2px);"
           >
             {{ selectedIcon }}
           </span>
@@ -119,6 +120,7 @@
           <span class="text-sm text-gray-600">背景：</span>
           <ColorPicker v-model="backgroundColor" />
           
+          <span v-if="mode === 'icon'" class="text-sm text-gray-600 ml-4">圖標：</span>
           <IconPicker 
             v-if="mode === 'icon'"
             v-model="selectedIcon"
@@ -326,6 +328,8 @@
 <script>
 import { ref, computed, watch } from 'vue'
 import { CloudUploadIcon, CogIcon, StarIcon } from '@heroicons/vue/outline'
+// 導入所有可能用到的 Heroicons
+import * as HeroIcons from '@heroicons/vue/outline'
 import ColorPicker from './ColorPicker.vue'
 import IconPicker from './IconPicker.vue'
 
@@ -336,7 +340,8 @@ export default {
     CogIcon,
     StarIcon,
     ColorPicker,
-    IconPicker
+    IconPicker,
+    ...HeroIcons // 註冊所有 Heroicons
   },
   props: {
     // 基本設定
@@ -457,23 +462,35 @@ export default {
     })
     
     const iconSizeClass = computed(() => {
+      // Heroicons 使用 width/height classes
       const sizeClasses = {
-        small: 'w-4 h-4',
-        medium: 'w-5 h-5', 
-        large: 'w-6 h-6',
-        xlarge: 'w-8 h-8'
+        small: 'w-6 h-6',
+        medium: 'w-8 h-8', 
+        large: 'w-10 h-10',
+        xlarge: 'w-12 h-12'
       }
-      return sizeClasses[props.size] || 'w-6 h-6'
+      return sizeClasses[props.size] || 'w-10 h-10'
+    })
+    
+    const bsIconSizeClass = computed(() => {
+      // Bootstrap Icons 使用與 Heroicons 相似的大小
+      const sizeClasses = {
+        small: 'text-2xl',
+        medium: 'text-3xl', 
+        large: 'text-4xl',
+        xlarge: 'text-5xl'
+      }
+      return sizeClasses[props.size] || 'text-4xl'
     })
     
     const emojiSizeClass = computed(() => {
       const sizeClasses = {
-        small: 'text-sm',
-        medium: 'text-base', 
-        large: 'text-lg',
-        xlarge: 'text-2xl'
+        small: 'text-2xl',
+        medium: 'text-3xl', 
+        large: 'text-4xl',
+        xlarge: 'text-5xl'
       }
-      return sizeClasses[props.size] || 'text-lg'
+      return sizeClasses[props.size] || 'text-4xl'
     })
     
     // 顯示的字母縮寫
@@ -620,6 +637,7 @@ export default {
       shapeClass,
       textSizeClass,
       iconSizeClass,
+      bsIconSizeClass,
       emojiSizeClass,
       displayInitials,
       defaultInitials,

@@ -1,5 +1,5 @@
 <template>
-  <div class="icon-picker" :class="{ 'icon-picker-open': isOpen }">
+  <div class="icon-picker" ref="iconPickerRef">
     <!-- 圖標預覽按鈕 -->
     <button
       type="button"
@@ -8,9 +8,14 @@
     >
       <!-- 顯示選中的圖標 -->
       <component 
-        v-if="selectedIcon && iconType !== 'emoji'" 
+        v-if="selectedIcon && iconType === 'heroicons'" 
         :is="selectedIcon" 
         class="w-5 h-5 text-gray-600" 
+      />
+      <i 
+        v-else-if="selectedIcon && iconType === 'bootstrap'" 
+        :class="['bi', selectedIcon]"
+        class="text-gray-600 text-sm"
       />
       <span v-else-if="selectedIcon && iconType === 'emoji'" class="text-sm">
         {{ selectedIcon }}
@@ -19,157 +24,175 @@
     </button>
     
     <!-- 圖標選擇面板 -->
-    <div 
-      v-if="isOpen" 
-      ref="iconPanel"
-      class="absolute z-50 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg w-80 max-h-96 overflow-hidden"
-      @click.stop
-    >
-      <!-- 標籤切換 -->
-      <div class="flex border-b border-gray-200">
-        <button
-          v-for="tab in iconTabs"
-          :key="tab.key"
-          @click="activeTab = tab.key"
-          class="flex-1 px-4 py-2 text-sm font-medium transition-colors focus:outline-none"
-          :class="activeTab === tab.key 
-            ? 'text-primary-600 border-b-2 border-primary-500 bg-primary-50' 
-            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
-        >
-          {{ tab.label }}
-        </button>
-      </div>
-      
-      <!-- 搜尋欄位 -->
-      <div class="px-4 py-2 border-b border-gray-100">
-        <div class="relative">
-          <SearchIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="搜尋圖標..."
-            class="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-          />
-          <button
-            v-if="searchQuery"
-            @click="clearSearch"
-            class="absolute right-2 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600"
-          >
-            <XIcon class="h-4 w-4" />
-          </button>
+    <Teleport to="body">
+      <div 
+        v-if="isOpen" 
+        ref="iconPanel"
+        class="fixed z-[9999] p-4 bg-white border border-gray-200 rounded-lg shadow-xl w-80"
+        :style="panelPosition"
+        @click.stop
+      >
+        <!-- 標籤頁 -->
+        <div class="mb-4">
+          <div class="flex space-x-1 bg-gray-100 rounded-md p-1">
+            <button
+              @click="activeTab = 'heroicons'"
+              :class="activeTab === 'heroicons' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
+              class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
+            >
+              Heroicons
+            </button>
+            <button
+              @click="activeTab = 'bootstrap'"
+              :class="activeTab === 'bootstrap' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
+              class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
+            >
+              Bootstrap
+            </button>
+            <button
+              @click="activeTab = 'emoji'"
+              :class="activeTab === 'emoji' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
+              class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
+            >
+              表情符號
+            </button>
+          </div>
         </div>
-      </div>
-      
-      <!-- 圖標內容區域 -->
-      <div class="p-4 overflow-y-auto max-h-80">
-        <!-- Heroicons -->
-        <div v-if="activeTab === 'heroicons'">
-          <div v-if="filteredHeroicons.length > 0" class="grid grid-cols-6 gap-2">
+
+        <!-- 搜尋欄位 -->
+        <div class="mb-4">
+          <div class="relative">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="搜尋圖標名稱..."
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+            <button
+              v-if="searchQuery"
+              @click="clearSearch"
+              class="absolute right-2 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+
+        <!-- 圖標內容區域 -->
+        <div class="h-48 overflow-y-auto border border-gray-100 rounded-md p-2 bg-gray-50">
+          <!-- Heroicons 標籤頁 -->
+          <div v-if="activeTab === 'heroicons'" class="grid grid-cols-6 gap-2">
             <button
               v-for="icon in filteredHeroicons"
               :key="icon.name"
               @click="selectIcon(icon.component, 'heroicons')"
-              class="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-              :class="selectedIcon === icon.component ? 'border-primary-500 bg-primary-100' : ''"
+              :class="selectedIcon === icon.component ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
+              class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
               :title="icon.name"
             >
-              <component :is="icon.component" class="w-5 h-5 text-gray-600" />
+              <component :is="icon.component" class="w-5 h-5 mx-auto text-gray-600" />
             </button>
           </div>
-          <div v-else class="text-center py-8 text-gray-500">
-            <SearchIcon class="mx-auto h-8 w-8 text-gray-300 mb-2" />
-            <p class="text-sm">找不到符合的圖標</p>
-          </div>
-        </div>
-        
-        <!-- Bootstrap Icons -->
-        <div v-if="activeTab === 'bootstrap'">
-          <div v-if="filteredBootstrapIcons.length > 0" class="grid grid-cols-6 gap-2">
+
+          <!-- Bootstrap Icons 標籤頁 -->
+          <div v-else-if="activeTab === 'bootstrap'" class="grid grid-cols-6 gap-2">
             <button
               v-for="icon in filteredBootstrapIcons"
               :key="icon.name"
               @click="selectIcon(icon.class, 'bootstrap')"
-              class="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-              :class="selectedIcon === icon.class ? 'border-primary-500 bg-primary-100' : ''"
+              :class="selectedIcon === icon.class ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
+              class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
               :title="icon.name"
             >
-              <i :class="icon.class" class="text-gray-600"></i>
+              <i :class="`bi ${icon.class}`" class="text-gray-600 text-xl flex items-center justify-center" style="width: 20px; height: 20px;"></i>
             </button>
           </div>
-          <div v-else class="text-center py-8 text-gray-500">
-            <SearchIcon class="mx-auto h-8 w-8 text-gray-300 mb-2" />
-            <p class="text-sm">找不到符合的圖標</p>
-          </div>
-        </div>
-        
-        <!-- Emoji -->
-        <div v-if="activeTab === 'emoji'">
-          <div v-if="filteredEmojis.length > 0" class="grid grid-cols-8 gap-2">
+
+          <!-- 表情符號標籤頁 -->
+          <div v-else-if="activeTab === 'emoji'" class="grid grid-cols-6 gap-2">
             <button
               v-for="emoji in filteredEmojis"
-              :key="emoji.char"
-              @click="selectIcon(emoji.char, 'emoji')"
-              class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 text-lg"
-              :class="selectedIcon === emoji.char ? 'border-primary-500 bg-primary-100' : ''"
+              :key="emoji.name"
+              @click="selectIcon(emoji.emoji, 'emoji')"
+              :class="selectedIcon === emoji.emoji ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
+              class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
               :title="emoji.name"
             >
-              {{ emoji.char }}
+              <span class="flex items-center justify-center text-xl" style="width: 20px; height: 20px;">{{ emoji.emoji }}</span>
             </button>
           </div>
-          <div v-else class="text-center py-8 text-gray-500">
-            <SearchIcon class="mx-auto h-8 w-8 text-gray-300 mb-2" />
-            <p class="text-sm">找不到符合的表情符號</p>
-          </div>
+        </div>
+
+        <!-- 搜尋結果為空的提示 -->
+        <div v-if="isSearchEmpty" class="text-center py-8 text-gray-500">
+          <p class="text-sm">找不到符合的圖標</p>
+          <p class="text-xs text-gray-400 mt-1">請嘗試其他關鍵字</p>
+        </div>
+
+        <!-- 底部按鈕 -->
+        <div class="flex space-x-2 mt-4 pt-3 border-t border-gray-200">
+          <button
+            @click="clearIcon"
+            class="flex-1 px-3 py-2 text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+          >
+            清除圖標
+          </button>
+          <button
+            @click="closePicker"
+            class="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          >
+            取消
+          </button>
         </div>
       </div>
-      
-      <!-- 底部操作區 -->
-      <div class="border-t border-gray-200 p-3 flex justify-between">
-        <button
-          @click="clearIcon"
-          class="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
-        >
-          清除圖標
-        </button>
-        <button
-          @click="closePicker"
-          class="px-4 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-        >
-          確定
-        </button>
-      </div>
-    </div>
+    </Teleport>
     
-    <!-- 背景遮罩 -->
-    <div
-      v-if="isOpen"
-      @click="closePicker"
-      class="fixed inset-0 z-40"
-    />
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-// Heroicons
-import {
-  UserIcon, CogIcon, HomeIcon, DocumentTextIcon, FolderIcon, 
-  TagIcon, StarIcon, HeartIcon, LightBulbIcon, ShieldCheckIcon,
-  BellIcon, ChatIcon, MailIcon, PhoneIcon, LocationMarkerIcon,
-  CalendarIcon, ClockIcon, SearchIcon, PlusIcon, CheckIcon,
-  XIcon, ArrowRightIcon, DownloadIcon, UploadIcon, ShareIcon,
-  EyeIcon, PencilIcon, TrashIcon, DuplicateIcon, BookmarkIcon
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
+// Heroicons imports
+import { 
+  HomeIcon, 
+  UserIcon, 
+  CogIcon, 
+  DocumentIcon, 
+  FolderIcon, 
+  HeartIcon, 
+  StarIcon, 
+  BellIcon, 
+  ChatIcon, 
+  PlusIcon, 
+  MinusIcon, 
+  XIcon,
+  MailIcon,
+  PhoneIcon,
+  CalendarIcon,
+  ClockIcon,
+  SearchIcon,
+  EyeIcon,
+  PencilIcon,
+  TrashIcon,
+  DownloadIcon,
+  UploadIcon,
+  ShareIcon,
+  BookmarkIcon,
+  FlagIcon,
+  GiftIcon,
+  LightBulbIcon,
+  FireIcon,
+  ShieldCheckIcon,
+  ExclamationIcon
 } from '@heroicons/vue/outline'
 
 export default {
   name: 'IconPicker',
   components: {
-    UserIcon, CogIcon, HomeIcon, DocumentTextIcon, FolderIcon, 
-    TagIcon, StarIcon, HeartIcon, LightBulbIcon, ShieldCheckIcon,
-    BellIcon, ChatIcon, MailIcon, PhoneIcon, LocationMarkerIcon,
-    CalendarIcon, ClockIcon, SearchIcon, PlusIcon, CheckIcon,
-    XIcon, ArrowRightIcon, DownloadIcon, UploadIcon, ShareIcon,
-    EyeIcon, PencilIcon, TrashIcon, DuplicateIcon, BookmarkIcon
+    HomeIcon, UserIcon, CogIcon, DocumentIcon, FolderIcon, HeartIcon, StarIcon, BellIcon, ChatIcon, PlusIcon, MinusIcon, XIcon,
+    MailIcon, PhoneIcon, CalendarIcon, ClockIcon, SearchIcon, EyeIcon, PencilIcon, TrashIcon, DownloadIcon, UploadIcon,
+    ShareIcon, BookmarkIcon, FlagIcon, GiftIcon, LightBulbIcon, FireIcon, ShieldCheckIcon, ExclamationIcon
   },
   props: {
     modelValue: {
@@ -178,131 +201,104 @@ export default {
     },
     iconType: {
       type: String,
-      default: '' // 'heroicons', 'bootstrap', 'emoji'
+      default: ''
     }
   },
   emits: ['update:modelValue', 'update:iconType'],
   setup(props, { emit }) {
     const isOpen = ref(false)
     const iconPanel = ref(null)
-    const activeTab = ref('heroicons')
-    const selectedIcon = ref(props.modelValue)
+    const iconPickerRef = ref(null)
     const searchQuery = ref('')
+    const activeTab = ref('heroicons')
+    const panelPosition = ref({ top: '0px', left: '0px' })
+    const selectedIcon = ref(props.modelValue)
+    const iconType = ref(props.iconType || 'heroicons')
     
-    const iconTabs = [
-      { key: 'heroicons', label: 'Heroicons' },
-      { key: 'bootstrap', label: 'BS Icons' },
-      { key: 'emoji', label: 'Emoji' }
-    ]
-    
-    // Heroicons 圖標列表
+    // Heroicons 圖標清單
     const heroicons = [
-      { name: 'User', component: 'UserIcon' },
-      { name: 'Settings', component: 'CogIcon' },
-      { name: 'Home', component: 'HomeIcon' },
-      { name: 'Document', component: 'DocumentTextIcon' },
-      { name: 'Folder', component: 'FolderIcon' },
-      { name: 'Tag', component: 'TagIcon' },
-      { name: 'Star', component: 'StarIcon' },
-      { name: 'Heart', component: 'HeartIcon' },
-      { name: 'Light Bulb', component: 'LightBulbIcon' },
-      { name: 'Shield', component: 'ShieldCheckIcon' },
-      { name: 'Bell', component: 'BellIcon' },
-      { name: 'Chat', component: 'ChatIcon' },
-      { name: 'Mail', component: 'MailIcon' },
-      { name: 'Phone', component: 'PhoneIcon' },
-      { name: 'Location', component: 'LocationMarkerIcon' },
-      { name: 'Calendar', component: 'CalendarIcon' },
-      { name: 'Clock', component: 'ClockIcon' },
-      { name: 'Search', component: 'SearchIcon' },
-      { name: 'Plus', component: 'PlusIcon' },
-      { name: 'Check', component: 'CheckIcon' },
-      { name: 'Close', component: 'XIcon' },
-      { name: 'Arrow Right', component: 'ArrowRightIcon' },
-      { name: 'Download', component: 'DownloadIcon' },
-      { name: 'Upload', component: 'UploadIcon' },
-      { name: 'Share', component: 'ShareIcon' },
-      { name: 'Eye', component: 'EyeIcon' },
-      { name: 'Edit', component: 'PencilIcon' },
-      { name: 'Delete', component: 'TrashIcon' },
-      { name: 'Duplicate', component: 'DuplicateIcon' },
-      { name: 'Bookmark', component: 'BookmarkIcon' }
+      { name: '首頁 Home', component: 'HomeIcon' },
+      { name: '使用者 User', component: 'UserIcon' },
+      { name: '設定 Settings', component: 'CogIcon' },
+      { name: '文件 Document', component: 'DocumentIcon' },
+      { name: '資料夾 Folder', component: 'FolderIcon' },
+      { name: '愛心 Heart', component: 'HeartIcon' },
+      { name: '星星 Star', component: 'StarIcon' },
+      { name: '鈴鐺 Bell', component: 'BellIcon' },
+      { name: '聊天 Chat', component: 'ChatIcon' },
+      { name: '加號 Plus', component: 'PlusIcon' },
+      { name: '減號 Minus', component: 'MinusIcon' },
+      { name: '關閉 Close', component: 'XIcon' },
+      { name: '信件 Mail', component: 'MailIcon' },
+      { name: '電話 Phone', component: 'PhoneIcon' },
+      { name: '日曆 Calendar', component: 'CalendarIcon' },
+      { name: '時鐘 Clock', component: 'ClockIcon' },
+      { name: '搜尋 Search', component: 'SearchIcon' },
+      { name: '眼睛 Eye', component: 'EyeIcon' },
+      { name: '編輯 Pencil', component: 'PencilIcon' },
+      { name: '刪除 Trash', component: 'TrashIcon' },
+      { name: '下載 Download', component: 'DownloadIcon' },
+      { name: '上傳 Upload', component: 'UploadIcon' },
+      { name: '分享 Share', component: 'ShareIcon' },
+      { name: '書籤 Bookmark', component: 'BookmarkIcon' },
+      { name: '旗幟 Flag', component: 'FlagIcon' },
+      { name: '禮物 Gift', component: 'GiftIcon' },
+      { name: '燈泡 Light Bulb', component: 'LightBulbIcon' },
+      { name: '火焰 Fire', component: 'FireIcon' },
+      { name: '盾牌 Shield Check', component: 'ShieldCheckIcon' },
+      { name: '驚嘆號 Exclamation', component: 'ExclamationIcon' }
     ]
     
-    // Bootstrap Icons 類別列表
-    const bootstrapIcons = [
-      { name: 'Person', class: 'bi bi-person' },
-      { name: 'Gear', class: 'bi bi-gear' },
-      { name: 'House', class: 'bi bi-house' },
-      { name: 'File Text', class: 'bi bi-file-text' },
-      { name: 'Folder', class: 'bi bi-folder' },
-      { name: 'Tag', class: 'bi bi-tag' },
-      { name: 'Star', class: 'bi bi-star' },
-      { name: 'Heart', class: 'bi bi-heart' },
-      { name: 'Lightbulb', class: 'bi bi-lightbulb' },
-      { name: 'Shield Check', class: 'bi bi-shield-check' },
-      { name: 'Bell', class: 'bi bi-bell' },
-      { name: 'Chat', class: 'bi bi-chat' },
-      { name: 'Envelope', class: 'bi bi-envelope' },
-      { name: 'Telephone', class: 'bi bi-telephone' },
-      { name: 'Geo Alt', class: 'bi bi-geo-alt' },
-      { name: 'Calendar', class: 'bi bi-calendar' },
-      { name: 'Clock', class: 'bi bi-clock' },
-      { name: 'Search', class: 'bi bi-search' },
-      { name: 'Plus', class: 'bi bi-plus' },
-      { name: 'Check', class: 'bi bi-check' },
-      { name: 'X', class: 'bi bi-x' },
-      { name: 'Arrow Right', class: 'bi bi-arrow-right' },
-      { name: 'Download', class: 'bi bi-download' },
-      { name: 'Upload', class: 'bi bi-upload' },
-      { name: 'Share', class: 'bi bi-share' },
-      { name: 'Eye', class: 'bi bi-eye' },
-      { name: 'Pencil', class: 'bi bi-pencil' },
-      { name: 'Trash', class: 'bi bi-trash' },
-      { name: 'Files', class: 'bi bi-files' },
-      { name: 'Bookmark', class: 'bi bi-bookmark' }
-    ]
+    // 使用完整的圖標清單
+    // bootstrapIcons 和 emojis 從 iconSets.js 導入
     
-    // Emoji 列表
-    const emojis = [
-      { char: '😀', name: 'Grinning Face' },
-      { char: '😃', name: 'Grinning Face with Big Eyes' },
-      { char: '😄', name: 'Grinning Face with Smiling Eyes' },
-      { char: '😊', name: 'Smiling Face with Smiling Eyes' },
-      { char: '😍', name: 'Smiling Face with Heart-Eyes' },
-      { char: '🤔', name: 'Thinking Face' },
-      { char: '😎', name: 'Smiling Face with Sunglasses' },
-      { char: '🚀', name: 'Rocket' },
-      { char: '⭐', name: 'Star' },
-      { char: '❤️', name: 'Red Heart' },
-      { char: '💡', name: 'Light Bulb' },
-      { char: '🎯', name: 'Direct Hit' },
-      { char: '🏆', name: 'Trophy' },
-      { char: '🎨', name: 'Artist Palette' },
-      { char: '📚', name: 'Books' },
-      { char: '💼', name: 'Briefcase' },
-      { char: '🏠', name: 'House' },
-      { char: '🌟', name: 'Glowing Star' },
-      { char: '🔥', name: 'Fire' },
-      { char: '⚡', name: 'Lightning' },
-      { char: '🌈', name: 'Rainbow' },
-      { char: '🎪', name: 'Circus Tent' },
-      { char: '🎭', name: 'Performing Arts' },
-      { char: '🎵', name: 'Musical Note' },
-      { char: '📱', name: 'Mobile Phone' },
-      { char: '💻', name: 'Laptop' },
-      { char: '⌚', name: 'Watch' },
-      { char: '📷', name: 'Camera' },
-      { char: '🎮', name: 'Video Game' },
-      { char: '🧩', name: 'Puzzle Piece' },
-      { char: '🎲', name: 'Dice' },
-      { char: '🏃', name: 'Runner' }
-    ]
+    const calculatePosition = () => {
+      if (!iconPickerRef.value) return
+      
+      const rect = iconPickerRef.value.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      const viewportWidth = window.innerWidth
+      
+      // 彈窗預設尺寸
+      const panelWidth = 320
+      const panelHeight = 400
+      
+      let top = rect.bottom + 5
+      let left = rect.left
+      
+      // 優先顯示在下方，只有在下方空間真的不足時才顯示在上方
+      const spaceBelow = viewportHeight - rect.bottom
+      const spaceAbove = rect.top
+      
+      if (spaceBelow < panelHeight && spaceAbove > spaceBelow) {
+        // 只有當上方空間比下方多時才顯示在上方
+        top = rect.top - panelHeight - 5
+      } else if (spaceBelow < panelHeight) {
+        // 如果下方空間不足但仍要顯示在下方，調整高度
+        top = rect.bottom + 5
+      }
+      
+      // 檢查是否超出視窗右邊
+      if (left + panelWidth > viewportWidth) {
+        left = viewportWidth - panelWidth - 10
+      }
+      
+      // 檢查是否超出視窗左邊
+      if (left < 10) {
+        left = 10
+      }
+      
+      panelPosition.value = {
+        top: `${top}px`,
+        left: `${left}px`
+      }
+    }
     
-    const togglePicker = () => {
+    const togglePicker = async () => {
       isOpen.value = !isOpen.value
-      if (isOpen.value && props.iconType) {
-        activeTab.value = props.iconType
+      if (isOpen.value) {
+        await nextTick()
+        calculatePosition()
       }
     }
     
@@ -312,12 +308,15 @@ export default {
     
     const selectIcon = (icon, type) => {
       selectedIcon.value = icon
+      iconType.value = type
       emit('update:modelValue', icon)
       emit('update:iconType', type)
+      closePicker()
     }
     
     const clearIcon = () => {
       selectedIcon.value = ''
+      iconType.value = ''
       emit('update:modelValue', '')
       emit('update:iconType', '')
       closePicker()
@@ -348,43 +347,65 @@ export default {
       if (!searchQuery.value) return emojis
       const query = searchQuery.value.toLowerCase()
       return emojis.filter(emoji => 
-        emoji.name.toLowerCase().includes(query) ||
-        emoji.char.includes(query)
+        emoji.name.toLowerCase().includes(query)
       )
+    })
+    
+    // 檢查搜尋結果是否為空
+    const isSearchEmpty = computed(() => {
+      if (!searchQuery.value) return false
+      
+      if (activeTab.value === 'heroicons') {
+        return filteredHeroicons.value.length === 0
+      } else if (activeTab.value === 'bootstrap') {
+        return filteredBootstrapIcons.value.length === 0
+      } else if (activeTab.value === 'emoji') {
+        return filteredEmojis.value.length === 0
+      }
+      
+      return false
     })
     
     // 點擊外部關閉
     const handleClickOutside = (event) => {
-      if (iconPanel.value && !iconPanel.value.contains(event.target)) {
+      if (iconPanel.value && !iconPanel.value.contains(event.target) &&
+          iconPickerRef.value && !iconPickerRef.value.contains(event.target)) {
         closePicker()
       }
     }
     
     onMounted(() => {
       document.addEventListener('click', handleClickOutside)
-      selectedIcon.value = props.modelValue
-      if (props.iconType) {
-        activeTab.value = props.iconType
-      }
+      window.addEventListener('resize', () => {
+        if (isOpen.value) calculatePosition()
+      })
+      window.addEventListener('scroll', () => {
+        if (isOpen.value) calculatePosition()
+      })
     })
     
     onUnmounted(() => {
       document.removeEventListener('click', handleClickOutside)
+      window.removeEventListener('resize', calculatePosition)
+      window.removeEventListener('scroll', calculatePosition)
     })
     
     return {
       isOpen,
       iconPanel,
-      activeTab,
-      selectedIcon,
+      iconPickerRef,
       searchQuery,
-      iconTabs,
+      activeTab,
+      panelPosition,
+      selectedIcon,
+      iconType,
       heroicons,
-      bootstrapIcons,
-      emojis,
+      bootstrapIcons: bootstrapIcons,
+      emojis: emojis,
       filteredHeroicons,
       filteredBootstrapIcons,
       filteredEmojis,
+      isSearchEmpty,
       togglePicker,
       closePicker,
       selectIcon,
@@ -398,9 +419,5 @@ export default {
 <style scoped>
 .icon-picker {
   @apply relative inline-block;
-}
-
-.icon-picker-open .absolute {
-  @apply block;
 }
 </style>
