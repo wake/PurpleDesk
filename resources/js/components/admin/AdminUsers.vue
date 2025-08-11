@@ -59,10 +59,10 @@
               所屬組織
             </th>
             <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              註冊時間
+              狀態
             </th>
             <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              狀態
+              註冊時間
             </th>
             <th class="w-1/6 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
@@ -110,13 +110,13 @@
               </div>
               <span v-else class="text-gray-500">無</span>
             </td>
-            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ formatDate(user.created_at) }}
-            </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                 啟用
               </span>
+            </td>
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ formatDate(user.created_at) }}
             </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button 
