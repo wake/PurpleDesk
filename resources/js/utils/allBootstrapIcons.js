@@ -877,6 +877,7 @@ export const allBootstrapIcons = [
   { name: 'Eyedropper', class: 'bi-eyedropper' },
   { name: 'Eyeglasses', class: 'bi-eyeglasses' },
   
-  // F-Z sections would continue...
-  // 為了簡潔，這裡只展示部分，實際應包含所有 1800+ 個圖標
+  
+  // Importing F-Z sections
+  ...require('./allBootstrapIconsComplete.js').allBootstrapIconsFtoZ
 ]
