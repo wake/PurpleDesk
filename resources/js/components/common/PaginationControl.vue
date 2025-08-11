@@ -73,10 +73,12 @@
           :disabled="currentPage <= 1"
           class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
         >
-          <svg v-if="loadingPage !== currentPage - 1" class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div v-if="loadingPage === currentPage - 1" class="absolute inset-0 flex items-center justify-center">
+            <div class="animate-spin h-6 w-6 border-2 border-primary-300 rounded-full border-t-transparent opacity-40"></div>
+          </div>
+          <svg class="relative z-10 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
-          <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
         </button>
         
         <!-- 頁碼按鈕 -->
@@ -93,8 +95,10 @@
                 : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
             ]"
           >
-            <span v-if="loadingPage !== page">{{ page }}</span>
-            <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
+            <div v-if="loadingPage === page" class="absolute inset-0 flex items-center justify-center">
+              <div class="animate-spin h-6 w-6 border-2 border-primary-300 rounded-full border-t-transparent opacity-40"></div>
+            </div>
+            <span class="relative z-10">{{ page }}</span>
           </button>
         </template>
         
@@ -113,8 +117,10 @@
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
-              <span v-if="loadingPage !== page">{{ page }}</span>
-              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
+              <div v-if="loadingPage === page" class="absolute inset-0 flex items-center justify-center">
+                <div class="animate-spin h-6 w-6 border-2 border-primary-300 rounded-full border-t-transparent opacity-40"></div>
+              </div>
+              <span class="relative z-10">{{ page }}</span>
             </button>
             <span class="relative inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400">
               ...
@@ -123,8 +129,10 @@
               @click="changePage(pagination.last_page)"
               class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
-              <span v-if="loadingPage !== pagination.last_page">{{ pagination.last_page }}</span>
-              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
+              <div v-if="loadingPage === pagination.last_page" class="absolute inset-0 flex items-center justify-center">
+                <div class="animate-spin h-6 w-6 border-2 border-primary-300 rounded-full border-t-transparent opacity-40"></div>
+              </div>
+              <span class="relative z-10">{{ pagination.last_page }}</span>
             </button>
           </template>
           
@@ -134,8 +142,10 @@
               @click="changePage(1)"
               class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
-              <span v-if="loadingPage !== 1">1</span>
-              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
+              <div v-if="loadingPage === 1" class="absolute inset-0 flex items-center justify-center">
+                <div class="animate-spin h-6 w-6 border-2 border-primary-300 rounded-full border-t-transparent opacity-40"></div>
+              </div>
+              <span class="relative z-10">1</span>
             </button>
             <span class="relative inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400">
               ...
@@ -151,8 +161,10 @@
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
-              <span v-if="loadingPage !== pagination.last_page - 5 + page">{{ pagination.last_page - 5 + page }}</span>
-              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
+              <div v-if="loadingPage === pagination.last_page - 5 + page" class="absolute inset-0 flex items-center justify-center">
+                <div class="animate-spin h-6 w-6 border-2 border-primary-300 rounded-full border-t-transparent opacity-40"></div>
+              </div>
+              <span class="relative z-10">{{ pagination.last_page - 5 + page }}</span>
             </button>
           </template>
           
@@ -162,8 +174,10 @@
               @click="changePage(1)"
               class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
-              <span v-if="loadingPage !== 1">1</span>
-              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
+              <div v-if="loadingPage === 1" class="absolute inset-0 flex items-center justify-center">
+                <div class="animate-spin h-6 w-6 border-2 border-primary-300 rounded-full border-t-transparent opacity-40"></div>
+              </div>
+              <span class="relative z-10">1</span>
             </button>
             <span class="relative inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400">
               ...
@@ -179,8 +193,10 @@
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
-              <span v-if="loadingPage !== page">{{ page }}</span>
-              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
+              <div v-if="loadingPage === page" class="absolute inset-0 flex items-center justify-center">
+                <div class="animate-spin h-6 w-6 border-2 border-primary-300 rounded-full border-t-transparent opacity-40"></div>
+              </div>
+              <span class="relative z-10">{{ page }}</span>
             </button>
             <span class="relative inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400">
               ...
@@ -189,8 +205,10 @@
               @click="changePage(pagination.last_page)"
               class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
-              <span v-if="loadingPage !== pagination.last_page">{{ pagination.last_page }}</span>
-              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
+              <div v-if="loadingPage === pagination.last_page" class="absolute inset-0 flex items-center justify-center">
+                <div class="animate-spin h-6 w-6 border-2 border-primary-300 rounded-full border-t-transparent opacity-40"></div>
+              </div>
+              <span class="relative z-10">{{ pagination.last_page }}</span>
             </button>
           </template>
         </template>
@@ -201,10 +219,12 @@
           :disabled="currentPage >= pagination.last_page"
           class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
         >
-          <svg v-if="loadingPage !== currentPage + 1" class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div v-if="loadingPage === currentPage + 1" class="absolute inset-0 flex items-center justify-center">
+            <div class="animate-spin h-6 w-6 border-2 border-primary-300 rounded-full border-t-transparent opacity-40"></div>
+          </div>
+          <svg class="relative z-10 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
-          <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
         </button>
         </nav>
         
