@@ -27,24 +27,40 @@
     <div class="hidden sm:flex sm:items-center sm:justify-center">
       <!-- 整合的分頁控制區塊 -->
       <div class="flex items-center justify-between bg-gray-50 px-4 py-2 rounded-lg min-w-96">
-        <!-- 左側：每頁數量連結 -->
-        <div class="flex items-center space-x-1">
+        <!-- 左側：每頁數量下拉（自訂樣式） -->
+        <div class="flex items-center">
           <span class="text-sm text-gray-600">每頁</span>
-          <template v-for="(option, index) in perPageOptions" :key="option">
+          <div class="relative ml-1">
             <button
-              @click="$emit('per-page-changed', option)"
-              :class="[
-                'text-sm transition-colors',
-                option === pagination.per_page
-                  ? 'text-primary-600 font-medium'
-                  : 'text-gray-500 hover:text-gray-700'
-              ]"
+              @click="showPerPageDropdown = !showPerPageDropdown"
+              class="inline-flex items-center text-sm text-primary-600 border-b border-primary-600 hover:text-primary-700 hover:border-primary-700 transition-colors"
             >
-              {{ option }}
+              {{ pagination.per_page }}
+              <svg class="ml-0.5 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
-            <span v-if="index < perPageOptions.length - 1" class="text-gray-400">/</span>
-          </template>
-          <span class="text-sm text-gray-600">筆</span>
+            
+            <!-- 下拉選單 -->
+            <div
+              v-if="showPerPageDropdown"
+              @click.stop
+              class="absolute left-0 mt-1 w-16 bg-white rounded-md shadow-lg z-10 border border-gray-200"
+            >
+              <button
+                v-for="option in perPageOptions"
+                :key="option"
+                @click="selectPerPage(option)"
+                :class="[
+                  'block w-full text-left px-3 py-2 text-sm hover:bg-gray-100',
+                  option === pagination.per_page ? 'text-primary-600 font-medium bg-gray-50' : 'text-gray-700'
+                ]"
+              >
+                {{ option }}
+              </button>
+            </div>
+          </div>
+          <span class="text-sm text-gray-600 ml-1">筆</span>
         </div>
         
         <!-- 中間：分頁按鈕 -->
@@ -210,10 +226,33 @@ export default {
     }
   },
   emits: ['page-changed', 'per-page-changed'],
+  data() {
+    return {
+      showPerPageDropdown: false
+    }
+  },
   computed: {
     currentPage() {
       return this.pagination.current_page
     }
+  },
+  methods: {
+    selectPerPage(value) {
+      this.$emit('per-page-changed', value)
+      this.showPerPageDropdown = false
+    },
+    handleClickOutside(event) {
+      if (!this.$el.contains(event.target)) {
+        this.showPerPageDropdown = false
+      }
+    }
+  },
+  mounted() {
+    // 點擊外部關閉下拉選單
+    document.addEventListener('click', this.handleClickOutside)
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside)
   }
 }
 </script>
