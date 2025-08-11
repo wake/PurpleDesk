@@ -122,7 +122,135 @@ export const uiIcons = [
   { name: 'UI Checks', class: 'bi-ui-checks' },
   { name: 'UI Checks Grid', class: 'bi-ui-checks-grid' },
   { name: 'UI Radios', class: 'bi-ui-radios' },
-  { name: 'UI Radios Grid', class: 'bi-ui-radios-grid' }
+  { name: 'UI Radios Grid', class: 'bi-ui-radios-grid' },
+  
+  // 更多選單類型
+  { name: 'Menu App', class: 'bi-menu-app' },
+  { name: 'Menu App Fill', class: 'bi-menu-app-fill' },
+  { name: 'Menu Down', class: 'bi-menu-down' },
+  { name: 'Menu Up', class: 'bi-menu-up' },
+  
+  // 卡片與面板
+  { name: 'Card Checklist', class: 'bi-card-checklist' },
+  { name: 'Card Heading', class: 'bi-card-heading' },
+  { name: 'Card Image', class: 'bi-card-image' },
+  { name: 'Card List', class: 'bi-card-list' },
+  { name: 'Card Text', class: 'bi-card-text' },
+  
+  // 徽章與標記
+  { name: 'Badge 3d', class: 'bi-badge-3d' },
+  { name: 'Badge 3d Fill', class: 'bi-badge-3d-fill' },
+  { name: 'Badge 4k', class: 'bi-badge-4k' },
+  { name: 'Badge 4k Fill', class: 'bi-badge-4k-fill' },
+  { name: 'Badge 8k', class: 'bi-badge-8k' },
+  { name: 'Badge 8k Fill', class: 'bi-badge-8k-fill' },
+  { name: 'Badge Ad', class: 'bi-badge-ad' },
+  { name: 'Badge Ad Fill', class: 'bi-badge-ad-fill' },
+  { name: 'Badge Ar', class: 'bi-badge-ar' },
+  { name: 'Badge Ar Fill', class: 'bi-badge-ar-fill' },
+  { name: 'Badge Cc', class: 'bi-badge-cc' },
+  { name: 'Badge Cc Fill', class: 'bi-badge-cc-fill' },
+  { name: 'Badge Hd', class: 'bi-badge-hd' },
+  { name: 'Badge Hd Fill', class: 'bi-badge-hd-fill' },
+  { name: 'Badge Sd', class: 'bi-badge-sd' },
+  { name: 'Badge Sd Fill', class: 'bi-badge-sd-fill' },
+  { name: 'Badge Tm', class: 'bi-badge-tm' },
+  { name: 'Badge Tm Fill', class: 'bi-badge-tm-fill' },
+  { name: 'Badge Vo', class: 'bi-badge-vo' },
+  { name: 'Badge Vo Fill', class: 'bi-badge-vo-fill' },
+  { name: 'Badge Vr', class: 'bi-badge-vr' },
+  { name: 'Badge Vr Fill', class: 'bi-badge-vr-fill' },
+  { name: 'Badge Wc', class: 'bi-badge-wc' },
+  { name: 'Badge Wc Fill', class: 'bi-badge-wc-fill' },
+  
+  // 分割與間隔
+  { name: 'Border', class: 'bi-border' },
+  { name: 'Border All', class: 'bi-border-all' },
+  { name: 'Border Bottom', class: 'bi-border-bottom' },
+  { name: 'Border Center', class: 'bi-border-center' },
+  { name: 'Border Inner', class: 'bi-border-inner' },
+  { name: 'Border Left', class: 'bi-border-left' },
+  { name: 'Border Middle', class: 'bi-border-middle' },
+  { name: 'Border Outer', class: 'bi-border-outer' },
+  { name: 'Border Right', class: 'bi-border-right' },
+  { name: 'Border Style', class: 'bi-border-style' },
+  { name: 'Border Top', class: 'bi-border-top' },
+  { name: 'Border Width', class: 'bi-border-width' },
+  
+  // 彈跳視窗
+  { name: 'Pip', class: 'bi-pip' },
+  { name: 'Pip Fill', class: 'bi-pip-fill' },
+  
+  // 分欄版面
+  { name: 'Columns', class: 'bi-columns' },
+  { name: 'Columns Gap', class: 'bi-columns-gap' },
+  
+  // 快速鍵與指令
+  { name: 'Command', class: 'bi-command' },
+  { name: 'Option', class: 'bi-option' },
+  { name: 'Alt', class: 'bi-alt' },
+  { name: 'Shift', class: 'bi-shift' },
+  { name: 'Shift Fill', class: 'bi-shift-fill' },
+  
+  // 圖層與堆疊
+  { name: 'Layers', class: 'bi-layers' },
+  { name: 'Layers Fill', class: 'bi-layers-fill' },
+  { name: 'Layers Half', class: 'bi-layers-half' },
+  { name: 'Stack', class: 'bi-stack' },
+  { name: 'Stack Overflow', class: 'bi-stack-overflow' },
+  
+  // 選單條與工具列
+  { name: 'Segmented Nav', class: 'bi-segmented-nav' },
+  
+  // 彈出與下拉
+  { name: 'Box Arrow In Down', class: 'bi-box-arrow-in-down' },
+  { name: 'Box Arrow In Down Left', class: 'bi-box-arrow-in-down-left' },
+  { name: 'Box Arrow In Down Right', class: 'bi-box-arrow-in-down-right' },
+  { name: 'Box Arrow In Left', class: 'bi-box-arrow-in-left' },
+  { name: 'Box Arrow In Right', class: 'bi-box-arrow-in-right' },
+  { name: 'Box Arrow In Up', class: 'bi-box-arrow-in-up' },
+  { name: 'Box Arrow In Up Left', class: 'bi-box-arrow-in-up-left' },
+  { name: 'Box Arrow In Up Right', class: 'bi-box-arrow-in-up-right' },
+  
+  // 圖釘與固定
+  { name: 'Pin', class: 'bi-pin' },
+  { name: 'Pin Angle', class: 'bi-pin-angle' },
+  { name: 'Pin Angle Fill', class: 'bi-pin-angle-fill' },
+  { name: 'Pin Fill', class: 'bi-pin-fill' },
+  
+  // 貼紙與便條
+  { name: 'Stickies', class: 'bi-stickies' },
+  { name: 'Stickies Fill', class: 'bi-stickies-fill' },
+  { name: 'Sticky', class: 'bi-sticky' },
+  { name: 'Sticky Fill', class: 'bi-sticky-fill' },
+  
+  // 點選與手勢
+  { name: 'Hand Index', class: 'bi-hand-index' },
+  { name: 'Hand Index Fill', class: 'bi-hand-index-fill' },
+  { name: 'Hand Index Thumb', class: 'bi-hand-index-thumb' },
+  { name: 'Hand Index Thumb Fill', class: 'bi-hand-index-thumb-fill' },
+  { name: 'Hand Thumbs Down', class: 'bi-hand-thumbs-down' },
+  { name: 'Hand Thumbs Down Fill', class: 'bi-hand-thumbs-down-fill' },
+  { name: 'Hand Thumbs Up', class: 'bi-hand-thumbs-up' },
+  { name: 'Hand Thumbs Up Fill', class: 'bi-hand-thumbs-up-fill' },
+  
+  // 分頁指示
+  { name: 'Caret Down', class: 'bi-caret-down' },
+  { name: 'Caret Down Fill', class: 'bi-caret-down-fill' },
+  { name: 'Caret Down Square', class: 'bi-caret-down-square' },
+  { name: 'Caret Down Square Fill', class: 'bi-caret-down-square-fill' },
+  { name: 'Caret Left', class: 'bi-caret-left' },
+  { name: 'Caret Left Fill', class: 'bi-caret-left-fill' },
+  { name: 'Caret Left Square', class: 'bi-caret-left-square' },
+  { name: 'Caret Left Square Fill', class: 'bi-caret-left-square-fill' },
+  { name: 'Caret Right', class: 'bi-caret-right' },
+  { name: 'Caret Right Fill', class: 'bi-caret-right-fill' },
+  { name: 'Caret Right Square', class: 'bi-caret-right-square' },
+  { name: 'Caret Right Square Fill', class: 'bi-caret-right-square-fill' },
+  { name: 'Caret Up', class: 'bi-caret-up' },
+  { name: 'Caret Up Fill', class: 'bi-caret-up-fill' },
+  { name: 'Caret Up Square', class: 'bi-caret-up-square' },
+  { name: 'Caret Up Square Fill', class: 'bi-caret-up-square-fill' }
 ]
 
 export const categoryInfo = {

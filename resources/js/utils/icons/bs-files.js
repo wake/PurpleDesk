@@ -95,15 +95,6 @@ export const filesIcons = [
   // 資料夾
   { name: 'Folder', class: 'bi-folder' },
   { name: 'Folder Fill', class: 'bi-folder-fill' },
-  { name: 'Folder2', class: 'bi-folder2' },
-  { name: 'Folder2 Open', class: 'bi-folder2-open' },
-  { name: 'Folder Check', class: 'bi-folder-check' },
-  { name: 'Folder Fill', class: 'bi-folder-fill' },
-  { name: 'Folder Minus', class: 'bi-folder-minus' },
-  { name: 'Folder Plus', class: 'bi-folder-plus' },
-  { name: 'Folder Symlink', class: 'bi-folder-symlink' },
-  { name: 'Folder Symlink Fill', class: 'bi-folder-symlink-fill' },
-  { name: 'Folder X', class: 'bi-folder-x' },
   
   // 圖像檔案
   { name: 'File Earmark Image', class: 'bi-file-earmark-image' },
@@ -145,7 +136,162 @@ export const filesIcons = [
   
   // 下載上傳
   { name: 'Download', class: 'bi-download' },
-  { name: 'Upload', class: 'bi-upload' }
+  { name: 'Upload', class: 'bi-upload' },
+  
+  // 壓縮檔案
+  { name: 'File Zip', class: 'bi-file-zip' },
+  { name: 'File Zip Fill', class: 'bi-file-zip-fill' },
+  
+  // 影片檔案
+  { name: 'File Earmark Play', class: 'bi-file-earmark-play' },
+  { name: 'File Earmark Play Fill', class: 'bi-file-earmark-play-fill' },
+  { name: 'File Play', class: 'bi-file-play' },
+  { name: 'File Play Fill', class: 'bi-file-play-fill' },
+  { name: 'Collection Play', class: 'bi-collection-play' },
+  { name: 'Collection Play Fill', class: 'bi-collection-play-fill' },
+  
+  // 資料夾變體
+  { name: 'Folder2', class: 'bi-folder2' },
+  { name: 'Folder2 Open', class: 'bi-folder2-open' },
+  { name: 'Folder Check', class: 'bi-folder-check' },
+  { name: 'Folder Minus', class: 'bi-folder-minus' },
+  { name: 'Folder Plus', class: 'bi-folder-plus' },
+  { name: 'Folder X', class: 'bi-folder-x' },
+  { name: 'Folder Symlink', class: 'bi-folder-symlink' },
+  { name: 'Folder Symlink Fill', class: 'bi-folder-symlink-fill' },
+  
+  // 雲端儲存
+  { name: 'Cloud', class: 'bi-cloud' },
+  { name: 'Cloud Fill', class: 'bi-cloud-fill' },
+  { name: 'Cloud Arrow Down', class: 'bi-cloud-arrow-down' },
+  { name: 'Cloud Arrow Down Fill', class: 'bi-cloud-arrow-down-fill' },
+  { name: 'Cloud Arrow Up', class: 'bi-cloud-arrow-up' },
+  { name: 'Cloud Arrow Up Fill', class: 'bi-cloud-arrow-up-fill' },
+  { name: 'Cloud Check', class: 'bi-cloud-check' },
+  { name: 'Cloud Check Fill', class: 'bi-cloud-check-fill' },
+  { name: 'Cloud Download', class: 'bi-cloud-download' },
+  { name: 'Cloud Download Fill', class: 'bi-cloud-download-fill' },
+  { name: 'Cloud Upload', class: 'bi-cloud-upload' },
+  { name: 'Cloud Upload Fill', class: 'bi-cloud-upload-fill' },
+  { name: 'Cloud Minus', class: 'bi-cloud-minus' },
+  { name: 'Cloud Minus Fill', class: 'bi-cloud-minus-fill' },
+  { name: 'Cloud Plus', class: 'bi-cloud-plus' },
+  { name: 'Cloud Plus Fill', class: 'bi-cloud-plus-fill' },
+  { name: 'Cloud Slash', class: 'bi-cloud-slash' },
+  { name: 'Cloud Slash Fill', class: 'bi-cloud-slash-fill' },
+  
+  // 硬碟與儲存裝置
+  { name: 'Hdd', class: 'bi-hdd' },
+  { name: 'Hdd Fill', class: 'bi-hdd-fill' },
+  { name: 'Hdd Network', class: 'bi-hdd-network' },
+  { name: 'Hdd Network Fill', class: 'bi-hdd-network-fill' },
+  { name: 'Hdd Rack', class: 'bi-hdd-rack' },
+  { name: 'Hdd Rack Fill', class: 'bi-hdd-rack-fill' },
+  { name: 'Hdd Stack', class: 'bi-hdd-stack' },
+  { name: 'Hdd Stack Fill', class: 'bi-hdd-stack-fill' },
+  { name: 'Device Hdd', class: 'bi-device-hdd' },
+  { name: 'Device Hdd Fill', class: 'bi-device-hdd-fill' },
+  { name: 'Device Ssd', class: 'bi-device-ssd' },
+  { name: 'Device Ssd Fill', class: 'bi-device-ssd-fill' },
+  
+  // USB 與外接儲存
+  { name: 'Usb', class: 'bi-usb' },
+  { name: 'Usb C', class: 'bi-usb-c' },
+  { name: 'Usb C Fill', class: 'bi-usb-c-fill' },
+  { name: 'Usb Drive', class: 'bi-usb-drive' },
+  { name: 'Usb Drive Fill', class: 'bi-usb-drive-fill' },
+  { name: 'Usb Micro', class: 'bi-usb-micro' },
+  { name: 'Usb Micro Fill', class: 'bi-usb-micro-fill' },
+  { name: 'Usb Mini', class: 'bi-usb-mini' },
+  { name: 'Usb Mini Fill', class: 'bi-usb-mini-fill' },
+  { name: 'Usb Symbol', class: 'bi-usb-symbol' },
+  
+  // 書籍與文件
+  { name: 'Book', class: 'bi-book' },
+  { name: 'Book Fill', class: 'bi-book-fill' },
+  { name: 'Book Half', class: 'bi-book-half' },
+  { name: 'Books', class: 'bi-books' },
+  { name: 'Journal', class: 'bi-journal' },
+  { name: 'Journal Album', class: 'bi-journal-album' },
+  { name: 'Journal Arrow Down', class: 'bi-journal-arrow-down' },
+  { name: 'Journal Arrow Up', class: 'bi-journal-arrow-up' },
+  { name: 'Journals', class: 'bi-journals' },
+  
+  // 收藏與集合
+  { name: 'Collection', class: 'bi-collection' },
+  { name: 'Collection Fill', class: 'bi-collection-fill' },
+  { name: 'Stack', class: 'bi-stack' },
+  { name: 'Stack Overflow', class: 'bi-stack-overflow' },
+  
+  // 筆記本與日誌
+  { name: 'Journal Text', class: 'bi-journal-text' },
+  { name: 'Journal Bookmark', class: 'bi-journal-bookmark' },
+  { name: 'Journal Bookmark Fill', class: 'bi-journal-bookmark-fill' },
+  { name: 'Journal Check', class: 'bi-journal-check' },
+  { name: 'Journal Code', class: 'bi-journal-code' },
+  { name: 'Journal Medical', class: 'bi-journal-medical' },
+  { name: 'Journal Minus', class: 'bi-journal-minus' },
+  { name: 'Journal Plus', class: 'bi-journal-plus' },
+  { name: 'Journal Richtext', class: 'bi-journal-richtext' },
+  { name: 'Journal X', class: 'bi-journal-x' },
+  
+  // 表格與試算表
+  { name: 'Table', class: 'bi-table' },
+  { name: 'Border', class: 'bi-border' },
+  { name: 'Border All', class: 'bi-border-all' },
+  { name: 'Border Bottom', class: 'bi-border-bottom' },
+  { name: 'Border Center', class: 'bi-border-center' },
+  { name: 'Border Inner', class: 'bi-border-inner' },
+  { name: 'Border Left', class: 'bi-border-left' },
+  { name: 'Border Middle', class: 'bi-border-middle' },
+  { name: 'Border Outer', class: 'bi-border-outer' },
+  { name: 'Border Right', class: 'bi-border-right' },
+  { name: 'Border Style', class: 'bi-border-style' },
+  { name: 'Border Top', class: 'bi-border-top' },
+  { name: 'Border Width', class: 'bi-border-width' },
+  
+  // 簡報與投影片
+  { name: 'Easel', class: 'bi-easel' },
+  { name: 'Easel Fill', class: 'bi-easel-fill' },
+  { name: 'Easel2', class: 'bi-easel2' },
+  { name: 'Easel2 Fill', class: 'bi-easel2-fill' },
+  { name: 'Easel3', class: 'bi-easel3' },
+  { name: 'Easel3 Fill', class: 'bi-easel3-fill' },
+  { name: 'Projection Screen', class: 'bi-projector' },
+  { name: 'Projection Screen Fill', class: 'bi-projector-fill' },
+  
+  // 剪貼簿與暫存
+  { name: 'Clipboard', class: 'bi-clipboard' },
+  { name: 'Clipboard Check', class: 'bi-clipboard-check' },
+  { name: 'Clipboard Check Fill', class: 'bi-clipboard-check-fill' },
+  { name: 'Clipboard Data', class: 'bi-clipboard-data' },
+  { name: 'Clipboard Data Fill', class: 'bi-clipboard-data-fill' },
+  { name: 'Clipboard Fill', class: 'bi-clipboard-fill' },
+  { name: 'Clipboard Heart', class: 'bi-clipboard-heart' },
+  { name: 'Clipboard Heart Fill', class: 'bi-clipboard-heart-fill' },
+  { name: 'Clipboard Minus', class: 'bi-clipboard-minus' },
+  { name: 'Clipboard Minus Fill', class: 'bi-clipboard-minus-fill' },
+  { name: 'Clipboard Plus', class: 'bi-clipboard-plus' },
+  { name: 'Clipboard Plus Fill', class: 'bi-clipboard-plus-fill' },
+  { name: 'Clipboard Pulse', class: 'bi-clipboard-pulse' },
+  { name: 'Clipboard X', class: 'bi-clipboard-x' },
+  { name: 'Clipboard X Fill', class: 'bi-clipboard-x-fill' },
+  { name: 'Clipboard2', class: 'bi-clipboard2' },
+  { name: 'Clipboard2 Check', class: 'bi-clipboard2-check' },
+  { name: 'Clipboard2 Check Fill', class: 'bi-clipboard2-check-fill' },
+  { name: 'Clipboard2 Data', class: 'bi-clipboard2-data' },
+  { name: 'Clipboard2 Data Fill', class: 'bi-clipboard2-data-fill' },
+  { name: 'Clipboard2 Fill', class: 'bi-clipboard2-fill' },
+  { name: 'Clipboard2 Heart', class: 'bi-clipboard2-heart' },
+  { name: 'Clipboard2 Heart Fill', class: 'bi-clipboard2-heart-fill' },
+  { name: 'Clipboard2 Minus', class: 'bi-clipboard2-minus' },
+  { name: 'Clipboard2 Minus Fill', class: 'bi-clipboard2-minus-fill' },
+  { name: 'Clipboard2 Plus', class: 'bi-clipboard2-plus' },
+  { name: 'Clipboard2 Plus Fill', class: 'bi-clipboard2-plus-fill' },
+  { name: 'Clipboard2 Pulse', class: 'bi-clipboard2-pulse' },
+  { name: 'Clipboard2 Pulse Fill', class: 'bi-clipboard2-pulse-fill' },
+  { name: 'Clipboard2 X', class: 'bi-clipboard2-x' },
+  { name: 'Clipboard2 X Fill', class: 'bi-clipboard2-x-fill' }
 ]
 
 export const categoryInfo = {

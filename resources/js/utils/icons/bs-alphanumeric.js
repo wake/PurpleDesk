@@ -50,6 +50,15 @@ export const alphanumericIcons = [
   { name: '123', class: 'bi-123' },
   { name: 'Alphabet', class: 'bi-alphabet' },
   { name: 'Alphabet Uppercase', class: 'bi-alphabet-uppercase' },
+  
+  // 鍵盤與輸入
+  { name: 'Keyboard', class: 'bi-keyboard' },
+  { name: 'Keyboard Fill', class: 'bi-keyboard-fill' },
+  { name: 'Command', class: 'bi-command' },
+  { name: 'Option', class: 'bi-option' },
+  { name: 'Alt', class: 'bi-alt' },
+  { name: 'Shift', class: 'bi-shift' },
+  { name: 'Shift Fill', class: 'bi-shift-fill' },
 
   // 字型與文字相關
   { name: 'Type', class: 'bi-type' },

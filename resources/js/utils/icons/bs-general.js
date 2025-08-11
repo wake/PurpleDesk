@@ -134,7 +134,124 @@ export const generalIcons = [
   { name: 'Exclamation Square', class: 'bi-exclamation-square' },
   { name: 'Exclamation Square Fill', class: 'bi-exclamation-square-fill' },
   { name: 'Exclamation Triangle', class: 'bi-exclamation-triangle' },
-  { name: 'Exclamation Triangle Fill', class: 'bi-exclamation-triangle-fill' }
+  { name: 'Exclamation Triangle Fill', class: 'bi-exclamation-triangle-fill' },
+  
+  // 更多箭頭變化
+  { name: 'Arrow Bar Up', class: 'bi-arrow-bar-up' },
+  { name: 'Arrow Bar Down', class: 'bi-arrow-bar-down' },
+  { name: 'Arrow Bar Left', class: 'bi-arrow-bar-left' },
+  { name: 'Arrow Bar Right', class: 'bi-arrow-bar-right' },
+  { name: 'Arrow Up Square', class: 'bi-arrow-up-square' },
+  { name: 'Arrow Down Square', class: 'bi-arrow-down-square' },
+  { name: 'Arrow Left Square', class: 'bi-arrow-left-square' },
+  { name: 'Arrow Right Square', class: 'bi-arrow-right-square' },
+  { name: 'Arrow Up Square Fill', class: 'bi-arrow-up-square-fill' },
+  { name: 'Arrow Down Square Fill', class: 'bi-arrow-down-square-fill' },
+  { name: 'Arrow Left Square Fill', class: 'bi-arrow-left-square-fill' },
+  { name: 'Arrow Right Square Fill', class: 'bi-arrow-right-square-fill' },
+  { name: 'Arrows Angle Contract', class: 'bi-arrows-angle-contract' },
+  { name: 'Arrows Angle Expand', class: 'bi-arrows-angle-expand' },
+  { name: 'Arrows Collapse', class: 'bi-arrows-collapse' },
+  { name: 'Arrows Expand', class: 'bi-arrows-expand' },
+  { name: 'Arrows Fullscreen', class: 'bi-arrows-fullscreen' },
+  { name: 'Arrows Move', class: 'bi-arrows-move' },
+  
+  // 更多形狀
+  { name: 'Pentagon', class: 'bi-pentagon' },
+  { name: 'Pentagon Fill', class: 'bi-pentagon-fill' },
+  { name: 'Pentagon Half', class: 'bi-pentagon-half' },
+  { name: 'Hexagon', class: 'bi-hexagon' },
+  { name: 'Hexagon Fill', class: 'bi-hexagon-fill' },
+  { name: 'Hexagon Half', class: 'bi-hexagon-half' },
+  { name: 'Octagon', class: 'bi-octagon' },
+  { name: 'Octagon Fill', class: 'bi-octagon-fill' },
+  { name: 'Octagon Half', class: 'bi-octagon-half' },
+  
+  // 點與標記
+  { name: 'Dot', class: 'bi-dot' },
+  { name: 'Three Dots', class: 'bi-three-dots' },
+  { name: 'Three Dots Vertical', class: 'bi-three-dots-vertical' },
+  { name: 'Grid', class: 'bi-grid' },
+  { name: 'Grid 1x2', class: 'bi-grid-1x2' },
+  { name: 'Grid 1x2 Fill', class: 'bi-grid-1x2-fill' },
+  { name: 'Grid 3x2', class: 'bi-grid-3x2' },
+  { name: 'Grid 3x2 Gap', class: 'bi-grid-3x2-gap' },
+  { name: 'Grid 3x2 Gap Fill', class: 'bi-grid-3x2-gap-fill' },
+  { name: 'Grid 3x3', class: 'bi-grid-3x3' },
+  { name: 'Grid 3x3 Gap', class: 'bi-grid-3x3-gap' },
+  { name: 'Grid 3x3 Gap Fill', class: 'bi-grid-3x3-gap-fill' },
+  { name: 'Grid Fill', class: 'bi-grid-fill' },
+  
+  // 鎖定與解鎖
+  { name: 'Lock', class: 'bi-lock' },
+  { name: 'Lock Fill', class: 'bi-lock-fill' },
+  { name: 'Unlock', class: 'bi-unlock' },
+  { name: 'Unlock Fill', class: 'bi-unlock-fill' },
+  { name: 'Shield Lock', class: 'bi-shield-lock' },
+  { name: 'Shield Lock Fill', class: 'bi-shield-lock-fill' },
+  
+  // 盾牌與安全
+  { name: 'Shield', class: 'bi-shield' },
+  { name: 'Shield Check', class: 'bi-shield-check' },
+  { name: 'Shield Exclamation', class: 'bi-shield-exclamation' },
+  { name: 'Shield Fill', class: 'bi-shield-fill' },
+  { name: 'Shield Fill Check', class: 'bi-shield-fill-check' },
+  { name: 'Shield Fill Exclamation', class: 'bi-shield-fill-exclamation' },
+  { name: 'Shield Fill Minus', class: 'bi-shield-fill-minus' },
+  { name: 'Shield Fill Plus', class: 'bi-shield-fill-plus' },
+  { name: 'Shield Fill X', class: 'bi-shield-fill-x' },
+  { name: 'Shield Minus', class: 'bi-shield-minus' },
+  { name: 'Shield Plus', class: 'bi-shield-plus' },
+  { name: 'Shield Slash', class: 'bi-shield-slash' },
+  { name: 'Shield Slash Fill', class: 'bi-shield-slash-fill' },
+  { name: 'Shield X', class: 'bi-shield-x' },
+  
+  // 眼睛與顯示
+  { name: 'Eye', class: 'bi-eye' },
+  { name: 'Eye Fill', class: 'bi-eye-fill' },
+  { name: 'Eye Slash', class: 'bi-eye-slash' },
+  { name: 'Eye Slash Fill', class: 'bi-eye-slash-fill' },
+  { name: 'Eyeglasses', class: 'bi-eyeglasses' },
+  
+  // 書籤與標籤
+  { name: 'Bookmark', class: 'bi-bookmark' },
+  { name: 'Bookmark Check', class: 'bi-bookmark-check' },
+  { name: 'Bookmark Check Fill', class: 'bi-bookmark-check-fill' },
+  { name: 'Bookmark Dash', class: 'bi-bookmark-dash' },
+  { name: 'Bookmark Dash Fill', class: 'bi-bookmark-dash-fill' },
+  { name: 'Bookmark Fill', class: 'bi-bookmark-fill' },
+  { name: 'Bookmark Heart', class: 'bi-bookmark-heart' },
+  { name: 'Bookmark Heart Fill', class: 'bi-bookmark-heart-fill' },
+  { name: 'Bookmark Plus', class: 'bi-bookmark-plus' },
+  { name: 'Bookmark Plus Fill', class: 'bi-bookmark-plus-fill' },
+  { name: 'Bookmark Star', class: 'bi-bookmark-star' },
+  { name: 'Bookmark Star Fill', class: 'bi-bookmark-star-fill' },
+  { name: 'Bookmark X', class: 'bi-bookmark-x' },
+  { name: 'Bookmark X Fill', class: 'bi-bookmark-x-fill' },
+  { name: 'Bookmarks', class: 'bi-bookmarks' },
+  { name: 'Bookmarks Fill', class: 'bi-bookmarks-fill' },
+  
+  // 旗標與標籤
+  { name: 'Flag', class: 'bi-flag' },
+  { name: 'Flag Fill', class: 'bi-flag-fill' },
+  { name: 'Tag', class: 'bi-tag' },
+  { name: 'Tag Fill', class: 'bi-tag-fill' },
+  { name: 'Tags', class: 'bi-tags' },
+  { name: 'Tags Fill', class: 'bi-tags-fill' },
+  
+  // 分享與連結
+  { name: 'Share', class: 'bi-share' },
+  { name: 'Share Fill', class: 'bi-share-fill' },
+  { name: 'Link', class: 'bi-link' },
+  { name: 'Link 45deg', class: 'bi-link-45deg' },
+  
+  // 下載與上傳
+  { name: 'Download', class: 'bi-download' },
+  { name: 'Upload', class: 'bi-upload' },
+  { name: 'Cloud Download', class: 'bi-cloud-download' },
+  { name: 'Cloud Download Fill', class: 'bi-cloud-download-fill' },
+  { name: 'Cloud Upload', class: 'bi-cloud-upload' },
+  { name: 'Cloud Upload Fill', class: 'bi-cloud-upload-fill' }
 ]
 
 export const categoryInfo = {
