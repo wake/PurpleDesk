@@ -245,14 +245,22 @@ export default {
       if (!this.$el.contains(event.target)) {
         this.showPerPageDropdown = false
       }
+    },
+    handleEscKey(event) {
+      if (event.key === 'Escape' && this.showPerPageDropdown) {
+        this.showPerPageDropdown = false
+      }
     }
   },
   mounted() {
     // 點擊外部關閉下拉選單
     document.addEventListener('click', this.handleClickOutside)
+    // ESC 鍵關閉下拉選單
+    document.addEventListener('keydown', this.handleEscKey)
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
+    document.removeEventListener('keydown', this.handleEscKey)
   }
 }
 </script>
