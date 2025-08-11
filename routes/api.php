@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::get('/users', [AdminController::class, 'users']);
     Route::post('/users', [AdminController::class, 'createUser']);
+    Route::get('/users/check-account', [AdminController::class, 'checkAccountAvailable']);
     Route::put('/users/{user}', [AdminController::class, 'updateUser']);
     Route::get('/users/search', [AdminController::class, 'searchUsers']);
     Route::get('/organizations', [AdminController::class, 'organizations']);

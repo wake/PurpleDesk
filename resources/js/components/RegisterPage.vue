@@ -18,29 +18,44 @@
       <form class="mt-8 space-y-6" @submit.prevent="handleRegister">
         <div class="space-y-4">
           <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">姓名</label>
+            <label for="account" class="block text-sm font-medium text-gray-700">帳號</label>
             <input
-              id="name"
-              v-model="form.name"
-              name="name"
+              id="account"
+              v-model="form.account"
+              name="account"
               type="text"
               required
+              pattern="[a-zA-Z0-9_]+"
               class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-              placeholder="請輸入您的姓名"
+              placeholder="請輸入帳號（僅限英數字及底線）"
             />
-            <span v-if="errors.name" class="text-sm text-red-600">{{ errors.name[0] }}</span>
+            <span v-if="errors.account" class="text-sm text-red-600">{{ errors.account[0] }}</span>
           </div>
 
           <div>
-            <label for="display_name" class="block text-sm font-medium text-gray-700">暱稱（選填）</label>
+            <label for="full_name" class="block text-sm font-medium text-gray-700">真實姓名（選填）</label>
+            <input
+              id="full_name"
+              v-model="form.full_name"
+              name="full_name"
+              type="text"
+              class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+              placeholder="請輸入您的真實姓名"
+            />
+            <span v-if="errors.full_name" class="text-sm text-red-600">{{ errors.full_name[0] }}</span>
+          </div>
+
+          <div>
+            <label for="display_name" class="block text-sm font-medium text-gray-700">顯示名稱（選填）</label>
             <input
               id="display_name"
               v-model="form.display_name"
               name="display_name"
               type="text"
               class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-              placeholder="請輸入您的暱稱"
+              placeholder="請輸入您的顯示名稱"
             />
+            <span v-if="errors.display_name" class="text-sm text-red-600">{{ errors.display_name[0] }}</span>
           </div>
 
           <div>
@@ -172,7 +187,8 @@ export default {
     const authStore = useAuthStore()
     
     const form = reactive({
-      name: '',
+      account: '',
+      full_name: '',
       display_name: '',
       email: '',
       password: '',

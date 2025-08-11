@@ -14,13 +14,15 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
+            'account' => 'required|string|max:255|unique:users|regex:/^[a-zA-Z0-9_]+$/',
             'full_name' => 'nullable|string|max:255',
-            'display_name' => 'required|string|max:255',
+            'display_name' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
+            'account' => $request->account,
             'full_name' => $request->full_name,
             'display_name' => $request->display_name,
             'email' => $request->email,
@@ -38,11 +40,13 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'login' => 'required|string',
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'account';
+        
+        if (!Auth::attempt([$loginField => $request->login, 'password' => $request->password])) {
             throw ValidationException::withMessages([
                 'message' => '登入資訊無效',
             ]);
@@ -78,8 +82,9 @@ class AuthController extends Controller
         $user = $request->user();
         
         $rules = [
+            'account' => 'required|string|max:255|unique:users,account,' . $user->id . '|regex:/^[a-zA-Z0-9_]+$/',
             'full_name' => 'nullable|string|max:255',
-            'display_name' => 'required|string|max:255',
+            'display_name' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'remove_avatar' => 'nullable|string',
@@ -103,6 +108,7 @@ class AuthController extends Controller
         }
         
         $data = [
+            'account' => $request->account,
             'display_name' => $request->display_name,
             'email' => $request->email,
             'full_name' => $request->full_name, // full_name 現在可以是 null

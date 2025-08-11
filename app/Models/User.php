@@ -20,6 +20,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'account',
         'full_name',
         'display_name',
         'email',
@@ -121,5 +122,21 @@ class User extends Authenticatable
     public function belongsToTeam($teamId): bool
     {
         return $this->teams()->where('team_id', $teamId)->exists();
+    }
+
+    /**
+     * 取得顯示名稱 (display_name > full_name > account)
+     */
+    public function getDisplayNameAttribute($value)
+    {
+        return $value ?: ($this->full_name ?: $this->account);
+    }
+
+    /**
+     * 取得用於顯示的名稱
+     */
+    public function getVisibleNameAttribute()
+    {
+        return $this->display_name ?: ($this->full_name ?: $this->account);
     }
 }
