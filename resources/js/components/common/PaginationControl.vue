@@ -26,34 +26,28 @@
     <!-- 桌面版分頁 -->
     <div class="hidden sm:flex sm:items-center sm:justify-center">
       <!-- 整合的分頁控制區塊 -->
-      <div class="flex items-center space-x-4 bg-gray-50 px-4 py-2 rounded-lg">
-        <!-- 分頁數量選擇 -->
-        <div class="flex items-center space-x-2">
+      <div class="flex items-center justify-between bg-gray-50 px-4 py-2 rounded-lg min-w-96">
+        <!-- 左側：每頁數量連結 -->
+        <div class="flex items-center space-x-1">
           <span class="text-sm text-gray-600">每頁</span>
-          <div class="relative">
-            <select
-              :value="pagination.per_page"
-              @change="$emit('per-page-changed', parseInt($event.target.value))"
-              class="block w-16 pl-3 pr-8 py-1.5 text-sm border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              style="appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: none;"
+          <template v-for="(option, index) in perPageOptions" :key="option">
+            <button
+              @click="$emit('per-page-changed', option)"
+              :class="[
+                'text-sm transition-colors',
+                option === pagination.per_page
+                  ? 'text-primary-600 font-medium'
+                  : 'text-gray-500 hover:text-gray-700'
+              ]"
             >
-              <option v-for="option in perPageOptions" :key="option" :value="option">
-                {{ option }}
-              </option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-              <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </div>
-          </div>
+              {{ option }}
+            </button>
+            <span v-if="index < perPageOptions.length - 1" class="text-gray-400">/</span>
+          </template>
           <span class="text-sm text-gray-600">筆</span>
         </div>
         
-        <!-- 分隔線 -->
-        <div class="w-px h-6 bg-gray-300"></div>
-        
-        <!-- 分頁按鈕 -->
+        <!-- 中間：分頁按鈕 -->
         <nav class="flex items-center space-x-1">
         <!-- 上一頁 -->
         <button
@@ -186,12 +180,9 @@
         </button>
         </nav>
         
-        <!-- 分隔線 -->
-        <div class="w-px h-6 bg-gray-300"></div>
-        
-        <!-- 總筆數資訊 -->
+        <!-- 右側：總筆數資訊 -->
         <div class="text-sm text-gray-600">
-          共 {{ pagination.total }} 筆
+          總共 {{ pagination.total }} 筆
         </div>
       </div>
     </div>
