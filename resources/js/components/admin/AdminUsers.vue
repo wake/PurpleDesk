@@ -49,31 +49,31 @@
 
     <!-- 使用者列表 -->
     <div class="overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
+      <table class="min-w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               使用者
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               所屬組織
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               註冊時間
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               狀態
             </th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
             </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="user in filteredUsers" :key="user.id">
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/4 px-6 py-4">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center overflow-hidden">
+                <div class="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     v-if="user.avatar_url"
                     :src="user.avatar_url"
@@ -84,20 +84,21 @@
                     {{ getUserInitials(user) }}
                   </span>
                 </div>
-                <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900">
+                <div class="ml-4 min-w-0 flex-1">
+                  <div class="text-sm font-medium text-gray-900 truncate">
                     {{ user.display_name }}
                   </div>
-                  <div class="text-sm text-gray-500">{{ user.email }}</div>
+                  <div class="text-sm text-gray-500 truncate" :title="user.email">{{ user.email }}</div>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td class="w-1/4 px-6 py-4 text-sm text-gray-900">
               <div v-if="user.organizations && user.organizations.length > 0" class="space-y-1">
                 <span 
                   v-for="org in user.organizations.slice(0, 2)" 
                   :key="org.id" 
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 mr-1"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 mr-1 truncate"
+                  :title="org.name"
                 >
                   {{ org.name }}
                 </span>
@@ -107,15 +108,15 @@
               </div>
               <span v-else class="text-gray-500">無</span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(user.created_at) }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                 啟用
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button 
                 @click="editUser(user)"
                 class="text-primary-600 hover:text-primary-900 mr-3"

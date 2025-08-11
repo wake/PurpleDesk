@@ -57,19 +57,19 @@
 
     <!-- 成員列表 -->
     <div class="overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
+      <table class="min-w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               成員
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               角色
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               所屬團隊
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               加入時間
             </th>
             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -79,9 +79,9 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="member in filteredMembers" :key="member.id">
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/4 px-6 py-4">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden">
+                <div class="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     v-if="member.avatar_url"
                     :src="member.avatar_url"
@@ -92,15 +92,15 @@
                     {{ getUserInitials(member) }}
                   </span>
                 </div>
-                <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900">
+                <div class="ml-4 min-w-0 flex-1">
+                  <div class="text-sm font-medium text-gray-900 truncate">
                     {{ member.display_name || member.name }}
                   </div>
-                  <div class="text-sm text-gray-500">{{ member.email }}</div>
+                  <div class="text-sm text-gray-500 truncate" :title="member.email">{{ member.email }}</div>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap">
               <span 
                 :class="[
                   'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
@@ -114,17 +114,18 @@
                 {{ member.pivot.role === 'owner' ? '擁有者' : member.pivot.role === 'admin' ? '管理員' : '成員' }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/4 px-6 py-4">
               <div class="space-y-1">
                 <span 
                   v-for="team in getMemberTeams(member)" 
                   :key="team.id"
                   :class="[
-                    'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mr-1',
+                    'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mr-1 truncate',
                     team.pivot.role === 'lead' 
                       ? 'bg-yellow-100 text-yellow-800' 
                       : 'bg-blue-100 text-blue-800'
                   ]"
+                  :title="team.name"
                 >
                   {{ team.name }}
                   <span v-if="team.pivot.role === 'lead'" class="ml-1">👑</span>
@@ -134,7 +135,7 @@
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(member.pivot.created_at) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

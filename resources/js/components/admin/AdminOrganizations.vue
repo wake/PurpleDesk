@@ -31,29 +31,29 @@
     </div>
 
     <!-- 組織列表 -->
-    <div class="overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
+    <div class="overflow-x-auto">
+      <table class="w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/2 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               組織資訊
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               成員數量
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               建立時間
             </th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
             </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="org in filteredOrganizations" :key="org.id">
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/2 px-6 py-4">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded bg-primary-100 flex items-center justify-center overflow-hidden">
+                <div class="h-10 w-10 rounded bg-primary-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     v-if="org.logo_url"
                     :src="org.logo_url"
@@ -62,23 +62,25 @@
                   />
                   <OfficeBuildingIcon v-else class="h-6 w-6 text-primary-600" />
                 </div>
-                <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900">
+                <div class="ml-4 min-w-0 flex-1" style="max-width: calc(100% - 3rem);">
+                  <div class="text-sm font-medium text-gray-900 truncate">
                     {{ org.name }}
                   </div>
-                  <div class="text-sm text-gray-500">{{ org.description }}</div>
+                  <div class="text-sm text-gray-500 truncate">
+                    {{ org.description || '無描述' }}
+                  </div>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                 {{ org.users_count || 0 }} 位成員
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(org.created_at) }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <router-link
                 :to="`/admin/organizations/${org.id}/manage`"
                 class="text-primary-600 hover:text-primary-900 mr-3"

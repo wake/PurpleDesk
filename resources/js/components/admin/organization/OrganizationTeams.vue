@@ -23,19 +23,19 @@
 
     <!-- 團隊列表 -->
     <div class="overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
+      <table class="w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               團隊資訊
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               成員數量
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               領導者
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               建立時間
             </th>
             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -45,9 +45,9 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="team in filteredTeams" :key="team.id">
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/4 px-6 py-4">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded bg-blue-100 flex items-center justify-center overflow-hidden">
+                <div class="h-10 w-10 rounded bg-blue-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     v-if="team.avatar_url"
                     :src="team.avatar_url"
@@ -58,27 +58,27 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
-                <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900">
+                <div class="ml-4 min-w-0 flex-1" style="max-width: calc(100% - 3rem);">
+                  <div class="text-sm font-medium text-gray-900 truncate">
                     {{ team.name }}
                   </div>
-                  <div class="text-sm text-gray-500">{{ team.description || '無描述' }}</div>
+                  <div class="text-sm text-gray-500 truncate">{{ team.description || '無描述' }}</div>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                 {{ team.users?.length || 0 }} 位成員
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex space-x-2">
+            <td class="w-1/4 px-6 py-4">
+              <div class="flex space-x-2 overflow-hidden">
                 <div
                   v-for="leader in getTeamLeaders(team)" 
                   :key="leader.id"
-                  class="flex items-center"
+                  class="flex items-center min-w-0"
                 >
-                  <div class="h-6 w-6 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden">
+                  <div class="h-6 w-6 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden flex-shrink-0">
                     <img
                       v-if="leader.avatar_url"
                       :src="leader.avatar_url"
@@ -89,14 +89,14 @@
                       {{ getUserInitials(leader) }}
                     </span>
                   </div>
-                  <span class="ml-1 text-sm text-gray-900">{{ leader.display_name || leader.name }}</span>
+                  <span class="ml-1 text-sm text-gray-900 truncate" :title="leader.display_name || leader.name">{{ leader.display_name || leader.name }}</span>
                 </div>
                 <span v-if="getTeamLeaders(team).length === 0" class="text-sm text-gray-400">
                   無領導者
                 </span>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(team.created_at) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
