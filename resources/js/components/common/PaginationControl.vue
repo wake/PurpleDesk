@@ -3,7 +3,7 @@
     <!-- 手機版分頁 -->
     <div class="flex items-center justify-between sm:hidden">
       <button
-        @click="$emit('page-changed', currentPage - 1)"
+        @click="changePage(currentPage - 1)"
         :disabled="currentPage <= 1"
         class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
       >
@@ -15,7 +15,7 @@
       </span>
       
       <button
-        @click="$emit('page-changed', currentPage + 1)"
+        @click="changePage(currentPage + 1)"
         :disabled="currentPage >= pagination.last_page"
         class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
       >
@@ -69,13 +69,14 @@
         <nav class="flex items-center space-x-1">
         <!-- 上一頁 -->
         <button
-          @click="$emit('page-changed', currentPage - 1)"
+          @click="changePage(currentPage - 1)"
           :disabled="currentPage <= 1"
           class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
         >
-          <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg v-if="loadingPage !== currentPage - 1" class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
+          <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
         </button>
         
         <!-- 頁碼按鈕 -->
@@ -84,15 +85,16 @@
           <button
             v-for="page in pagination.last_page"
             :key="page"
-            @click="$emit('page-changed', page)"
+            @click="changePage(page)"
             :class="[
               'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
               page === currentPage
-                ? 'bg-primary-100 text-primary-700 font-semibold'
+                ? 'bg-gray-200 text-gray-900 font-semibold'
                 : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
             ]"
           >
-            {{ page }}
+            <span v-if="loadingPage !== page">{{ page }}</span>
+            <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
           </button>
         </template>
         
@@ -103,34 +105,37 @@
             <button
               v-for="page in 5"
               :key="page"
-              @click="$emit('page-changed', page)"
+              @click="changePage(page)"
               :class="[
                 'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
                 page === currentPage
-                  ? 'bg-primary-100 text-primary-700 font-semibold'
+                  ? 'bg-gray-200 text-gray-900 font-semibold'
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
-              {{ page }}
+              <span v-if="loadingPage !== page">{{ page }}</span>
+              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
             </button>
             <span class="relative inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400">
               ...
             </span>
             <button
-              @click="$emit('page-changed', pagination.last_page)"
+              @click="changePage(pagination.last_page)"
               class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
-              {{ pagination.last_page }}
+              <span v-if="loadingPage !== pagination.last_page">{{ pagination.last_page }}</span>
+              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
             </button>
           </template>
           
           <template v-else-if="currentPage >= pagination.last_page - 3">
             <!-- 當前頁在後面時 -->
             <button
-              @click="$emit('page-changed', 1)"
+              @click="changePage(1)"
               class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
-              1
+              <span v-if="loadingPage !== 1">1</span>
+              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
             </button>
             <span class="relative inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400">
               ...
@@ -138,25 +143,27 @@
             <button
               v-for="page in 5"
               :key="page"
-              @click="$emit('page-changed', pagination.last_page - 5 + page)"
+              @click="changePage(pagination.last_page - 5 + page)"
               :class="[
                 'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
                 (pagination.last_page - 5 + page) === currentPage
-                  ? 'bg-primary-100 text-primary-700 font-semibold'
+                  ? 'bg-gray-200 text-gray-900 font-semibold'
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
-              {{ pagination.last_page - 5 + page }}
+              <span v-if="loadingPage !== pagination.last_page - 5 + page">{{ pagination.last_page - 5 + page }}</span>
+              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
             </button>
           </template>
           
           <template v-else>
             <!-- 當前頁在中間時 -->
             <button
-              @click="$emit('page-changed', 1)"
+              @click="changePage(1)"
               class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
-              1
+              <span v-if="loadingPage !== 1">1</span>
+              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
             </button>
             <span class="relative inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400">
               ...
@@ -164,51 +171,46 @@
             <button
               v-for="page in [currentPage - 1, currentPage, currentPage + 1]"
               :key="page"
-              @click="$emit('page-changed', page)"
+              @click="changePage(page)"
               :class="[
                 'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
                 page === currentPage
-                  ? 'bg-primary-100 text-primary-700 font-semibold'
+                  ? 'bg-gray-200 text-gray-900 font-semibold'
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
-              {{ page }}
+              <span v-if="loadingPage !== page">{{ page }}</span>
+              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
             </button>
             <span class="relative inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400">
               ...
             </span>
             <button
-              @click="$emit('page-changed', pagination.last_page)"
+              @click="changePage(pagination.last_page)"
               class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
-              {{ pagination.last_page }}
+              <span v-if="loadingPage !== pagination.last_page">{{ pagination.last_page }}</span>
+              <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
             </button>
           </template>
         </template>
         
         <!-- 下一頁 -->
         <button
-          @click="$emit('page-changed', currentPage + 1)"
+          @click="changePage(currentPage + 1)"
           :disabled="currentPage >= pagination.last_page"
           class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
         >
-          <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg v-if="loadingPage !== currentPage + 1" class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
+          <div v-else class="animate-spin h-3 w-3 border-2 border-primary-600 rounded-full border-t-transparent"></div>
         </button>
         </nav>
         
         <!-- 右側：總筆數資訊 -->
         <div class="text-sm text-gray-600">
           總共 {{ pagination.total }} 筆
-        </div>
-        
-        <!-- 載入中覆蓋層 -->
-        <div 
-          v-if="isLoading" 
-          class="absolute inset-0 bg-white bg-opacity-60 rounded-lg flex items-center justify-center"
-        >
-          <div class="animate-spin h-5 w-5 border-2 border-primary-600 rounded-full border-t-transparent"></div>
         </div>
       </div>
     </div>
@@ -242,7 +244,8 @@ export default {
   emits: ['page-changed', 'per-page-changed'],
   data() {
     return {
-      showPerPageDropdown: false
+      showPerPageDropdown: false,
+      loadingPage: null
     }
   },
   computed: {
@@ -250,10 +253,21 @@ export default {
       return this.pagination.current_page
     }
   },
+  watch: {
+    isLoading(newVal) {
+      if (!newVal) {
+        this.loadingPage = null
+      }
+    }
+  },
   methods: {
     selectPerPage(value) {
       this.$emit('per-page-changed', value)
       this.showPerPageDropdown = false
+    },
+    changePage(page) {
+      this.loadingPage = page
+      this.$emit('page-changed', page)
     },
     handleClickOutside(event) {
       // 檢查點擊是否在下拉按鈕或下拉選單之外
