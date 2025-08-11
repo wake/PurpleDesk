@@ -11,24 +11,40 @@
             class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
           />
         </div>
-        <select
-          v-model="selectedTeam"
-          class="px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-        >
-          <option value="">所有團隊</option>
-          <option v-for="team in teams" :key="team.id" :value="team.id">
-            {{ team.name }}
-          </option>
-        </select>
-        <select
-          v-model="selectedRole"
-          class="px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-        >
-          <option value="">所有角色</option>
-          <option value="owner">擁有者</option>
-          <option value="admin">管理員</option>
-          <option value="member">成員</option>
-        </select>
+        <div class="relative">
+          <select
+            v-model="selectedTeam"
+            class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            style="appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: none;"
+          >
+            <option value="">所有團隊</option>
+            <option v-for="team in teams" :key="team.id" :value="team.id">
+              {{ team.name }}
+            </option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="relative">
+          <select
+            v-model="selectedRole"
+            class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            style="appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: none;"
+          >
+            <option value="">所有角色</option>
+            <option value="owner">擁有者</option>
+            <option value="admin">管理員</option>
+            <option value="member">成員</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
         <button 
           v-if="showInviteButton"
           @click="$emit('show-invite')"
@@ -85,16 +101,18 @@
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <select
-                :value="member.pivot.role"
-                @change="updateMemberRole(member.id, $event.target.value)"
-                :disabled="member.pivot.role === 'owner'"
-                class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              <span 
+                :class="[
+                  'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                  member.pivot.role === 'owner' 
+                    ? 'bg-red-100 text-red-800' 
+                    : member.pivot.role === 'admin'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-blue-100 text-blue-800'
+                ]"
               >
-                <option value="member">成員</option>
-                <option value="admin">管理員</option>
-                <option value="owner">擁有者</option>
-              </select>
+                {{ member.pivot.role === 'owner' ? '擁有者' : member.pivot.role === 'admin' ? '管理員' : '成員' }}
+              </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="space-y-1">
@@ -140,13 +158,7 @@
     </div>
 
     <!-- 載入狀態 -->
-    <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
-      <svg class="animate-spin h-8 w-8 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      <p class="text-gray-500 mt-2">載入中...</p>
-    </div>
+    <LoadingSpinner v-if="isLoading" />
 
     <!-- 空狀態 -->
     <div v-else-if="filteredMembers.length === 0" class="text-center py-12">
@@ -332,9 +344,13 @@
 <script>
 import { ref, computed, onMounted, watch } from 'vue'
 import axios from 'axios'
+import LoadingSpinner from '../../common/LoadingSpinner.vue'
 
 export default {
   name: 'OrganizationMembers',
+  components: {
+    LoadingSpinner
+  },
   props: {
     organization: {
       type: Object,
@@ -444,26 +460,6 @@ export default {
       }
     }
     
-    const updateMemberRole = async (userId, newRole) => {
-      try {
-        await axios.put(`/api/admin/organizations/${props.organization.id}/members/${userId}`, {
-          role: newRole
-        })
-        
-        // 更新本地數據
-        const member = members.value.find(m => m.id === userId)
-        if (member) {
-          member.pivot.role = newRole
-        }
-        
-        emit('success', '成員角色已更新')
-        emit('refresh')
-      } catch (error) {
-        console.error('Failed to update member role:', error)
-        // TODO: 改用統一的錯誤提示
-        alert('更新角色失敗')
-      }
-    }
     
     const removeMember = async (member) => {
       if (!confirm(`確定要移除 ${member.display_name || member.name} 嗎？`)) {
@@ -582,7 +578,6 @@ export default {
       getUserInitials,
       getMemberTeams,
       formatDate,
-      updateMemberRole,
       removeMember,
       sendInvite,
       editMember,

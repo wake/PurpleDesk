@@ -27,15 +27,23 @@
             class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
           />
         </div>
-        <select
-          v-model="selectedOrganization"
-          class="px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-        >
-          <option value="">所有組織</option>
-          <option v-for="org in organizations" :key="org.id" :value="org.id">
-            {{ org.name }}
-          </option>
-        </select>
+        <div class="relative">
+          <select
+            v-model="selectedOrganization"
+            class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            style="appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: none;"
+          >
+            <option value="">所有組織</option>
+            <option v-for="org in organizations" :key="org.id" :value="org.id">
+              {{ org.name }}
+            </option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -122,10 +130,7 @@
     </div>
 
     <!-- 載入狀態 -->
-    <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
-      <RefreshIcon class="animate-spin h-8 w-8 text-primary-600" />
-      <p class="text-gray-500 mt-2">載入中...</p>
-    </div>
+    <LoadingSpinner v-if="isLoading" />
 
     <!-- 空狀態 -->
     <div v-else-if="filteredUsers.length === 0" class="text-center py-12">
@@ -300,12 +305,12 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
-import { RefreshIcon } from '@heroicons/vue/outline'
+import LoadingSpinner from '../common/LoadingSpinner.vue'
 
 export default {
   name: 'AdminUsers',
   components: {
-    RefreshIcon
+    LoadingSpinner
   },
   setup() {
     const users = ref([])

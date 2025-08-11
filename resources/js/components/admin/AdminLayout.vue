@@ -89,9 +89,8 @@
                   v-if="showOrganizationDropdown"
                   class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-64 overflow-y-auto"
                 >
-                  <div v-if="isLoadingOrganizations" class="p-4 text-center text-gray-500">
-                    <div class="animate-spin inline-block w-4 h-4 border-2 border-solid border-current border-r-transparent rounded-full mr-2"></div>
-                    載入中...
+                  <div v-if="isLoadingOrganizations" class="p-4">
+                    <LoadingSpinner size="sm" :container-class="'py-2'" />
                   </div>
                   <div v-else>
                     <button
@@ -186,13 +185,15 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import AppNavbar from '../AppNavbar.vue'
 import { OfficeBuildingIcon, CogIcon } from '@heroicons/vue/outline'
+import LoadingSpinner from '../common/LoadingSpinner.vue'
 
 export default {
   name: 'AdminLayout',
   components: {
     AppNavbar,
     OfficeBuildingIcon,
-    CogIcon
+    CogIcon,
+    LoadingSpinner
   },
   setup() {
     const route = useRoute()
