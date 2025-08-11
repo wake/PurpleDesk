@@ -17,7 +17,8 @@ class TeamController extends Controller
         $organization = Organization::findOrFail($organizationId);
         
         $page = $request->get('page', 1);
-        $perPage = 10;
+        $perPage = $request->get('per_page', 10);
+        $perPage = min(max($perPage, 10), 100); // 限制在 10-100 之間
         
         $teams = $organization->teams()
             ->with('users')

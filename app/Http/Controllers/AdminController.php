@@ -12,29 +12,35 @@ class AdminController extends Controller
 {
     // 認證已在路由中處理，無需在 constructor 中重複設定
     
-    public function users()
+    public function users(Request $request)
     {
         // 簡單的權限檢查（實際應用中應該使用更完善的權限系統）
-        if (request()->user()->email !== 'admin@purpledesk.com') {
+        if ($request->user()->email !== 'admin@purpledesk.com') {
             abort(403, '無權限存取');
         }
         
+        $perPage = $request->get('per_page', 10);
+        $perPage = min(max($perPage, 10), 100); // 限制在 10-100 之間
+        
         $users = User::with('organizations', 'teams')
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate($perPage);
             
         return response()->json($users);
     }
     
-    public function organizations()
+    public function organizations(Request $request)
     {
-        if (request()->user()->email !== 'admin@purpledesk.com') {
+        if ($request->user()->email !== 'admin@purpledesk.com') {
             abort(403, '無權限存取');
         }
         
+        $perPage = $request->get('per_page', 10);
+        $perPage = min(max($perPage, 10), 100); // 限制在 10-100 之間
+        
         $organizations = Organization::withCount('users')
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate($perPage);
             
         return response()->json($organizations);
     }
