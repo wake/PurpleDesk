@@ -30,7 +30,7 @@
         <div class="relative">
           <select
             v-model="selectedOrganization"
-            class="pl-3 pr-8 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm appearance-none w-full"
+            class="pl-3 pr-10 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm appearance-none w-full"
           >
             <option value="">所有組織</option>
             <option v-for="org in organizations" :key="org.id" :value="org.id">
