@@ -1,5 +1,7 @@
 // 完整的 Bootstrap Icons 列表（按官網順序）
 // 參考：https://icons.getbootstrap.com/
+import { allBootstrapIconsFtoZ } from './allBootstrapIconsComplete.js'
+
 export const allBootstrapIcons = [
   // 0-9
   { name: '0 Circle', class: 'bi-0-circle' },
@@ -877,7 +879,6 @@ export const allBootstrapIcons = [
   { name: 'Eyedropper', class: 'bi-eyedropper' },
   { name: 'Eyeglasses', class: 'bi-eyeglasses' },
   
-  
-  // Importing F-Z sections
-  ...require('./allBootstrapIconsComplete.js').allBootstrapIconsFtoZ
+  // F-Z sections
+  ...allBootstrapIconsFtoZ
 ]
