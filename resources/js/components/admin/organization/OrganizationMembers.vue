@@ -170,70 +170,12 @@
     </div>
 
     <!-- 分頁導航 -->
-    <div v-if="membersPagination.last_page > 1" class="px-6 py-4 border-t border-gray-200">
-      <div class="flex items-center justify-between">
-        <div class="flex-1 flex justify-between sm:hidden">
-          <button
-            @click="changeMembersPage(currentMembersPage - 1)"
-            :disabled="currentMembersPage <= 1"
-            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            上一頁
-          </button>
-          <button
-            @click="changeMembersPage(currentMembersPage + 1)"
-            :disabled="currentMembersPage >= membersPagination.last_page"
-            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            下一頁
-          </button>
-        </div>
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm text-gray-700">
-              顯示第
-              <span class="font-medium">{{ (currentMembersPage - 1) * membersPagination.per_page + 1 }}</span>
-              到
-              <span class="font-medium">{{ Math.min(currentMembersPage * membersPagination.per_page, membersPagination.total) }}</span>
-              筆，共
-              <span class="font-medium">{{ membersPagination.total }}</span>
-              筆成員
-            </p>
-          </div>
-          <div>
-            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-              <button
-                @click="changeMembersPage(currentMembersPage - 1)"
-                :disabled="currentMembersPage <= 1"
-                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ‹
-              </button>
-              <button
-                v-for="page in Math.min(membersPagination.last_page, 5)"
-                :key="page"
-                @click="changeMembersPage(page)"
-                :class="[
-                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                  page === currentMembersPage
-                    ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
-                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                ]"
-              >
-                {{ page }}
-              </button>
-              <button
-                @click="changeMembersPage(currentMembersPage + 1)"
-                :disabled="currentMembersPage >= membersPagination.last_page"
-                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ›
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PaginationControl 
+      v-if="membersPagination.last_page > 1" 
+      :pagination="membersPagination" 
+      @page-changed="changeMembersPage" 
+      @per-page-changed="changePerPage" 
+    />
 
     <!-- 邀請成員 Modal -->
     <div v-if="showInviteModal" class="fixed inset-0 z-50 overflow-y-auto">
@@ -345,11 +287,13 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import axios from 'axios'
 import LoadingSpinner from '../../common/LoadingSpinner.vue'
+import PaginationControl from '../../common/PaginationControl.vue'
 
 export default {
   name: 'OrganizationMembers',
   components: {
-    LoadingSpinner
+    LoadingSpinner,
+    PaginationControl
   },
   props: {
     organization: {
@@ -374,6 +318,7 @@ export default {
     const members = ref([])
     const membersPagination = ref({})
     const currentMembersPage = ref(1)
+    const perPage = ref(10)
     const teams = ref([])
     const isInviting = ref(false)
     const searchUsers = ref([])
@@ -435,7 +380,7 @@ export default {
       
       isLoading.value = true
       try {
-        const response = await axios.get(`/api/organizations/${props.organization.id}?page=${page}`)
+        const response = await axios.get(`/api/organizations/${props.organization.id}?page=${page}&per_page=${perPage.value}`)
         
         // 處理分頁後的成員數據
         if (response.data.users && response.data.users.data) {
@@ -555,6 +500,12 @@ export default {
       fetchMembers(page)
     }
     
+    const changePerPage = (newPerPage) => {
+      perPage.value = newPerPage
+      currentMembersPage.value = 1
+      fetchMembers(1)
+    }
+    
     watch(() => props.organization, () => {
       if (props.organization) {
         fetchMembers()
@@ -586,7 +537,9 @@ export default {
       hideUserDropdown,
       membersPagination,
       currentMembersPage,
-      changeMembersPage
+      perPage,
+      changeMembersPage,
+      changePerPage
     }
   }
 }

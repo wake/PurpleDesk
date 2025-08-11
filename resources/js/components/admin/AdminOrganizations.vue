@@ -110,70 +110,12 @@
     </div>
 
     <!-- 分頁導航 -->
-    <div v-if="pagination.last_page > 1" class="px-6 py-4 border-t border-gray-200">
-      <div class="flex items-center justify-between">
-        <div class="flex-1 flex justify-between sm:hidden">
-          <button
-            @click="changePage(currentPage - 1)"
-            :disabled="currentPage <= 1"
-            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            上一頁
-          </button>
-          <button
-            @click="changePage(currentPage + 1)"
-            :disabled="currentPage >= pagination.last_page"
-            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            下一頁
-          </button>
-        </div>
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm text-gray-700">
-              顯示第
-              <span class="font-medium">{{ (currentPage - 1) * pagination.per_page + 1 }}</span>
-              到
-              <span class="font-medium">{{ Math.min(currentPage * pagination.per_page, pagination.total) }}</span>
-              筆，共
-              <span class="font-medium">{{ pagination.total }}</span>
-              筆結果
-            </p>
-          </div>
-          <div>
-            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-              <button
-                @click="changePage(currentPage - 1)"
-                :disabled="currentPage <= 1"
-                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ‹
-              </button>
-              <button
-                v-for="page in Math.min(pagination.last_page, 5)"
-                :key="page"
-                @click="changePage(page)"
-                :class="[
-                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                  page === currentPage
-                    ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
-                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                ]"
-              >
-                {{ page }}
-              </button>
-              <button
-                @click="changePage(currentPage + 1)"
-                :disabled="currentPage >= pagination.last_page"
-                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ›
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PaginationControl 
+      v-if="pagination.last_page > 1" 
+      :pagination="pagination" 
+      @page-changed="changePage" 
+      @per-page-changed="changePerPage" 
+    />
 
     <!-- 新增/編輯組織 Modal（簡化版） -->
     <div v-if="showCreateModal || editingOrganization" class="fixed inset-0 z-50 overflow-y-auto">
@@ -323,18 +265,21 @@ import axios from 'axios'
 import { OfficeBuildingIcon } from '@heroicons/vue/outline'
 import ConfirmDialog from '../common/ConfirmDialog.vue'
 import LoadingSpinner from '../common/LoadingSpinner.vue'
+import PaginationControl from '../common/PaginationControl.vue'
 
 export default {
   name: 'AdminOrganizations',
   components: {
     OfficeBuildingIcon,
     ConfirmDialog,
-    LoadingSpinner
+    LoadingSpinner,
+    PaginationControl
   },
   setup() {
     const organizations = ref([])
     const pagination = ref({})
     const currentPage = ref(1)
+    const perPage = ref(10)
     const isLoading = ref(true)
     const searchQuery = ref('')
     const showCreateModal = ref(false)
@@ -377,7 +322,7 @@ export default {
       try {
         isLoading.value = true
         console.log('AdminOrganizations: Fetching organizations, page:', page)
-        const response = await axios.get(`/api/admin/organizations?page=${page}`)
+        const response = await axios.get(`/api/admin/organizations?page=${page}&per_page=${perPage.value}`)
         console.log('AdminOrganizations: API response:', response.data)
         
         // 處理回應資料
@@ -599,6 +544,12 @@ export default {
       fetchOrganizations(page)
     }
     
+    const changePerPage = (newPerPage) => {
+      perPage.value = newPerPage
+      currentPage.value = 1
+      fetchOrganizations(1)
+    }
+    
     onMounted(() => {
       fetchOrganizations()
     })
@@ -635,7 +586,9 @@ export default {
       deleteTarget,
       pagination,
       currentPage,
-      changePage
+      perPage,
+      changePage,
+      changePerPage
     }
   }
 }

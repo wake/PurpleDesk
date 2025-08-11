@@ -139,70 +139,12 @@
     </div>
 
     <!-- 分頁導航 -->
-    <div v-if="teamsPagination.last_page > 1" class="px-6 py-4 border-t border-gray-200">
-      <div class="flex items-center justify-between">
-        <div class="flex-1 flex justify-between sm:hidden">
-          <button
-            @click="changeTeamsPage(currentTeamsPage - 1)"
-            :disabled="currentTeamsPage <= 1"
-            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            上一頁
-          </button>
-          <button
-            @click="changeTeamsPage(currentTeamsPage + 1)"
-            :disabled="currentTeamsPage >= teamsPagination.last_page"
-            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            下一頁
-          </button>
-        </div>
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm text-gray-700">
-              顯示第
-              <span class="font-medium">{{ (currentTeamsPage - 1) * teamsPagination.per_page + 1 }}</span>
-              到
-              <span class="font-medium">{{ Math.min(currentTeamsPage * teamsPagination.per_page, teamsPagination.total) }}</span>
-              筆，共
-              <span class="font-medium">{{ teamsPagination.total }}</span>
-              筆團隊
-            </p>
-          </div>
-          <div>
-            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-              <button
-                @click="changeTeamsPage(currentTeamsPage - 1)"
-                :disabled="currentTeamsPage <= 1"
-                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ‹
-              </button>
-              <button
-                v-for="page in Math.min(teamsPagination.last_page, 5)"
-                :key="page"
-                @click="changeTeamsPage(page)"
-                :class="[
-                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                  page === currentTeamsPage
-                    ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
-                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                ]"
-              >
-                {{ page }}
-              </button>
-              <button
-                @click="changeTeamsPage(currentTeamsPage + 1)"
-                :disabled="currentTeamsPage >= teamsPagination.last_page"
-                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ›
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PaginationControl 
+      v-if="teamsPagination.last_page > 1" 
+      :pagination="teamsPagination" 
+      @page-changed="changeTeamsPage" 
+      @per-page-changed="changePerPage" 
+    />
 
     <!-- 建立/編輯團隊 Modal -->
     <div v-if="showCreateModal || editingTeam" class="fixed inset-0 z-50 overflow-y-auto">
@@ -302,11 +244,13 @@
 import { ref, computed, watch } from 'vue'
 import axios from 'axios'
 import LoadingSpinner from '../../common/LoadingSpinner.vue'
+import PaginationControl from '../../common/PaginationControl.vue'
 
 export default {
   name: 'OrganizationTeams',
   components: {
-    LoadingSpinner
+    LoadingSpinner,
+    PaginationControl
   },
   props: {
     organization: {
@@ -329,6 +273,7 @@ export default {
     const teams = ref([])
     const teamsPagination = ref({})
     const currentTeamsPage = ref(1)
+    const perPage = ref(10)
     const editingTeam = ref(null)
     const isSaving = ref(false)
     const avatarPreview = ref(null)
@@ -377,7 +322,7 @@ export default {
       
       isLoading.value = true
       try {
-        const response = await axios.get(`/api/organizations/${props.organization.id}/teams?page=${page}`)
+        const response = await axios.get(`/api/organizations/${props.organization.id}/teams?page=${page}&per_page=${perPage.value}`)
         
         // 處理分頁後的團隊數據
         if (response.data.teams && response.data.teams.data) {
@@ -514,6 +459,12 @@ export default {
       fetchTeams(page)
     }
     
+    const changePerPage = (newPerPage) => {
+      perPage.value = newPerPage
+      currentTeamsPage.value = 1
+      fetchTeams(1)
+    }
+    
     watch(() => props.organization, () => {
       if (props.organization) {
         fetchTeams()
@@ -541,7 +492,9 @@ export default {
       closeModal,
       teamsPagination,
       currentTeamsPage,
-      changeTeamsPage
+      perPage,
+      changeTeamsPage,
+      changePerPage
     }
   }
 }
