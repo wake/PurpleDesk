@@ -49,31 +49,31 @@
 
     <!-- 使用者列表 -->
     <div class="overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
+      <table class="min-w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               使用者
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               所屬組織
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               註冊時間
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               狀態
             </th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
             </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="user in filteredUsers" :key="user.id">
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/4 px-6 py-4">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center overflow-hidden">
+                <div class="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     v-if="user.avatar_url"
                     :src="user.avatar_url"
@@ -84,20 +84,21 @@
                     {{ getUserInitials(user) }}
                   </span>
                 </div>
-                <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900">
+                <div class="ml-4 min-w-0 flex-1">
+                  <div class="text-sm font-medium text-gray-900 truncate">
                     {{ user.display_name }}
                   </div>
-                  <div class="text-sm text-gray-500">{{ user.email }}</div>
+                  <div class="text-sm text-gray-500 truncate" :title="user.email">{{ user.email }}</div>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td class="w-1/4 px-6 py-4 text-sm text-gray-900">
               <div v-if="user.organizations && user.organizations.length > 0" class="space-y-1">
                 <span 
                   v-for="org in user.organizations.slice(0, 2)" 
                   :key="org.id" 
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 mr-1"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 mr-1 truncate"
+                  :title="org.name"
                 >
                   {{ org.name }}
                 </span>
@@ -107,15 +108,15 @@
               </div>
               <span v-else class="text-gray-500">無</span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(user.created_at) }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                 啟用
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button 
                 @click="editUser(user)"
                 class="text-primary-600 hover:text-primary-900 mr-3"
@@ -129,81 +130,21 @@
       </table>
     </div>
 
-    <!-- 載入狀態 -->
-    <LoadingSpinner v-if="isLoading" />
-
     <!-- 空狀態 -->
-    <div v-else-if="filteredUsers.length === 0" class="text-center py-12">
+    <div v-if="!isLoading && filteredUsers.length === 0" class="text-center py-12">
       <i class="bi bi-people-fill mx-auto text-5xl text-gray-400"></i>
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到使用者</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件</p>
     </div>
 
     <!-- 分頁導航 -->
-    <div v-if="pagination.last_page > 1" class="px-6 py-4 border-t border-gray-200">
-      <div class="flex items-center justify-between">
-        <div class="flex-1 flex justify-between sm:hidden">
-          <button
-            @click="changePage(currentPage - 1)"
-            :disabled="currentPage <= 1"
-            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            上一頁
-          </button>
-          <button
-            @click="changePage(currentPage + 1)"
-            :disabled="currentPage >= pagination.last_page"
-            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            下一頁
-          </button>
-        </div>
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm text-gray-700">
-              顯示第
-              <span class="font-medium">{{ (currentPage - 1) * pagination.per_page + 1 }}</span>
-              到
-              <span class="font-medium">{{ Math.min(currentPage * pagination.per_page, pagination.total) }}</span>
-              筆，共
-              <span class="font-medium">{{ pagination.total }}</span>
-              筆結果
-            </p>
-          </div>
-          <div>
-            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-              <button
-                @click="changePage(currentPage - 1)"
-                :disabled="currentPage <= 1"
-                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ‹
-              </button>
-              <button
-                v-for="page in Math.min(pagination.last_page, 5)"
-                :key="page"
-                @click="changePage(page)"
-                :class="[
-                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                  page === currentPage
-                    ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
-                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                ]"
-              >
-                {{ page }}
-              </button>
-              <button
-                @click="changePage(currentPage + 1)"
-                :disabled="currentPage >= pagination.last_page"
-                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ›
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PaginationControl 
+      v-if="pagination.last_page > 1" 
+      :pagination="pagination" 
+      :is-loading="isLoading"
+      @page-changed="changePage" 
+      @per-page-changed="changePerPage" 
+    />
 
     <!-- 新增/編輯使用者 Modal -->
     <div v-if="showCreateModal || editingUser" class="fixed inset-0 z-50 overflow-y-auto">
@@ -306,16 +247,19 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import LoadingSpinner from '../common/LoadingSpinner.vue'
+import PaginationControl from '../common/PaginationControl.vue'
 
 export default {
   name: 'AdminUsers',
   components: {
-    LoadingSpinner
+    LoadingSpinner,
+    PaginationControl
   },
   setup() {
     const users = ref([])
     const pagination = ref({})
     const currentPage = ref(1)
+    const perPage = ref(10)
     const organizations = ref([])
     const isLoading = ref(true)
     const searchQuery = ref('')
@@ -374,7 +318,7 @@ export default {
     const fetchUsers = async (page = 1) => {
       try {
         isLoading.value = true
-        const response = await axios.get(`/api/admin/users?page=${page}`)
+        const response = await axios.get(`/api/admin/users?page=${page}&per_page=${perPage.value}`)
         users.value = response.data.data
         pagination.value = {
           current_page: response.data.current_page,
@@ -467,6 +411,12 @@ export default {
       fetchUsers(page)
     }
     
+    const changePerPage = (newPerPage) => {
+      perPage.value = newPerPage
+      currentPage.value = 1
+      fetchUsers(1)
+    }
+    
     onMounted(async () => {
       await Promise.all([fetchUsers(), fetchOrganizations()])
     })
@@ -485,12 +435,14 @@ export default {
       userFormErrors,
       pagination,
       currentPage,
+      perPage,
       getUserInitials,
       formatDate,
       editUser,
       saveUser,
       cancelUserEdit,
-      changePage
+      changePage,
+      changePerPage
     }
   }
 }

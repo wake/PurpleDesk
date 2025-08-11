@@ -23,31 +23,31 @@
 
     <!-- 團隊列表 -->
     <div class="overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
+      <table class="w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/3 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               團隊資訊
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              成員數量
+            <th class="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              管理者
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              領導者
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              成員
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               建立時間
             </th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
             </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="team in filteredTeams" :key="team.id">
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-1/3 px-6 py-4">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded bg-blue-100 flex items-center justify-center overflow-hidden">
+                <div class="h-10 w-10 rounded bg-blue-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     v-if="team.avatar_url"
                     :src="team.avatar_url"
@@ -58,48 +58,29 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
-                <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900">
+                <div class="ml-4 min-w-0 flex-1" style="max-width: calc(100% - 3rem);">
+                  <div class="text-sm font-medium text-gray-900 truncate">
                     {{ team.name }}
                   </div>
-                  <div class="text-sm text-gray-500">{{ team.description || '無描述' }}</div>
+                  <div class="text-sm text-gray-500 truncate">{{ team.description || '無描述' }}</div>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                {{ team.users?.length || 0 }} 位成員
-              </span>
+            <td class="w-1/5 px-6 py-4">
+              <UserAvatarGroup 
+                :users="getTeamLeaders(team)" 
+                theme="admin"
+                member-text="個管理者"
+                empty-text="無管理者"
+              />
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex space-x-2">
-                <div
-                  v-for="leader in getTeamLeaders(team)" 
-                  :key="leader.id"
-                  class="flex items-center"
-                >
-                  <div class="h-6 w-6 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden">
-                    <img
-                      v-if="leader.avatar_url"
-                      :src="leader.avatar_url"
-                      :alt="leader.name"
-                      class="h-full w-full object-cover"
-                    />
-                    <span v-else class="text-white text-xs">
-                      {{ getUserInitials(leader) }}
-                    </span>
-                  </div>
-                  <span class="ml-1 text-sm text-gray-900">{{ leader.display_name || leader.name }}</span>
-                </div>
-                <span v-if="getTeamLeaders(team).length === 0" class="text-sm text-gray-400">
-                  無領導者
-                </span>
-              </div>
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap">
+              <UserAvatarGroup :users="getTeamMembers(team)" />
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(team.created_at) }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button 
                 @click="manageTeam(team)"
                 class="text-primary-600 hover:text-primary-900 mr-3"
@@ -126,11 +107,8 @@
       </table>
     </div>
 
-    <!-- 載入狀態 -->
-    <LoadingSpinner v-if="isLoading" />
-
     <!-- 空狀態 -->
-    <div v-else-if="filteredTeams.length === 0" class="text-center py-12">
+    <div v-if="!isLoading && filteredTeams.length === 0" class="text-center py-12">
       <div class="mx-auto h-12 w-12 text-gray-400 flex items-center justify-center">
         <i class="bi bi-people-fill text-4xl opacity-50"></i>
       </div>
@@ -139,70 +117,13 @@
     </div>
 
     <!-- 分頁導航 -->
-    <div v-if="teamsPagination.last_page > 1" class="px-6 py-4 border-t border-gray-200">
-      <div class="flex items-center justify-between">
-        <div class="flex-1 flex justify-between sm:hidden">
-          <button
-            @click="changeTeamsPage(currentTeamsPage - 1)"
-            :disabled="currentTeamsPage <= 1"
-            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            上一頁
-          </button>
-          <button
-            @click="changeTeamsPage(currentTeamsPage + 1)"
-            :disabled="currentTeamsPage >= teamsPagination.last_page"
-            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            下一頁
-          </button>
-        </div>
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm text-gray-700">
-              顯示第
-              <span class="font-medium">{{ (currentTeamsPage - 1) * teamsPagination.per_page + 1 }}</span>
-              到
-              <span class="font-medium">{{ Math.min(currentTeamsPage * teamsPagination.per_page, teamsPagination.total) }}</span>
-              筆，共
-              <span class="font-medium">{{ teamsPagination.total }}</span>
-              筆團隊
-            </p>
-          </div>
-          <div>
-            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-              <button
-                @click="changeTeamsPage(currentTeamsPage - 1)"
-                :disabled="currentTeamsPage <= 1"
-                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ‹
-              </button>
-              <button
-                v-for="page in Math.min(teamsPagination.last_page, 5)"
-                :key="page"
-                @click="changeTeamsPage(page)"
-                :class="[
-                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                  page === currentTeamsPage
-                    ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
-                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                ]"
-              >
-                {{ page }}
-              </button>
-              <button
-                @click="changeTeamsPage(currentTeamsPage + 1)"
-                :disabled="currentTeamsPage >= teamsPagination.last_page"
-                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ›
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PaginationControl 
+      v-if="teamsPagination.last_page > 1" 
+      :pagination="teamsPagination" 
+      :is-loading="isLoading"
+      @page-changed="changeTeamsPage" 
+      @per-page-changed="changePerPage" 
+    />
 
     <!-- 建立/編輯團隊 Modal -->
     <div v-if="showCreateModal || editingTeam" class="fixed inset-0 z-50 overflow-y-auto">
@@ -302,11 +223,15 @@
 import { ref, computed, watch } from 'vue'
 import axios from 'axios'
 import LoadingSpinner from '../../common/LoadingSpinner.vue'
+import PaginationControl from '../../common/PaginationControl.vue'
+import UserAvatarGroup from '../../common/UserAvatarGroup.vue'
 
 export default {
   name: 'OrganizationTeams',
   components: {
-    LoadingSpinner
+    LoadingSpinner,
+    PaginationControl,
+    UserAvatarGroup
   },
   props: {
     organization: {
@@ -329,6 +254,7 @@ export default {
     const teams = ref([])
     const teamsPagination = ref({})
     const currentTeamsPage = ref(1)
+    const perPage = ref(10)
     const editingTeam = ref(null)
     const isSaving = ref(false)
     const avatarPreview = ref(null)
@@ -356,16 +282,16 @@ export default {
       return filtered
     })
     
-    const getUserInitials = (user) => {
-      if (!user) return ''
-      const name = user.display_name || user.name
-      return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-    }
-    
     const getTeamLeaders = (team) => {
       if (!team.users) return []
       return team.users.filter(user => user.pivot.role === 'lead')
     }
+    
+    const getTeamMembers = (team) => {
+      if (!team.users) return []
+      return team.users.filter(user => user.pivot.role !== 'lead')
+    }
+    
     
     const formatDate = (dateString) => {
       if (!dateString) return ''
@@ -377,7 +303,7 @@ export default {
       
       isLoading.value = true
       try {
-        const response = await axios.get(`/api/organizations/${props.organization.id}/teams?page=${page}`)
+        const response = await axios.get(`/api/organizations/${props.organization.id}/teams?page=${page}&per_page=${perPage.value}`)
         
         // 處理分頁後的團隊數據
         if (response.data.teams && response.data.teams.data) {
@@ -514,6 +440,12 @@ export default {
       fetchTeams(page)
     }
     
+    const changePerPage = (newPerPage) => {
+      perPage.value = newPerPage
+      currentTeamsPage.value = 1
+      fetchTeams(1)
+    }
+    
     watch(() => props.organization, () => {
       if (props.organization) {
         fetchTeams()
@@ -530,8 +462,8 @@ export default {
       avatarPreview,
       showCreateModal: computed(() => props.showCreateModal),
       teamForm,
-      getUserInitials,
       getTeamLeaders,
+      getTeamMembers,
       formatDate,
       handleAvatarChange,
       editTeam,
@@ -541,7 +473,9 @@ export default {
       closeModal,
       teamsPagination,
       currentTeamsPage,
-      changeTeamsPage
+      perPage,
+      changeTeamsPage,
+      changePerPage
     }
   }
 }

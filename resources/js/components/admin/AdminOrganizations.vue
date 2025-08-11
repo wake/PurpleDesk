@@ -31,29 +31,29 @@
     </div>
 
     <!-- 組織列表 -->
-    <div class="overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
+    <div class="overflow-x-auto">
+      <table class="w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-2/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               組織資訊
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              成員數量
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              成員
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               建立時間
             </th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
             </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="org in filteredOrganizations" :key="org.id">
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="w-2/5 px-6 py-4">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded bg-primary-100 flex items-center justify-center overflow-hidden">
+                <div class="h-10 w-10 rounded bg-primary-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     v-if="org.logo_url"
                     :src="org.logo_url"
@@ -62,23 +62,23 @@
                   />
                   <OfficeBuildingIcon v-else class="h-6 w-6 text-primary-600" />
                 </div>
-                <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900">
+                <div class="ml-4 min-w-0 flex-1" style="max-width: calc(100% - 3rem);">
+                  <div class="text-sm font-medium text-gray-900 truncate">
                     {{ org.name }}
                   </div>
-                  <div class="text-sm text-gray-500">{{ org.description }}</div>
+                  <div class="text-sm text-gray-500 truncate">
+                    {{ org.description || '無描述' }}
+                  </div>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                {{ org.users_count || 0 }} 位成員
-              </span>
+            <td class="w-1/4 px-6 py-4 whitespace-nowrap">
+              <UserAvatarGroup :users="org.users" />
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(org.created_at) }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <router-link
                 :to="`/admin/organizations/${org.id}/manage`"
                 class="text-primary-600 hover:text-primary-900 mr-3"
@@ -99,81 +99,21 @@
       </table>
     </div>
 
-    <!-- 載入狀態 -->
-    <LoadingSpinner v-if="isLoading" />
-
     <!-- 空狀態 -->
-    <div v-else-if="filteredOrganizations.length === 0" class="text-center py-12">
+    <div v-if="!isLoading && filteredOrganizations.length === 0" class="text-center py-12">
       <OfficeBuildingIcon class="mx-auto h-12 w-12 text-gray-400" />
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到組織</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或新增組織</p>
     </div>
 
     <!-- 分頁導航 -->
-    <div v-if="pagination.last_page > 1" class="px-6 py-4 border-t border-gray-200">
-      <div class="flex items-center justify-between">
-        <div class="flex-1 flex justify-between sm:hidden">
-          <button
-            @click="changePage(currentPage - 1)"
-            :disabled="currentPage <= 1"
-            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            上一頁
-          </button>
-          <button
-            @click="changePage(currentPage + 1)"
-            :disabled="currentPage >= pagination.last_page"
-            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            下一頁
-          </button>
-        </div>
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm text-gray-700">
-              顯示第
-              <span class="font-medium">{{ (currentPage - 1) * pagination.per_page + 1 }}</span>
-              到
-              <span class="font-medium">{{ Math.min(currentPage * pagination.per_page, pagination.total) }}</span>
-              筆，共
-              <span class="font-medium">{{ pagination.total }}</span>
-              筆結果
-            </p>
-          </div>
-          <div>
-            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-              <button
-                @click="changePage(currentPage - 1)"
-                :disabled="currentPage <= 1"
-                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ‹
-              </button>
-              <button
-                v-for="page in Math.min(pagination.last_page, 5)"
-                :key="page"
-                @click="changePage(page)"
-                :class="[
-                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                  page === currentPage
-                    ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
-                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                ]"
-              >
-                {{ page }}
-              </button>
-              <button
-                @click="changePage(currentPage + 1)"
-                :disabled="currentPage >= pagination.last_page"
-                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                ›
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PaginationControl 
+      v-if="pagination.last_page > 1" 
+      :pagination="pagination" 
+      :is-loading="isLoading"
+      @page-changed="changePage" 
+      @per-page-changed="changePerPage" 
+    />
 
     <!-- 新增/編輯組織 Modal（簡化版） -->
     <div v-if="showCreateModal || editingOrganization" class="fixed inset-0 z-50 overflow-y-auto">
@@ -323,18 +263,23 @@ import axios from 'axios'
 import { OfficeBuildingIcon } from '@heroicons/vue/outline'
 import ConfirmDialog from '../common/ConfirmDialog.vue'
 import LoadingSpinner from '../common/LoadingSpinner.vue'
+import PaginationControl from '../common/PaginationControl.vue'
+import UserAvatarGroup from '../common/UserAvatarGroup.vue'
 
 export default {
   name: 'AdminOrganizations',
   components: {
     OfficeBuildingIcon,
     ConfirmDialog,
-    LoadingSpinner
+    LoadingSpinner,
+    PaginationControl,
+    UserAvatarGroup
   },
   setup() {
     const organizations = ref([])
     const pagination = ref({})
     const currentPage = ref(1)
+    const perPage = ref(10)
     const isLoading = ref(true)
     const searchQuery = ref('')
     const showCreateModal = ref(false)
@@ -373,11 +318,12 @@ export default {
       })
     }
     
+    
     const fetchOrganizations = async (page = 1) => {
       try {
         isLoading.value = true
         console.log('AdminOrganizations: Fetching organizations, page:', page)
-        const response = await axios.get(`/api/admin/organizations?page=${page}`)
+        const response = await axios.get(`/api/admin/organizations?page=${page}&per_page=${perPage.value}`)
         console.log('AdminOrganizations: API response:', response.data)
         
         // 處理回應資料
@@ -599,6 +545,12 @@ export default {
       fetchOrganizations(page)
     }
     
+    const changePerPage = (newPerPage) => {
+      perPage.value = newPerPage
+      currentPage.value = 1
+      fetchOrganizations(1)
+    }
+    
     onMounted(() => {
       fetchOrganizations()
     })
@@ -635,7 +587,9 @@ export default {
       deleteTarget,
       pagination,
       currentPage,
-      changePage
+      perPage,
+      changePage,
+      changePerPage
     }
   }
 }

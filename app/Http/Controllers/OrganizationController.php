@@ -40,7 +40,8 @@ class OrganizationController extends Controller
     public function show(Organization $organization, Request $request)
     {
         $page = $request->get('page', 1);
-        $perPage = 10;
+        $perPage = $request->get('per_page', 10);
+        $perPage = min(max($perPage, 10), 100); // 限制在 10-100 之間
         
         // 分頁載入組織成員
         $users = $organization->users()
