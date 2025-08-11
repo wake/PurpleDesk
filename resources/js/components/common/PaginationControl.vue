@@ -5,7 +5,7 @@
       <button
         @click="$emit('page-changed', currentPage - 1)"
         :disabled="currentPage <= 1"
-        class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
       >
         上一頁
       </button>
@@ -17,7 +17,7 @@
       <button
         @click="$emit('page-changed', currentPage + 1)"
         :disabled="currentPage >= pagination.last_page"
-        class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
       >
         下一頁
       </button>
@@ -32,7 +32,8 @@
           <span class="text-sm text-gray-600">每頁</span>
           <div class="relative ml-1">
             <button
-              @click="showPerPageDropdown = !showPerPageDropdown"
+              @click.stop="showPerPageDropdown = !showPerPageDropdown"
+              data-dropdown-button
               class="inline-flex items-center text-sm text-primary-600 border-b border-primary-600 hover:text-primary-700 hover:border-primary-700 transition-colors"
             >
               {{ pagination.per_page }}
@@ -41,11 +42,12 @@
               </svg>
             </button>
             
-            <!-- 下拉選單 -->
+            <!-- 下拉選單（向上展開） -->
             <div
               v-if="showPerPageDropdown"
               @click.stop
-              class="absolute left-0 mt-1 w-16 bg-white rounded-md shadow-lg z-10 border border-gray-200"
+              data-dropdown-menu
+              class="absolute left-0 bottom-full mb-1 w-16 bg-white rounded-md shadow-lg z-10 border border-gray-200"
             >
               <button
                 v-for="option in perPageOptions"
@@ -69,7 +71,7 @@
         <button
           @click="$emit('page-changed', currentPage - 1)"
           :disabled="currentPage <= 1"
-          class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
         >
           <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -188,7 +190,7 @@
         <button
           @click="$emit('page-changed', currentPage + 1)"
           :disabled="currentPage >= pagination.last_page"
-          class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
         >
           <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -242,7 +244,12 @@ export default {
       this.showPerPageDropdown = false
     },
     handleClickOutside(event) {
-      if (!this.$el.contains(event.target)) {
+      // 檢查點擊是否在下拉按鈕或下拉選單之外
+      const dropdownButton = this.$el.querySelector('[data-dropdown-button]')
+      const dropdownMenu = this.$el.querySelector('[data-dropdown-menu]')
+      
+      if (dropdownButton && !dropdownButton.contains(event.target) && 
+          (!dropdownMenu || !dropdownMenu.contains(event.target))) {
         this.showPerPageDropdown = false
       }
     },
