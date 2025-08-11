@@ -24,13 +24,12 @@
     </div>
     
     <!-- 桌面版分頁 -->
-    <div class="hidden sm:flex sm:items-center sm:justify-center sm:space-x-8">
-      <!-- 左側：每頁顯示數量選擇 -->
+    <div class="hidden sm:flex sm:items-center sm:justify-between">
+      <!-- 左側：合併分頁數量與總數資訊 -->
       <div class="flex items-center space-x-2">
-        <label for="per-page" class="text-sm text-gray-600">每頁</label>
+        <span class="text-sm text-gray-600">每頁</span>
         <div class="relative">
           <select
-            id="per-page"
             :value="pagination.per_page"
             @change="$emit('per-page-changed', parseInt($event.target.value))"
             class="block w-16 pl-3 pr-8 py-1.5 text-sm border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -46,7 +45,7 @@
             </svg>
           </div>
         </div>
-        <span class="text-sm text-gray-600">筆</span>
+        <span class="text-sm text-gray-600">筆，共 {{ pagination.total }} 筆</span>
       </div>
       
       <!-- 中間：分頁按鈕 -->
@@ -182,10 +181,8 @@
         </button>
       </nav>
       
-      <!-- 右側：顯示資訊 -->
-      <div class="text-sm text-gray-600">
-        {{ startItem }}-{{ endItem }} / {{ pagination.total }}
-      </div>
+      <!-- 右側：保持空白以維持平衡 -->
+      <div></div>
     </div>
   </div>
 </template>
@@ -214,12 +211,6 @@ export default {
   computed: {
     currentPage() {
       return this.pagination.current_page
-    },
-    startItem() {
-      return (this.currentPage - 1) * this.pagination.per_page + 1
-    },
-    endItem() {
-      return Math.min(this.currentPage * this.pagination.per_page, this.pagination.total)
     }
   }
 }
