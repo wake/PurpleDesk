@@ -86,11 +86,10 @@
                 </div>
                 <div class="ml-4 min-w-0 flex-1">
                   <div class="text-sm font-medium text-gray-900 truncate">
-                    {{ user.visible_name || user.display_name || user.full_name || user.account }}
+                    {{ user.display_name || user.full_name || user.account }}
                   </div>
                   <div class="text-sm text-gray-500 truncate">
                     <span :title="user.email">{{ user.email }}</span>
-                    <span class="text-xs text-gray-400 ml-2">@{{ user.account }}</span>
                   </div>
                 </div>
               </div>
