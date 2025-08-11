@@ -40,48 +40,86 @@
         </button>
       </div>
       
+      <!-- 搜尋欄位 -->
+      <div class="px-4 py-2 border-b border-gray-100">
+        <div class="relative">
+          <SearchIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="搜尋圖標..."
+            class="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          />
+          <button
+            v-if="searchQuery"
+            @click="clearSearch"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600"
+          >
+            <XIcon class="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+      
       <!-- 圖標內容區域 -->
       <div class="p-4 overflow-y-auto max-h-80">
         <!-- Heroicons -->
-        <div v-if="activeTab === 'heroicons'" class="grid grid-cols-6 gap-2">
-          <button
-            v-for="icon in heroicons"
-            :key="icon.name"
-            @click="selectIcon(icon.component, 'heroicons')"
-            class="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-            :class="selectedIcon === icon.component ? 'border-primary-500 bg-primary-100' : ''"
-            :title="icon.name"
-          >
-            <component :is="icon.component" class="w-5 h-5 text-gray-600" />
-          </button>
+        <div v-if="activeTab === 'heroicons'">
+          <div v-if="filteredHeroicons.length > 0" class="grid grid-cols-6 gap-2">
+            <button
+              v-for="icon in filteredHeroicons"
+              :key="icon.name"
+              @click="selectIcon(icon.component, 'heroicons')"
+              class="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+              :class="selectedIcon === icon.component ? 'border-primary-500 bg-primary-100' : ''"
+              :title="icon.name"
+            >
+              <component :is="icon.component" class="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+          <div v-else class="text-center py-8 text-gray-500">
+            <SearchIcon class="mx-auto h-8 w-8 text-gray-300 mb-2" />
+            <p class="text-sm">找不到符合的圖標</p>
+          </div>
         </div>
         
         <!-- Bootstrap Icons -->
-        <div v-if="activeTab === 'bootstrap'" class="grid grid-cols-6 gap-2">
-          <button
-            v-for="icon in bootstrapIcons"
-            :key="icon.name"
-            @click="selectIcon(icon.class, 'bootstrap')"
-            class="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-            :class="selectedIcon === icon.class ? 'border-primary-500 bg-primary-100' : ''"
-            :title="icon.name"
-          >
-            <i :class="icon.class" class="text-gray-600"></i>
-          </button>
+        <div v-if="activeTab === 'bootstrap'">
+          <div v-if="filteredBootstrapIcons.length > 0" class="grid grid-cols-6 gap-2">
+            <button
+              v-for="icon in filteredBootstrapIcons"
+              :key="icon.name"
+              @click="selectIcon(icon.class, 'bootstrap')"
+              class="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+              :class="selectedIcon === icon.class ? 'border-primary-500 bg-primary-100' : ''"
+              :title="icon.name"
+            >
+              <i :class="icon.class" class="text-gray-600"></i>
+            </button>
+          </div>
+          <div v-else class="text-center py-8 text-gray-500">
+            <SearchIcon class="mx-auto h-8 w-8 text-gray-300 mb-2" />
+            <p class="text-sm">找不到符合的圖標</p>
+          </div>
         </div>
         
         <!-- Emoji -->
-        <div v-if="activeTab === 'emoji'" class="grid grid-cols-8 gap-2">
-          <button
-            v-for="emoji in emojis"
-            :key="emoji.char"
-            @click="selectIcon(emoji.char, 'emoji')"
-            class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 text-lg"
-            :class="selectedIcon === emoji.char ? 'border-primary-500 bg-primary-100' : ''"
-            :title="emoji.name"
-          >
-            {{ emoji.char }}
-          </button>
+        <div v-if="activeTab === 'emoji'">
+          <div v-if="filteredEmojis.length > 0" class="grid grid-cols-8 gap-2">
+            <button
+              v-for="emoji in filteredEmojis"
+              :key="emoji.char"
+              @click="selectIcon(emoji.char, 'emoji')"
+              class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 text-lg"
+              :class="selectedIcon === emoji.char ? 'border-primary-500 bg-primary-100' : ''"
+              :title="emoji.name"
+            >
+              {{ emoji.char }}
+            </button>
+          </div>
+          <div v-else class="text-center py-8 text-gray-500">
+            <SearchIcon class="mx-auto h-8 w-8 text-gray-300 mb-2" />
+            <p class="text-sm">找不到符合的表情符號</p>
+          </div>
         </div>
       </div>
       
@@ -112,7 +150,7 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 // Heroicons
 import {
   UserIcon, CogIcon, HomeIcon, DocumentTextIcon, FolderIcon, 
@@ -149,6 +187,7 @@ export default {
     const iconPanel = ref(null)
     const activeTab = ref('heroicons')
     const selectedIcon = ref(props.modelValue)
+    const searchQuery = ref('')
     
     const iconTabs = [
       { key: 'heroicons', label: 'Heroicons' },
@@ -284,6 +323,36 @@ export default {
       closePicker()
     }
     
+    const clearSearch = () => {
+      searchQuery.value = ''
+    }
+    
+    // 篩選後的圖標列表
+    const filteredHeroicons = computed(() => {
+      if (!searchQuery.value) return heroicons
+      const query = searchQuery.value.toLowerCase()
+      return heroicons.filter(icon => 
+        icon.name.toLowerCase().includes(query)
+      )
+    })
+    
+    const filteredBootstrapIcons = computed(() => {
+      if (!searchQuery.value) return bootstrapIcons
+      const query = searchQuery.value.toLowerCase()
+      return bootstrapIcons.filter(icon => 
+        icon.name.toLowerCase().includes(query)
+      )
+    })
+    
+    const filteredEmojis = computed(() => {
+      if (!searchQuery.value) return emojis
+      const query = searchQuery.value.toLowerCase()
+      return emojis.filter(emoji => 
+        emoji.name.toLowerCase().includes(query) ||
+        emoji.char.includes(query)
+      )
+    })
+    
     // 點擊外部關閉
     const handleClickOutside = (event) => {
       if (iconPanel.value && !iconPanel.value.contains(event.target)) {
@@ -308,14 +377,19 @@ export default {
       iconPanel,
       activeTab,
       selectedIcon,
+      searchQuery,
       iconTabs,
       heroicons,
       bootstrapIcons,
       emojis,
+      filteredHeroicons,
+      filteredBootstrapIcons,
+      filteredEmojis,
       togglePicker,
       closePicker,
       selectIcon,
-      clearIcon
+      clearIcon,
+      clearSearch
     }
   }
 }
