@@ -15,11 +15,12 @@
 
           <form @submit.prevent="handleSubmit" class="space-y-6 p-6">
             <!-- 頭像設定 -->
-            <AvatarField
-              ref="avatarField"
+            <ImageField
+              ref="imageField"
               label="頭像"
               :current-image-url="user?.avatar_url"
               :image-alt="user?.display_name || user?.name"
+              :initials="getUserInitials(user)"
               size="large"
               shape="circle"
               remove-button-text="移除頭像"
@@ -27,19 +28,14 @@
               remove-confirm-message="確定要移除頭像嗎？此操作無法復原。"
               :uploading="isLoading"
               :removing="isRemovingAvatar"
+              @mode-changed="handleModeChanged"
+              @settings-changed="handleSettingsChanged"
               @file-selected="handleAvatarSelected"
               @file-error="handleFileError"
-              @upload="handleAvatarUpload"
               @remove="handleAvatarRemove"
               @success="handleSuccess"
               @error="handleError"
-            >
-              <template #placeholder>
-                <span class="text-white text-lg font-medium">
-                  {{ getUserInitials(user) }}
-                </span>
-              </template>
-            </AvatarField>
+            />
 
             <!-- 基本資料 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -193,7 +189,7 @@ import AppNavbar from './AppNavbar.vue'
 import axios from 'axios'
 import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
 import ConfirmDialog from './common/ConfirmDialog.vue'
-import AvatarField from './common/AvatarField.vue'
+import ImageField from './common/ImageField.vue'
 
 export default {
   name: 'ProfilePage',
@@ -202,7 +198,7 @@ export default {
     XCircleIcon,
     CheckCircleIcon,
     ConfirmDialog,
-    AvatarField
+    ImageField
   },
   setup() {
     const authStore = useAuthStore()
@@ -271,6 +267,18 @@ export default {
     
     const handleError = (error) => {
       errorMessage.value = error
+    }
+    
+    const handleModeChanged = (data) => {
+      // 處理模式變更 (字母/圖標/上傳)
+      console.log('Mode changed:', data)
+      // 這裡可以保存用戶的偏好設定
+    }
+    
+    const handleSettingsChanged = (data) => {
+      // 處理設定變更 (顏色、圖標等)
+      console.log('Settings changed:', data)
+      // 這裡可以保存用戶的自訂設定
     }
     
     const showRemoveAvatarDialog = () => {
@@ -415,6 +423,8 @@ export default {
       handleAvatarRemove,
       handleSuccess,
       handleError,
+      handleModeChanged,
+      handleSettingsChanged,
       showRemoveAvatarDialog,
       confirmRemoveAvatar,
       cancelRemoveAvatar,

@@ -2,11 +2,12 @@
   <div>
     <form @submit.prevent="saveSettings" class="space-y-6 p-6">
       <!-- Logo 設定 -->
-      <AvatarField
+      <ImageField
         ref="logoField"
         label="組織 Logo"
         :current-image-url="organization?.logo_url"
         :image-alt="organization?.name"
+        :initials="organization?.name?.substring(0, 2)?.toUpperCase()"
         size="large"
         shape="rounded"
         remove-button-text="移除 Logo"
@@ -14,6 +15,8 @@
         remove-confirm-message="確定要移除組織 Logo 嗎？此操作無法復原。"
         :uploading="isSaving"
         :removing="isRemovingLogo"
+        @mode-changed="handleModeChanged"
+        @settings-changed="handleSettingsChanged"
         @file-selected="handleLogoSelected"
         @file-error="handleLogoError"
         @remove="handleLogoRemove"
@@ -25,7 +28,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
           </svg>
         </template>
-      </AvatarField>
+      </ImageField>
 
       <!-- 基本資訊 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -223,13 +226,13 @@ import { ref, reactive, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import ConfirmDialog from '../../common/ConfirmDialog.vue'
-import AvatarField from '../../common/AvatarField.vue'
+import ImageField from '../../common/ImageField.vue'
 
 export default {
   name: 'OrganizationSettings',
   components: {
     ConfirmDialog,
-    AvatarField
+    ImageField
   },
   props: {
     organization: {
@@ -285,6 +288,14 @@ export default {
     
     const handleLogoSuccess = (message) => {
       emit('success', message)
+    }
+    
+    const handleModeChanged = (data) => {
+      console.log('Logo mode changed:', data)
+    }
+    
+    const handleSettingsChanged = (data) => {
+      console.log('Logo settings changed:', data)
     }
     
     const confirmRemoveLogo = async () => {
@@ -410,6 +421,8 @@ export default {
       handleLogoError,
       handleLogoRemove,
       handleLogoSuccess,
+      handleModeChanged,
+      handleSettingsChanged,
       removeLogo,
       saveSettings,
       deleteOrganization

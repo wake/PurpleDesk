@@ -130,11 +130,12 @@
             
             <div class="space-y-4">
               <!-- Logo 設定 -->
-              <AvatarField
+              <ImageField
                 ref="logoField"
                 label="組織 Logo"
                 :current-image-url="editingOrganization?.logo_url"
                 :image-alt="formData.name"
+                :initials="formData.name?.substring(0, 2)?.toUpperCase()"
                 size="medium"
                 shape="rounded"
                 remove-button-text="移除 Logo"
@@ -142,16 +143,14 @@
                 remove-confirm-message="確定要移除組織 Logo 嗎？此操作無法復原。"
                 :uploading="isLoading"
                 :removing="isRemovingLogo"
+                @mode-changed="handleModeChanged"
+                @settings-changed="handleSettingsChanged"
                 @file-selected="handleLogoSelected"
                 @file-error="handleLogoError"
                 @remove="handleLogoRemove"
                 @success="handleLogoSuccess"
                 @error="handleLogoError"
-              >
-                <template #placeholder>
-                  <OfficeBuildingIcon class="h-8 w-8 text-primary-600" />
-                </template>
-              </AvatarField>
+              />
               
               <div>
                 <label class="block text-sm font-medium text-gray-700">組織名稱</label>
@@ -216,7 +215,7 @@ import ConfirmDialog from '../common/ConfirmDialog.vue'
 import LoadingSpinner from '../common/LoadingSpinner.vue'
 import PaginationControl from '../common/PaginationControl.vue'
 import UserAvatarGroup from '../common/UserAvatarGroup.vue'
-import AvatarField from '../common/AvatarField.vue'
+import ImageField from '../common/ImageField.vue'
 
 export default {
   name: 'AdminOrganizations',
@@ -226,7 +225,7 @@ export default {
     LoadingSpinner,
     PaginationControl,
     UserAvatarGroup,
-    AvatarField
+    ImageField
   },
   setup() {
     const organizations = ref([])
@@ -316,6 +315,14 @@ export default {
     
     const handleLogoSuccess = (message) => {
       console.log('Logo success:', message)
+    }
+    
+    const handleModeChanged = (data) => {
+      console.log('Logo mode changed:', data)
+    }
+    
+    const handleSettingsChanged = (data) => {
+      console.log('Logo settings changed:', data)
     }
     
     const showRemoveLogoDialog = () => {
@@ -471,6 +478,8 @@ export default {
       handleLogoError,
       handleLogoRemove,
       handleLogoSuccess,
+      handleModeChanged,
+      handleSettingsChanged,
       showDeleteDialog,
       confirmDeleteOrganization,
       cancelDeleteOrganization,
