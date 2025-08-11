@@ -1,26 +1,31 @@
 <template>
   <div>
     <form @submit.prevent="saveSettings" class="space-y-6 p-6">
-      <!-- Logo 上傳 -->
-      <FileUploader
-        ref="logoUploader"
+      <!-- Logo 設定 -->
+      <AvatarField
+        ref="logoField"
         label="組織 Logo"
-        :current-file-url="organization?.logo_url"
-        :preview-alt="organization?.name"
-        preview-container-class="h-20 w-20 rounded bg-primary-100 flex items-center justify-center overflow-hidden"
-        placeholder-icon-class="h-8 w-8 text-primary-600"
+        :current-image-url="organization?.logo_url"
+        :image-alt="organization?.name"
+        size="large"
+        shape="rounded"
         remove-button-text="移除 Logo"
-        :loading="isRemovingLogo"
+        remove-confirm-title="移除組織 Logo"
+        remove-confirm-message="確定要移除組織 Logo 嗎？此操作無法復原。"
+        :uploading="isSaving"
+        :removing="isRemovingLogo"
         @file-selected="handleLogoSelected"
         @file-error="handleLogoError"
-        @remove="removeLogo"
+        @remove="handleLogoRemove"
+        @success="handleLogoSuccess"
+        @error="handleLogoError"
       >
         <template #placeholder>
           <svg class="h-8 w-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
           </svg>
         </template>
-      </FileUploader>
+      </AvatarField>
 
       <!-- 基本資訊 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -210,18 +215,6 @@
       </div>
     </div>
     
-    <!-- 移除 Logo 確認對話框 -->
-    <ConfirmDialog
-      :show="showRemoveLogoConfirm"
-      type="danger"
-      title="移除組織 Logo"
-      message="確定要移除組織 Logo 嗎？此操作無法復原。"
-      confirm-text="移除"
-      cancel-text="取消"
-      :loading="isRemovingLogo"
-      @confirm="confirmRemoveLogo"
-      @cancel="cancelRemoveLogo"
-    />
   </div>
 </template>
 
@@ -230,13 +223,13 @@ import { ref, reactive, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import ConfirmDialog from '../../common/ConfirmDialog.vue'
-import FileUploader from '../../common/FileUploader.vue'
+import AvatarField from '../../common/AvatarField.vue'
 
 export default {
   name: 'OrganizationSettings',
   components: {
     ConfirmDialog,
-    FileUploader
+    AvatarField
   },
   props: {
     organization: {
@@ -284,6 +277,14 @@ export default {
     
     const removeLogo = () => {
       showRemoveLogoConfirm.value = true
+    }
+    
+    const handleLogoRemove = async () => {
+      await confirmRemoveLogo()
+    }
+    
+    const handleLogoSuccess = (message) => {
+      emit('success', message)
     }
     
     const confirmRemoveLogo = async () => {
@@ -407,9 +408,9 @@ export default {
       isRemovingLogo,
       handleLogoSelected,
       handleLogoError,
+      handleLogoRemove,
+      handleLogoSuccess,
       removeLogo,
-      confirmRemoveLogo,
-      cancelRemoveLogo,
       saveSettings,
       deleteOrganization
     }

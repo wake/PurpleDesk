@@ -129,24 +129,29 @@
             </h3>
             
             <div class="space-y-4">
-              <!-- Logo 上傳 -->
-              <FileUploader
-                ref="logoUploader"
+              <!-- Logo 設定 -->
+              <AvatarField
+                ref="logoField"
                 label="組織 Logo"
-                :current-file-url="editingOrganization?.logo_url"
-                :preview-alt="formData.name"
-                preview-container-class="h-16 w-16 bg-primary-100 rounded flex items-center justify-center overflow-hidden"
-                placeholder-icon-class="h-8 w-8 text-primary-600"
+                :current-image-url="editingOrganization?.logo_url"
+                :image-alt="formData.name"
+                size="medium"
+                shape="rounded"
                 remove-button-text="移除 Logo"
-                :loading="isRemovingLogo"
+                remove-confirm-title="移除組織 Logo"
+                remove-confirm-message="確定要移除組織 Logo 嗎？此操作無法復原。"
+                :uploading="isLoading"
+                :removing="isRemovingLogo"
                 @file-selected="handleLogoSelected"
                 @file-error="handleLogoError"
-                @remove="showRemoveLogoDialog"
+                @remove="handleLogoRemove"
+                @success="handleLogoSuccess"
+                @error="handleLogoError"
               >
                 <template #placeholder>
                   <OfficeBuildingIcon class="h-8 w-8 text-primary-600" />
                 </template>
-              </FileUploader>
+              </AvatarField>
               
               <div>
                 <label class="block text-sm font-medium text-gray-700">組織名稱</label>
@@ -187,18 +192,6 @@
       </div>
     </div>
     
-    <!-- 移除 Logo 確認對話框 -->
-    <ConfirmDialog
-      :show="showRemoveLogoConfirm"
-      type="danger"
-      title="移除組織 Logo"
-      message="確定要移除組織 Logo 嗎？此操作無法復原。"
-      confirm-text="移除"
-      cancel-text="取消"
-      :loading="isRemovingLogo"
-      @confirm="confirmRemoveLogo"
-      @cancel="cancelRemoveLogo"
-    />
     
     <!-- 刪除組織確認對話框 -->
     <ConfirmDialog
@@ -223,7 +216,7 @@ import ConfirmDialog from '../common/ConfirmDialog.vue'
 import LoadingSpinner from '../common/LoadingSpinner.vue'
 import PaginationControl from '../common/PaginationControl.vue'
 import UserAvatarGroup from '../common/UserAvatarGroup.vue'
-import FileUploader from '../common/FileUploader.vue'
+import AvatarField from '../common/AvatarField.vue'
 
 export default {
   name: 'AdminOrganizations',
@@ -233,7 +226,7 @@ export default {
     LoadingSpinner,
     PaginationControl,
     UserAvatarGroup,
-    FileUploader
+    AvatarField
   },
   setup() {
     const organizations = ref([])
@@ -315,6 +308,14 @@ export default {
     
     const handleLogoError = (error) => {
       alert(error)
+    }
+    
+    const handleLogoRemove = async () => {
+      await confirmRemoveLogo()
+    }
+    
+    const handleLogoSuccess = (message) => {
+      console.log('Logo success:', message)
     }
     
     const showRemoveLogoDialog = () => {
@@ -468,11 +469,8 @@ export default {
       saveOrganization,
       handleLogoSelected,
       handleLogoError,
-      showRemoveLogoDialog,
-      confirmRemoveLogo,
-      cancelRemoveLogo,
-      showRemoveLogoConfirm,
-      isRemovingLogo,
+      handleLogoRemove,
+      handleLogoSuccess,
       showDeleteDialog,
       confirmDeleteOrganization,
       cancelDeleteOrganization,

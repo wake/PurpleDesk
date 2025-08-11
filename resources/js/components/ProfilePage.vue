@@ -14,24 +14,32 @@
           </div>
 
           <form @submit.prevent="handleSubmit" class="space-y-6 p-6">
-            <!-- 頭像上傳 -->
-            <FileUploader
-              ref="avatarUploader"
+            <!-- 頭像設定 -->
+            <AvatarField
+              ref="avatarField"
               label="頭像"
-              :current-file-url="user?.avatar_url"
-              :preview-alt="user?.name"
+              :current-image-url="user?.avatar_url"
+              :image-alt="user?.display_name || user?.name"
+              size="large"
+              shape="circle"
               remove-button-text="移除頭像"
-              :loading="isRemovingAvatar"
+              remove-confirm-title="移除頭像"
+              remove-confirm-message="確定要移除頭像嗎？此操作無法復原。"
+              :uploading="isLoading"
+              :removing="isRemovingAvatar"
               @file-selected="handleAvatarSelected"
               @file-error="handleFileError"
-              @remove="showRemoveAvatarDialog"
+              @upload="handleAvatarUpload"
+              @remove="handleAvatarRemove"
+              @success="handleSuccess"
+              @error="handleError"
             >
-              <template v-if="!user?.avatar_url" #placeholder>
+              <template #placeholder>
                 <span class="text-white text-lg font-medium">
                   {{ getUserInitials(user) }}
                 </span>
               </template>
-            </FileUploader>
+            </AvatarField>
 
             <!-- 基本資料 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -175,18 +183,6 @@
       </div>
     </div>
     
-    <!-- 移除頭像確認對話框 -->
-    <ConfirmDialog
-      :show="showRemoveAvatarConfirm"
-      type="danger"
-      title="移除頭像"
-      message="確定要移除頭像嗎？此操作無法復原。"
-      confirm-text="移除"
-      cancel-text="取消"
-      :loading="isRemovingAvatar"
-      @confirm="confirmRemoveAvatar"
-      @cancel="cancelRemoveAvatar"
-    />
   </div>
 </template>
 
@@ -197,7 +193,7 @@ import AppNavbar from './AppNavbar.vue'
 import axios from 'axios'
 import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
 import ConfirmDialog from './common/ConfirmDialog.vue'
-import FileUploader from './common/FileUploader.vue'
+import AvatarField from './common/AvatarField.vue'
 
 export default {
   name: 'ProfilePage',
@@ -206,7 +202,7 @@ export default {
     XCircleIcon,
     CheckCircleIcon,
     ConfirmDialog,
-    FileUploader
+    AvatarField
   },
   setup() {
     const authStore = useAuthStore()
@@ -253,6 +249,27 @@ export default {
     }
     
     const handleFileError = (error) => {
+      errorMessage.value = error
+    }
+    
+    const handleAvatarUpload = async (file) => {
+      // 自動上傳功能（如果需要的話）
+      form.avatar = file
+      await handleSubmit()
+    }
+    
+    const handleAvatarRemove = async () => {
+      await confirmRemoveAvatar()
+    }
+    
+    const handleSuccess = (message) => {
+      successMessage.value = message
+      setTimeout(() => {
+        successMessage.value = ''
+      }, 3000)
+    }
+    
+    const handleError = (error) => {
       errorMessage.value = error
     }
     
@@ -394,6 +411,10 @@ export default {
       getUserInitials,
       handleAvatarSelected,
       handleFileError,
+      handleAvatarUpload,
+      handleAvatarRemove,
+      handleSuccess,
+      handleError,
       showRemoveAvatarDialog,
       confirmRemoveAvatar,
       cancelRemoveAvatar,
