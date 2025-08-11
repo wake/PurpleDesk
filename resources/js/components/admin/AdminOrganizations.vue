@@ -130,65 +130,23 @@
             
             <div class="space-y-4">
               <!-- Logo 上傳 -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">組織 Logo</label>
-                <div class="flex items-start space-x-4">
-                  <div class="h-16 w-16 bg-primary-100 rounded flex items-center justify-center overflow-hidden">
-                    <img
-                      v-if="logoPreview || (editingOrganization?.logo_url)"
-                      :src="logoPreview || editingOrganization.logo_url"
-                      :alt="formData.name"
-                      class="h-full w-full object-cover"
-                    />
-                    <OfficeBuildingIcon v-else class="h-8 w-8 text-primary-600" />
-                  </div>
-                  
-                  <div class="flex-1">
-                    <div
-                      ref="logoDropZone"
-                      @drop="handleLogoDrop"
-                      @dragover="handleLogoDragOver"
-                      @dragenter="handleLogoDragEnter"
-                      @dragleave="handleLogoDragLeave"
-                      :class="{
-                        'border-primary-500 bg-primary-50': isLogoDragOver,
-                        'border-gray-300': !isLogoDragOver
-                      }"
-                      class="border-2 border-dashed rounded-lg p-3 text-center transition-colors cursor-pointer hover:border-primary-400 hover:bg-primary-25"
-                      @click="$refs.logoFileInput.click()"
-                    >
-                      <svg class="mx-auto h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                      </svg>
-                      <p class="mt-1 text-xs text-gray-600">
-                        <span class="font-medium text-primary-500">點擊上傳</span>
-                        或拖曳檔案至此
-                      </p>
-                      <p class="text-xs text-gray-500">支援 JPG, PNG 格式，檔案大小不超過 2MB</p>
-                    </div>
-                    
-                    <input
-                      ref="logoFileInput"
-                      type="file"
-                      accept="image/*"
-                      @change="handleLogoFileChange"
-                      class="hidden"
-                    />
-                    
-                    <!-- 移除 Logo 按鈕 -->
-                    <div v-if="logoPreview || editingOrganization?.logo_url" class="mt-3">
-                      <button
-                        type="button"
-                        @click="showRemoveLogoDialog"
-                        class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                      >
-                        <i class="bi bi-trash mr-2"></i>
-                        移除 Logo
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <FileUploader
+                ref="logoUploader"
+                label="組織 Logo"
+                :current-file-url="editingOrganization?.logo_url"
+                :preview-alt="formData.name"
+                preview-container-class="h-16 w-16 bg-primary-100 rounded flex items-center justify-center overflow-hidden"
+                placeholder-icon-class="h-8 w-8 text-primary-600"
+                remove-button-text="移除 Logo"
+                :loading="isRemovingLogo"
+                @file-selected="handleLogoSelected"
+                @file-error="handleLogoError"
+                @remove="showRemoveLogoDialog"
+              >
+                <template #placeholder>
+                  <OfficeBuildingIcon class="h-8 w-8 text-primary-600" />
+                </template>
+              </FileUploader>
               
               <div>
                 <label class="block text-sm font-medium text-gray-700">組織名稱</label>
@@ -265,6 +223,7 @@ import ConfirmDialog from '../common/ConfirmDialog.vue'
 import LoadingSpinner from '../common/LoadingSpinner.vue'
 import PaginationControl from '../common/PaginationControl.vue'
 import UserAvatarGroup from '../common/UserAvatarGroup.vue'
+import FileUploader from '../common/FileUploader.vue'
 
 export default {
   name: 'AdminOrganizations',
@@ -273,7 +232,8 @@ export default {
     ConfirmDialog,
     LoadingSpinner,
     PaginationControl,
-    UserAvatarGroup
+    UserAvatarGroup,
+    FileUploader
   },
   setup() {
     const organizations = ref([])
@@ -284,8 +244,6 @@ export default {
     const searchQuery = ref('')
     const showCreateModal = ref(false)
     const editingOrganization = ref(null)
-    const logoPreview = ref(null)
-    const isLogoDragOver = ref(false)
     const logoFile = ref(null)
     const showRemoveLogoConfirm = ref(false)
     const isRemovingLogo = ref(false)
@@ -351,62 +309,12 @@ export default {
       }
     }
     
-    const validateAndProcessLogoFile = (file) => {
-      // 驗證檔案大小 (2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        alert('檔案大小不能超過 2MB')
-        return false
-      }
-      
-      // 驗證檔案類型
-      if (!file.type.startsWith('image/')) {
-        alert('請選擇圖片檔案')
-        return false
-      }
-      
+    const handleLogoSelected = (file) => {
       logoFile.value = file
-      
-      // 產生預覽圖
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        logoPreview.value = e.target.result
-      }
-      reader.readAsDataURL(file)
-      
-      return true
     }
     
-    const handleLogoFileChange = (event) => {
-      const file = event.target.files[0]
-      if (file) {
-        validateAndProcessLogoFile(file)
-      }
-    }
-    
-    // Logo 拖曳事件處理
-    const handleLogoDragEnter = (e) => {
-      e.preventDefault()
-      isLogoDragOver.value = true
-    }
-    
-    const handleLogoDragOver = (e) => {
-      e.preventDefault()
-      isLogoDragOver.value = true
-    }
-    
-    const handleLogoDragLeave = (e) => {
-      e.preventDefault()
-      isLogoDragOver.value = false
-    }
-    
-    const handleLogoDrop = (e) => {
-      e.preventDefault()
-      isLogoDragOver.value = false
-      
-      const files = e.dataTransfer.files
-      if (files.length > 0) {
-        validateAndProcessLogoFile(files[0])
-      }
+    const handleLogoError = (error) => {
+      alert(error)
     }
     
     const showRemoveLogoDialog = () => {
@@ -437,13 +345,6 @@ export default {
         // 清空本地狀態
         logoFile.value = null
         formData.remove_avatar = false
-        logoPreview.value = null
-        
-        // 清空檔案輸入
-        const fileInput = document.querySelector('input[type="file"][accept="image/*"]')
-        if (fileInput) {
-          fileInput.value = ''
-        }
         
         // 關閉對話框
         showRemoveLogoConfirm.value = false
@@ -465,7 +366,6 @@ export default {
       editingOrganization.value = org
       formData.name = org.name
       formData.description = org.description || ''
-      logoPreview.value = null
       logoFile.value = null
     }
     
@@ -475,7 +375,6 @@ export default {
       formData.name = ''
       formData.description = ''
       formData.remove_avatar = false
-      logoPreview.value = null
       logoFile.value = null
     }
     
@@ -562,18 +461,13 @@ export default {
       showCreateModal,
       editingOrganization,
       formData,
-      logoPreview,
-      isLogoDragOver,
       filteredOrganizations,
       formatDate,
       editOrganization,
       cancelEdit,
       saveOrganization,
-      handleLogoFileChange,
-      handleLogoDragEnter,
-      handleLogoDragOver,
-      handleLogoDragLeave,
-      handleLogoDrop,
+      handleLogoSelected,
+      handleLogoError,
       showRemoveLogoDialog,
       confirmRemoveLogo,
       cancelRemoveLogo,

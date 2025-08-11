@@ -15,66 +15,23 @@
 
           <form @submit.prevent="handleSubmit" class="space-y-6 p-6">
             <!-- 頭像上傳 -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">頭像</label>
-              <div class="flex items-start space-x-6">
-                <div class="h-20 w-20 rounded-full bg-primary-500 flex items-center justify-center overflow-hidden">
-                  <img
-                    v-if="form.avatar || user?.avatar_url"
-                    :src="avatarPreview || user.avatar_url"
-                    :alt="user?.name"
-                    class="h-full w-full object-cover"
-                  />
-                  <span v-else class="text-white text-lg font-medium">
-                    {{ getUserInitials(user) }}
-                  </span>
-                </div>
-                
-                <div class="flex-1">
-                  <!-- 拖曳上傳區域 -->
-                  <div
-                    ref="dropZone"
-                    @drop="handleDrop"
-                    @dragover="handleDragOver"
-                    @dragenter="handleDragEnter"
-                    @dragleave="handleDragLeave"
-                    :class="{
-                      'border-primary-500 bg-primary-50': isDragOver,
-                      'border-gray-300': !isDragOver
-                    }"
-                    class="border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer hover:border-primary-400 hover:bg-primary-25"
-                    @click="$refs.fileInput.click()"
-                  >
-                    <CloudUploadIcon class="mx-auto h-8 w-8 text-gray-400" />
-                    <p class="mt-2 text-sm text-gray-600">
-                      <span class="font-medium text-primary-500">點擊上傳</span>
-                      或拖曳檔案至此
-                    </p>
-                    <p class="text-xs text-gray-500 mt-1">支援 JPG, PNG 格式，檔案大小不超過 2MB</p>
-                  </div>
-                  
-                  <input
-                    ref="fileInput"
-                    type="file"
-                    accept="image/*"
-                    @change="handleFileChange"
-                    class="hidden"
-                  />
-                  
-                  <!-- 移除頭像按鈕 -->
-                  <div v-if="form.avatar || user?.avatar_url" class="mt-3">
-                    <button
-                      type="button"
-                      @click="showRemoveAvatarDialog"
-                      class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                    >
-                      <i class="bi bi-trash mr-2"></i>
-                      移除頭像
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <FileUploader
+              ref="avatarUploader"
+              label="頭像"
+              :current-file-url="user?.avatar_url"
+              :preview-alt="user?.name"
+              remove-button-text="移除頭像"
+              :loading="isRemovingAvatar"
+              @file-selected="handleAvatarSelected"
+              @file-error="handleFileError"
+              @remove="showRemoveAvatarDialog"
+            >
+              <template v-if="!user?.avatar_url" #placeholder>
+                <span class="text-white text-lg font-medium">
+                  {{ getUserInitials(user) }}
+                </span>
+              </template>
+            </FileUploader>
 
             <!-- 基本資料 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -238,17 +195,18 @@ import { reactive, ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import AppNavbar from './AppNavbar.vue'
 import axios from 'axios'
-import { CloudUploadIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
+import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
 import ConfirmDialog from './common/ConfirmDialog.vue'
+import FileUploader from './common/FileUploader.vue'
 
 export default {
   name: 'ProfilePage',
   components: {
     AppNavbar,
-    CloudUploadIcon,
     XCircleIcon,
     CheckCircleIcon,
-    ConfirmDialog
+    ConfirmDialog,
+    FileUploader
   },
   setup() {
     const authStore = useAuthStore()
@@ -258,7 +216,6 @@ export default {
     const errors = ref({})
     const organizations = ref([])
     const avatarPreview = ref(null)
-    const isDragOver = ref(false)
     const showRemoveAvatarConfirm = ref(false)
     const isRemovingAvatar = ref(false)
     
@@ -290,62 +247,13 @@ export default {
       }
     }
     
-    const validateAndProcessFile = (file) => {
-      // 驗證檔案大小 (2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        errorMessage.value = '檔案大小不能超過 2MB'
-        return false
-      }
-      
-      // 驗證檔案類型
-      if (!file.type.startsWith('image/')) {
-        errorMessage.value = '請選擇圖片檔案'
-        return false
-      }
-      
+    const handleAvatarSelected = (file) => {
       form.avatar = file
-      
-      // 產生預覽圖
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        avatarPreview.value = e.target.result
-      }
-      reader.readAsDataURL(file)
-      
-      return true
+      errorMessage.value = '' // 清除任何現有錯誤訊息
     }
     
-    const handleFileChange = (event) => {
-      const file = event.target.files[0]
-      if (file) {
-        validateAndProcessFile(file)
-      }
-    }
-    
-    // 拖曳事件處理
-    const handleDragEnter = (e) => {
-      e.preventDefault()
-      isDragOver.value = true
-    }
-    
-    const handleDragOver = (e) => {
-      e.preventDefault()
-      isDragOver.value = true
-    }
-    
-    const handleDragLeave = (e) => {
-      e.preventDefault()
-      isDragOver.value = false
-    }
-    
-    const handleDrop = (e) => {
-      e.preventDefault()
-      isDragOver.value = false
-      
-      const files = e.dataTransfer.files
-      if (files.length > 0) {
-        validateAndProcessFile(files[0])
-      }
+    const handleFileError = (error) => {
+      errorMessage.value = error
     }
     
     const showRemoveAvatarDialog = () => {
@@ -373,12 +281,6 @@ export default {
         form.avatar = null
         form.remove_avatar = false
         avatarPreview.value = null
-        
-        // 清空檔案輸入
-        const fileInput = document.querySelector('input[type="file"]')
-        if (fileInput) {
-          fileInput.value = ''
-        }
         
         // 更新本地用戶資料
         await authStore.fetchUser()
@@ -489,13 +391,9 @@ export default {
       errors,
       organizations,
       avatarPreview,
-      isDragOver,
       getUserInitials,
-      handleFileChange,
-      handleDragEnter,
-      handleDragOver,
-      handleDragLeave,
-      handleDrop,
+      handleAvatarSelected,
+      handleFileError,
       showRemoveAvatarDialog,
       confirmRemoveAvatar,
       cancelRemoveAvatar,
