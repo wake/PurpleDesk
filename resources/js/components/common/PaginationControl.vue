@@ -55,7 +55,7 @@
         <button
           @click="$emit('page-changed', currentPage - 1)"
           :disabled="currentPage <= 1"
-          class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -70,10 +70,10 @@
             :key="page"
             @click="$emit('page-changed', page)"
             :class="[
-              'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium border rounded-md transition-colors',
+              'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
               page === currentPage
-                ? 'bg-primary-600 border-primary-600 text-white hover:bg-primary-700'
-                : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                ? 'bg-primary-600 text-white hover:bg-primary-700'
+                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
             ]"
           >
             {{ page }}
@@ -89,10 +89,10 @@
               :key="page"
               @click="$emit('page-changed', page)"
               :class="[
-                'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium border rounded-md transition-colors',
+                'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
                 page === currentPage
-                  ? 'bg-primary-600 border-primary-600 text-white hover:bg-primary-700'
-                  : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                  ? 'bg-primary-600 text-white hover:bg-primary-700'
+                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
               {{ page }}
@@ -102,7 +102,7 @@
             </span>
             <button
               @click="$emit('page-changed', pagination.last_page)"
-              class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700"
+              class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
               {{ pagination.last_page }}
             </button>
@@ -112,7 +112,7 @@
             <!-- 當前頁在後面時 -->
             <button
               @click="$emit('page-changed', 1)"
-              class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700"
+              class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
               1
             </button>
@@ -124,10 +124,10 @@
               :key="page"
               @click="$emit('page-changed', pagination.last_page - 5 + page)"
               :class="[
-                'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium border rounded-md transition-colors',
+                'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
                 (pagination.last_page - 5 + page) === currentPage
-                  ? 'bg-primary-600 border-primary-600 text-white hover:bg-primary-700'
-                  : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                  ? 'bg-primary-600 text-white hover:bg-primary-700'
+                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
               {{ pagination.last_page - 5 + page }}
@@ -138,7 +138,7 @@
             <!-- 當前頁在中間時 -->
             <button
               @click="$emit('page-changed', 1)"
-              class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700"
+              class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
               1
             </button>
@@ -150,10 +150,10 @@
               :key="page"
               @click="$emit('page-changed', page)"
               :class="[
-                'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium border rounded-md transition-colors',
+                'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
                 page === currentPage
-                  ? 'bg-primary-600 border-primary-600 text-white hover:bg-primary-700'
-                  : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                  ? 'bg-primary-600 text-white hover:bg-primary-700'
+                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
               {{ page }}
@@ -163,7 +163,7 @@
             </span>
             <button
               @click="$emit('page-changed', pagination.last_page)"
-              class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700"
+              class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-md transition-colors"
             >
               {{ pagination.last_page }}
             </button>
@@ -174,7 +174,7 @@
         <button
           @click="$emit('page-changed', currentPage + 1)"
           :disabled="currentPage >= pagination.last_page"
-          class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
