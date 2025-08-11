@@ -77,7 +77,10 @@ class CrossOrganizationSeeder extends Seeder
 
         // 創建跨組織用戶
         foreach ($crossOrgUsers as $userData) {
+            $account = strtolower($userData['display_name']);
+            
             $user = User::create([
+                'account' => $account,
                 'full_name' => $userData['full_name'],
                 'display_name' => $userData['display_name'],
                 'email' => $userData['email'],

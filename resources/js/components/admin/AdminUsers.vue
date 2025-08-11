@@ -59,10 +59,10 @@
               所屬組織
             </th>
             <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              註冊時間
+              狀態
             </th>
             <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              狀態
+              註冊時間
             </th>
             <th class="w-1/6 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
@@ -86,9 +86,11 @@
                 </div>
                 <div class="ml-4 min-w-0 flex-1">
                   <div class="text-sm font-medium text-gray-900 truncate">
-                    {{ user.display_name }}
+                    {{ user.display_name || user.full_name || user.account }}
                   </div>
-                  <div class="text-sm text-gray-500 truncate" :title="user.email">{{ user.email }}</div>
+                  <div class="text-sm text-gray-500 truncate">
+                    <span :title="user.email">{{ user.email }}</span>
+                  </div>
                 </div>
               </div>
             </td>
@@ -108,13 +110,13 @@
               </div>
               <span v-else class="text-gray-500">無</span>
             </td>
-            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ formatDate(user.created_at) }}
-            </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                 啟用
               </span>
+            </td>
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ formatDate(user.created_at) }}
             </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button 
@@ -164,19 +166,46 @@
               <div>
                 <div class="space-y-3">
                   <div>
-                    <label class="block text-sm font-medium text-gray-700">名稱 *</label>
+                    <label class="block text-sm font-medium text-gray-700">帳號 *</label>
+                    <div class="relative">
+                      <input
+                        v-model="userForm.account"
+                        type="text"
+                        required
+                        pattern="[a-zA-Z0-9_]+"
+                        :disabled="editingUser && !canEditAccount"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
+                        placeholder="僅限英數字及底線"
+                        @input="checkAccountDebounced"
+                      />
+                      <div v-if="editingUser && !canEditAccount" class="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <button 
+                          @click="enableAccountEdit" 
+                          class="text-primary-600 hover:text-primary-700 text-xs font-medium"
+                        >
+                          編輯
+                        </button>
+                      </div>
+                    </div>
+                    <div v-if="accountCheckResult" class="mt-1 text-xs" :class="accountCheckResult.available ? 'text-green-600' : 'text-red-600'">
+                      {{ accountCheckResult.message }}
+                    </div>
+                    <span v-if="userFormErrors.account" class="text-sm text-red-600">{{ userFormErrors.account[0] }}</span>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">顯示名稱</label>
                     <input
                       v-model="userForm.display_name"
                       type="text"
-                      required
                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                      placeholder="用於系統中顯示的名稱"
+                      placeholder="用於系統中顯示的名稱（選填）"
                     />
                     <span v-if="userFormErrors.display_name" class="text-sm text-red-600">{{ userFormErrors.display_name[0] }}</span>
                   </div>
                   
                   <div>
-                    <label class="block text-sm font-medium text-gray-700">姓名</label>
+                    <label class="block text-sm font-medium text-gray-700">真實姓名</label>
                     <input
                       v-model="userForm.full_name"
                       type="text"
@@ -225,7 +254,7 @@
           <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <button
               @click="saveUser"
-              :disabled="isCreatingUser || !userForm.display_name || !userForm.email || (!editingUser && (!userForm.password || !userForm.password_confirmation))"
+              :disabled="isCreatingUser || !userForm.account || !userForm.email || (!editingUser && (!userForm.password || !userForm.password_confirmation)) || (accountCheckResult && !accountCheckResult.available)"
               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
             >
               {{ isCreatingUser ? '處理中...' : (editingUser ? '更新' : '建立') }}
@@ -240,6 +269,18 @@
         </div>
       </div>
     </div>
+    
+    <!-- 帳號變更確認對話框 -->
+    <ConfirmDialog
+      v-if="showAccountChangeConfirm"
+      type="warning"
+      title="確認變更帳號"
+      :message="`您確定要將帳號從 '${editingUser?.account}' 變更為 '${pendingAccountChange}' 嗎？此操作會影響使用者登入。`"
+      confirm-text="確認變更"
+      cancel-text="取消"
+      @confirm="confirmAccountChange"
+      @cancel="cancelAccountChange"
+    />
   </div>
 </template>
 
@@ -248,12 +289,14 @@ import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import LoadingSpinner from '../common/LoadingSpinner.vue'
 import PaginationControl from '../common/PaginationControl.vue'
+import ConfirmDialog from '../common/ConfirmDialog.vue'
 
 export default {
   name: 'AdminUsers',
   components: {
     LoadingSpinner,
-    PaginationControl
+    PaginationControl,
+    ConfirmDialog
   },
   setup() {
     const users = ref([])
@@ -268,8 +311,13 @@ export default {
     const editingUser = ref(null)
     const isCreatingUser = ref(false)
     const userFormErrors = ref({})
+    const canEditAccount = ref(false)
+    const accountCheckResult = ref(null)
+    const showAccountChangeConfirm = ref(false)
+    const pendingAccountChange = ref('')
     
     const userForm = ref({
+      account: '',
       display_name: '',
       full_name: '',
       email: '',
@@ -299,6 +347,7 @@ export default {
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         filtered = filtered.filter(user => 
+          (user.account && user.account.toLowerCase().includes(query)) ||
           (user.display_name && user.display_name.toLowerCase().includes(query)) ||
           (user.full_name && user.full_name.toLowerCase().includes(query)) ||
           user.email.toLowerCase().includes(query)
@@ -345,6 +394,7 @@ export default {
     
     const resetUserForm = () => {
       userForm.value = {
+        account: '',
         display_name: '',
         full_name: '',
         email: '',
@@ -352,6 +402,8 @@ export default {
         password_confirmation: ''
       }
       userFormErrors.value = {}
+      accountCheckResult.value = null
+      canEditAccount.value = false
     }
     
     const cancelUserEdit = () => {
@@ -363,6 +415,7 @@ export default {
     const editUser = (user) => {
       editingUser.value = user
       userForm.value = {
+        account: user.account || '',
         display_name: user.display_name || '',
         full_name: user.full_name || '',
         email: user.email || '',
@@ -370,6 +423,8 @@ export default {
         password_confirmation: ''
       }
       userFormErrors.value = {}
+      accountCheckResult.value = null
+      canEditAccount.value = false
     }
     
     const saveUser = async () => {
@@ -382,6 +437,7 @@ export default {
         if (editingUser.value) {
           // 更新使用者
           const updateData = {
+            account: userForm.value.account,
             display_name: userForm.value.display_name,
             full_name: userForm.value.full_name,
             email: userForm.value.email
@@ -417,6 +473,65 @@ export default {
       fetchUsers(1)
     }
     
+    // 防抖函數
+    let checkAccountTimeout = null
+    const checkAccountDebounced = () => {
+      clearTimeout(checkAccountTimeout)
+      checkAccountTimeout = setTimeout(() => {
+        checkAccountAvailable()
+      }, 500)
+    }
+    
+    const checkAccountAvailable = async () => {
+      if (!userForm.value.account) {
+        accountCheckResult.value = null
+        return
+      }
+      
+      try {
+        const response = await axios.get('/api/admin/users/check-account', {
+          params: {
+            account: userForm.value.account,
+            exclude_user_id: editingUser.value?.id
+          }
+        })
+        accountCheckResult.value = response.data
+      } catch (error) {
+        console.error('檢查帳號可用性失敗:', error)
+        accountCheckResult.value = { available: false, message: '檢查失敗，請稍後再試' }
+      }
+    }
+    
+    const enableAccountEdit = () => {
+      if (!editingUser.value) return
+      
+      const originalAccount = editingUser.value.account
+      const newAccount = userForm.value.account
+      
+      if (originalAccount !== newAccount) {
+        // 如果帳號已變更，顯示確認對話框
+        showAccountChangeConfirm.value = true
+        pendingAccountChange.value = newAccount
+      } else {
+        // 直接啟用編輯
+        canEditAccount.value = true
+      }
+    }
+    
+    const confirmAccountChange = () => {
+      canEditAccount.value = true
+      showAccountChangeConfirm.value = false
+      userForm.value.account = pendingAccountChange.value
+      checkAccountAvailable()
+    }
+    
+    const cancelAccountChange = () => {
+      showAccountChangeConfirm.value = false
+      userForm.value.account = editingUser.value.account
+      canEditAccount.value = false
+      accountCheckResult.value = null
+    }
+    
     onMounted(async () => {
       await Promise.all([fetchUsers(), fetchOrganizations()])
     })
@@ -436,13 +551,21 @@ export default {
       pagination,
       currentPage,
       perPage,
+      canEditAccount,
+      accountCheckResult,
+      showAccountChangeConfirm,
+      pendingAccountChange,
       getUserInitials,
       formatDate,
       editUser,
       saveUser,
       cancelUserEdit,
       changePage,
-      changePerPage
+      changePerPage,
+      checkAccountDebounced,
+      enableAccountEdit,
+      confirmAccountChange,
+      cancelAccountChange
     }
   }
 }

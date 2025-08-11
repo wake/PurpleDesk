@@ -17,15 +17,15 @@
       <form class="mt-8 space-y-6" @submit.prevent="handleLogin">
         <div class="space-y-4">
           <div>
-            <label for="email" class="sr-only">電子郵件</label>
+            <label for="login" class="sr-only">帳號或電子郵件</label>
             <input
-              id="email"
-              v-model="form.email"
-              name="email"
-              type="email"
+              id="login"
+              v-model="form.login"
+              name="login"
+              type="text"
               required
               class="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-              placeholder="電子郵件"
+              placeholder="帳號或電子郵件"
             />
           </div>
           <div>
@@ -113,7 +113,7 @@
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm font-medium text-gray-900">管理員帳號</p>
-                  <p class="text-xs text-gray-500">admin@purpledesk.com</p>
+                  <p class="text-xs text-gray-500">帳號: admin</p>
                 </div>
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                   管理員
@@ -130,7 +130,7 @@
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm font-medium text-gray-900">一般用戶</p>
-                  <p class="text-xs text-gray-500">user1@purpledesk.com</p>
+                  <p class="text-xs text-gray-500">帳號: vincent</p>
                 </div>
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                   用戶
@@ -147,7 +147,7 @@
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm font-medium text-gray-900">設計師</p>
-                  <p class="text-xs text-gray-500">designer@purpledesk.com</p>
+                  <p class="text-xs text-gray-500">電郵: sophia@cloudtech.com</p>
                 </div>
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                   設計師
@@ -164,7 +164,7 @@
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm font-medium text-gray-900">自由工作者</p>
-                  <p class="text-xs text-gray-500">freelancer@purpledesk.com</p>
+                  <p class="text-xs text-gray-500">帳號: techwang</p>
                 </div>
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                   自由工作者
@@ -215,7 +215,7 @@ export default {
     const authStore = useAuthStore()
     
     const form = reactive({
-      email: '',
+      login: '',
       password: ''
     })
     
@@ -225,25 +225,25 @@ export default {
     const fillTestAccount = (type) => {
       const accounts = {
         admin: {
-          email: 'admin@purpledesk.com',
+          login: 'admin',
           password: 'password'
         },
         user: {
-          email: 'user1@purpledesk.com',
+          login: 'vincent',
           password: 'password'
         },
         designer: {
-          email: 'designer@purpledesk.com',
+          login: 'sophia@cloudtech.com',
           password: 'password'
         },
         freelancer: {
-          email: 'freelancer@purpledesk.com',
+          login: 'techwang',
           password: 'password'
         }
       }
       
       if (accounts[type]) {
-        form.email = accounts[type].email
+        form.login = accounts[type].login
         form.password = accounts[type].password
       }
     }
@@ -255,7 +255,7 @@ export default {
       errorMessage.value = ''
       
       try {
-        await authStore.login(form.email, form.password)
+        await authStore.login(form.login, form.password)
         await router.push('/dashboard')
       } catch (error) {
         errorMessage.value = error.response?.data?.message || '登入失敗，請稍後再試'

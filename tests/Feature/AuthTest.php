@@ -17,6 +17,7 @@ class AuthTest extends TestCase
         $organization = Organization::factory()->create();
         
         $userData = [
+            'account' => 'test_user_' . rand(1000, 9999),
             'full_name' => $this->faker->name,
             'display_name' => $this->faker->firstName,
             'email' => $this->faker->unique()->safeEmail,
@@ -28,11 +29,12 @@ class AuthTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonStructure([
-                'user' => ['id', 'full_name', 'display_name', 'email'],
+                'user' => ['id', 'account', 'full_name', 'display_name', 'email'],
                 'token'
             ]);
 
         $this->assertDatabaseHas('users', [
+            'account' => $userData['account'],
             'full_name' => $userData['full_name'],
             'email' => $userData['email'],
         ]);
@@ -41,18 +43,19 @@ class AuthTest extends TestCase
     public function test_user_can_login(): void
     {
         $user = User::factory()->create([
+            'account' => 'testuser',
             'email' => 'test@example.com',
             'password' => bcrypt('password123'),
         ]);
 
         $response = $this->postJson('/api/login', [
-            'email' => 'test@example.com',
+            'login' => 'test@example.com',
             'password' => 'password123',
         ]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'user' => ['id', 'full_name', 'display_name', 'email'],
+                'user' => ['id', 'account', 'full_name', 'display_name', 'email'],
                 'token'
             ]);
     }
@@ -74,7 +77,7 @@ class AuthTest extends TestCase
     public function test_invalid_login_credentials(): void
     {
         $response = $this->postJson('/api/login', [
-            'email' => 'nonexistent@example.com',
+            'login' => 'nonexistent@example.com',
             'password' => 'wrongpassword',
         ]);
 

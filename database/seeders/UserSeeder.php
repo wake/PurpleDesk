@@ -16,18 +16,21 @@ class UserSeeder extends Seeder
         $organizations = Organization::all();
         
         // 系統管理員
-        $admin = User::create([
-            'full_name' => '系統管理員',
-            'display_name' => 'Admin',
-            'email' => 'admin@purpledesk.com',
-            'password' => Hash::make('password'),
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@purpledesk.com'],
+            [
+                'account' => 'admin',
+                'full_name' => '系統管理員',
+                'display_name' => 'Admin',
+                'password' => Hash::make('password'),
+            ]
+        );
 
         // 創建豐富的測試用戶資料
         $testUsers = [
             // 智慧雲端服務 - 7人團隊
-            ['full_name' => '劉執行長', 'display_name' => 'Vincent', 'email' => 'ceo@cloudtech.com', 'org_index' => 0, 'role' => 'admin'],
-            ['full_name' => '張技術長', 'display_name' => 'Andy', 'email' => 'cto@cloudtech.com', 'org_index' => 0, 'role' => 'lead'],
+            ['account' => 'vincent', 'full_name' => '劉執行長', 'display_name' => 'Vincent', 'email' => 'ceo@cloudtech.com', 'org_index' => 0, 'role' => 'admin'],
+            ['account' => 'andy', 'full_name' => '張技術長', 'display_name' => 'Andy', 'email' => 'cto@cloudtech.com', 'org_index' => 0, 'role' => 'lead'],
             ['full_name' => '王資深工程師', 'display_name' => 'Kevin', 'email' => 'kevin@cloudtech.com', 'org_index' => 0, 'role' => 'member'],
             ['full_name' => '李前端工程師', 'display_name' => 'Emma', 'email' => 'emma@cloudtech.com', 'org_index' => 0, 'role' => 'member'],
             ['full_name' => '陳後端工程師', 'display_name' => 'Chris', 'email' => 'chris@cloudtech.com', 'org_index' => 0, 'role' => 'member'],
@@ -99,7 +102,11 @@ class UserSeeder extends Seeder
 
         // 創建用戶並分配到組織
         foreach ($testUsers as $userData) {
+            // 自動生成 account，如果沒有指定的話
+            $account = $userData['account'] ?? strtolower($userData['display_name']);
+            
             $user = User::create([
+                'account' => $account,
                 'full_name' => $userData['full_name'],
                 'display_name' => $userData['display_name'],
                 'email' => $userData['email'],

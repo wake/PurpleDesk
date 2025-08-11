@@ -76,7 +76,9 @@ class AdminController extends Controller
         }
         
         $usersQuery = User::where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
+                $q->where('account', 'like', "%{$query}%")
+                  ->orWhere('full_name', 'like', "%{$query}%")
+                  ->orWhere('display_name', 'like', "%{$query}%")
                   ->orWhere('email', 'like', "%{$query}%");
             })
             ->with('organizations', 'teams');
@@ -100,15 +102,17 @@ class AdminController extends Controller
         }
         
         $request->validate([
-            'display_name' => 'required|string|max:255',
+            'account' => 'required|string|max:255|unique:users|regex:/^[a-zA-Z0-9_]+$/',
+            'display_name' => 'nullable|string|max:255',
             'full_name' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
+            'account' => $request->account,
             'display_name' => $request->display_name,
-            'full_name' => $request->full_name ?: $request->display_name, // 如果沒有提供 full_name，使用 display_name
+            'full_name' => $request->full_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -126,20 +130,52 @@ class AdminController extends Controller
         }
         
         $request->validate([
-            'display_name' => 'required|string|max:255',
+            'account' => 'required|string|max:255|unique:users,account,' . $user->id . '|regex:/^[a-zA-Z0-9_]+$/',
+            'display_name' => 'nullable|string|max:255',
             'full_name' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
         ]);
 
         $user->update([
+            'account' => $request->account,
             'display_name' => $request->display_name,
-            'full_name' => $request->full_name ?: $request->display_name, // 如果沒有提供 full_name，使用 display_name
+            'full_name' => $request->full_name,
             'email' => $request->email,
         ]);
 
         return response()->json([
             'message' => '使用者更新成功',
             'user' => $user->load('organizations', 'teams'),
+        ]);
+    }
+    
+    public function checkAccountAvailable(Request $request)
+    {
+        if (request()->user()->email !== 'admin@purpledesk.com') {
+            abort(403, '無權限存取');
+        }
+        
+        $account = $request->get('account');
+        $excludeUserId = $request->get('exclude_user_id');
+        
+        if (!$account) {
+            return response()->json(['available' => false, 'message' => '帳號不能為空']);
+        }
+        
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $account)) {
+            return response()->json(['available' => false, 'message' => '帳號只能包含英數字和底線']);
+        }
+        
+        $query = User::where('account', $account);
+        if ($excludeUserId) {
+            $query->where('id', '!=', $excludeUserId);
+        }
+        
+        $exists = $query->exists();
+        
+        return response()->json([
+            'available' => !$exists,
+            'message' => $exists ? '此帳號已被使用' : '帳號可用'
         ]);
     }
 }
