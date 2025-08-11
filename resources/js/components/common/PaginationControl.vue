@@ -91,7 +91,7 @@
             :class="[
               'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
               page === currentPage
-                ? 'bg-gray-200 text-gray-900 font-semibold'
+                ? 'bg-primary-200 text-primary-900 font-semibold'
                 : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
             ]"
           >
@@ -113,7 +113,7 @@
               :class="[
                 'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
                 page === currentPage
-                  ? 'bg-gray-200 text-gray-900 font-semibold'
+                  ? 'bg-primary-200 text-primary-900 font-semibold'
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
@@ -157,7 +157,7 @@
               :class="[
                 'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
                 (pagination.last_page - 5 + page) === currentPage
-                  ? 'bg-gray-200 text-gray-900 font-semibold'
+                  ? 'bg-primary-200 text-primary-900 font-semibold'
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
@@ -189,7 +189,7 @@
               :class="[
                 'relative inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-md transition-colors',
                 page === currentPage
-                  ? 'bg-gray-200 text-gray-900 font-semibold'
+                  ? 'bg-primary-200 text-primary-900 font-semibold'
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               ]"
             >
