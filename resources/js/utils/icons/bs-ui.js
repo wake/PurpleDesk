@@ -250,7 +250,214 @@ export const uiIcons = [
   { name: 'Caret Up', class: 'bi-caret-up' },
   { name: 'Caret Up Fill', class: 'bi-caret-up-fill' },
   { name: 'Caret Up Square', class: 'bi-caret-up-square' },
-  { name: 'Caret Up Square Fill', class: 'bi-caret-up-square-fill' }
+  { name: 'Caret Up Square Fill', class: 'bi-caret-up-square-fill' },
+  
+  // 工具提示與彈出
+  { name: 'Tooltip', class: 'bi-tooltip' },
+  { name: 'Tooltip Fill', class: 'bi-tooltip-fill' },
+  { name: 'Balloon', class: 'bi-balloon' },
+  { name: 'Balloon Fill', class: 'bi-balloon-fill' },
+  { name: 'Balloon Heart', class: 'bi-balloon-heart' },
+  { name: 'Balloon Heart Fill', class: 'bi-balloon-heart-fill' },
+  
+  // 滾動條與捲動
+  { name: 'Scrollbar', class: 'bi-scrollbar' },
+  { name: 'Mouse', class: 'bi-mouse' },
+  { name: 'Mouse Fill', class: 'bi-mouse-fill' },
+  { name: 'Mouse2', class: 'bi-mouse2' },
+  { name: 'Mouse2 Fill', class: 'bi-mouse2-fill' },
+  { name: 'Mouse3', class: 'bi-mouse3' },
+  { name: 'Mouse3 Fill', class: 'bi-mouse3-fill' },
+  
+  // 遊標與指標
+  { name: 'Cursor', class: 'bi-cursor' },
+  { name: 'Cursor Fill', class: 'bi-cursor-fill' },
+  { name: 'Cursor Text', class: 'bi-cursor-text' },
+  
+  // 導航列與麵包屑
+  { name: 'Breadcrumb', class: 'bi-breadcrumb' },
+  { name: 'Breadcrumb Fill', class: 'bi-breadcrumb-fill' },
+  { name: 'Nav', class: 'bi-nav' },
+  { name: 'Nav Fill', class: 'bi-nav-fill' },
+  
+  // 進度條
+  { name: 'Progress', class: 'bi-progress' },
+  { name: 'Progress Bar', class: 'bi-progress-bar' },
+  { name: 'Progress Bar Fill', class: 'bi-progress-bar-fill' },
+  { name: 'Progress Circle', class: 'bi-progress-circle' },
+  { name: 'Progress Circle Fill', class: 'bi-progress-circle-fill' },
+  
+  // 折疊與手風琴
+  { name: 'Accordion', class: 'bi-accordion' },
+  { name: 'Accordion Fill', class: 'bi-accordion-fill' },
+  
+  // 下拉選單
+  { name: 'Dropdown', class: 'bi-dropdown' },
+  { name: 'Dropdown Fill', class: 'bi-dropdown-fill' },
+  
+  // 徽章與標籤
+  { name: 'Label', class: 'bi-label' },
+  { name: 'Label Fill', class: 'bi-label-fill' },
+  
+  // 貼紙與便條
+  { name: 'Postcard', class: 'bi-postcard' },
+  { name: 'Postcard Fill', class: 'bi-postcard-fill' },
+  { name: 'Postcard Heart', class: 'bi-postcard-heart' },
+  { name: 'Postcard Heart Fill', class: 'bi-postcard-heart-fill' },
+  { name: 'Postage', class: 'bi-postage' },
+  { name: 'Postage Fill', class: 'bi-postage-fill' },
+  { name: 'Postage Heart', class: 'bi-postage-heart' },
+  { name: 'Postage Heart Fill', class: 'bi-postage-heart-fill' },
+  
+  // 泡泡與對話
+  { name: 'Chat', class: 'bi-chat' },
+  { name: 'Chat Dots', class: 'bi-chat-dots' },
+  { name: 'Chat Dots Fill', class: 'bi-chat-dots-fill' },
+  { name: 'Chat Fill', class: 'bi-chat-fill' },
+  { name: 'Chat Heart', class: 'bi-chat-heart' },
+  { name: 'Chat Heart Fill', class: 'bi-chat-heart-fill' },
+  { name: 'Chat Left', class: 'bi-chat-left' },
+  { name: 'Chat Left Dots', class: 'bi-chat-left-dots' },
+  { name: 'Chat Left Dots Fill', class: 'bi-chat-left-dots-fill' },
+  { name: 'Chat Left Fill', class: 'bi-chat-left-fill' },
+  { name: 'Chat Left Heart', class: 'bi-chat-left-heart' },
+  { name: 'Chat Left Heart Fill', class: 'bi-chat-left-heart-fill' },
+  { name: 'Chat Left Quote', class: 'bi-chat-left-quote' },
+  { name: 'Chat Left Quote Fill', class: 'bi-chat-left-quote-fill' },
+  { name: 'Chat Left Text', class: 'bi-chat-left-text' },
+  { name: 'Chat Left Text Fill', class: 'bi-chat-left-text-fill' },
+  { name: 'Chat Quote', class: 'bi-chat-quote' },
+  { name: 'Chat Quote Fill', class: 'bi-chat-quote-fill' },
+  { name: 'Chat Right', class: 'bi-chat-right' },
+  { name: 'Chat Right Dots', class: 'bi-chat-right-dots' },
+  { name: 'Chat Right Dots Fill', class: 'bi-chat-right-dots-fill' },
+  { name: 'Chat Right Fill', class: 'bi-chat-right-fill' },
+  { name: 'Chat Right Heart', class: 'bi-chat-right-heart' },
+  { name: 'Chat Right Heart Fill', class: 'bi-chat-right-heart-fill' },
+  { name: 'Chat Right Quote', class: 'bi-chat-right-quote' },
+  { name: 'Chat Right Quote Fill', class: 'bi-chat-right-quote-fill' },
+  { name: 'Chat Right Text', class: 'bi-chat-right-text' },
+  { name: 'Chat Right Text Fill', class: 'bi-chat-right-text-fill' },
+  { name: 'Chat Square', class: 'bi-chat-square' },
+  { name: 'Chat Square Dots', class: 'bi-chat-square-dots' },
+  { name: 'Chat Square Dots Fill', class: 'bi-chat-square-dots-fill' },
+  { name: 'Chat Square Fill', class: 'bi-chat-square-fill' },
+  { name: 'Chat Square Heart', class: 'bi-chat-square-heart' },
+  { name: 'Chat Square Heart Fill', class: 'bi-chat-square-heart-fill' },
+  { name: 'Chat Square Quote', class: 'bi-chat-square-quote' },
+  { name: 'Chat Square Quote Fill', class: 'bi-chat-square-quote-fill' },
+  { name: 'Chat Square Text', class: 'bi-chat-square-text' },
+  { name: 'Chat Square Text Fill', class: 'bi-chat-square-text-fill' },
+  { name: 'Chat Text', class: 'bi-chat-text' },
+  { name: 'Chat Text Fill', class: 'bi-chat-text-fill' },
+  
+  // 滑動開關
+  { name: 'Switch', class: 'bi-switch' },
+  { name: 'Switch Fill', class: 'bi-switch-fill' },
+  
+  // 面板與儀表板
+  { name: 'Dashboard', class: 'bi-dashboard' },
+  { name: 'Dashboard Fill', class: 'bi-dashboard-fill' },
+  { name: 'Speedometer', class: 'bi-speedometer' },
+  { name: 'Speedometer2', class: 'bi-speedometer2' },
+  
+  // 工具欄與功能表
+  { name: 'Toolbar', class: 'bi-toolbar' },
+  { name: 'Tools', class: 'bi-tools' },
+  { name: 'Wrench', class: 'bi-wrench' },
+  { name: 'Wrench Adjustable', class: 'bi-wrench-adjustable' },
+  { name: 'Wrench Adjustable Circle', class: 'bi-wrench-adjustable-circle' },
+  { name: 'Wrench Adjustable Circle Fill', class: 'bi-wrench-adjustable-circle-fill' },
+  
+  // 提示與警告
+  { name: 'Alert', class: 'bi-alert' },
+  { name: 'Alert Circle', class: 'bi-alert-circle' },
+  { name: 'Alert Circle Fill', class: 'bi-alert-circle-fill' },
+  { name: 'Alert Diamond', class: 'bi-alert-diamond' },
+  { name: 'Alert Diamond Fill', class: 'bi-alert-diamond-fill' },
+  { name: 'Alert Octagon', class: 'bi-alert-octagon' },
+  { name: 'Alert Octagon Fill', class: 'bi-alert-octagon-fill' },
+  { name: 'Alert Square', class: 'bi-alert-square' },
+  { name: 'Alert Square Fill', class: 'bi-alert-square-fill' },
+  { name: 'Alert Triangle', class: 'bi-alert-triangle' },
+  { name: 'Alert Triangle Fill', class: 'bi-alert-triangle-fill' },
+  
+  // 導覽器與窗口
+  { name: 'Browser Chrome', class: 'bi-browser-chrome' },
+  { name: 'Browser Edge', class: 'bi-browser-edge' },
+  { name: 'Browser Firefox', class: 'bi-browser-firefox' },
+  { name: 'Browser Safari', class: 'bi-browser-safari' },
+  
+  // 圖形與圖表
+  { name: 'Bar Chart', class: 'bi-bar-chart' },
+  { name: 'Bar Chart Fill', class: 'bi-bar-chart-fill' },
+  { name: 'Bar Chart Line', class: 'bi-bar-chart-line' },
+  { name: 'Bar Chart Line Fill', class: 'bi-bar-chart-line-fill' },
+  { name: 'Bar Chart Steps', class: 'bi-bar-chart-steps' },
+  { name: 'Graph Down', class: 'bi-graph-down' },
+  { name: 'Graph Down Arrow', class: 'bi-graph-down-arrow' },
+  { name: 'Graph Up', class: 'bi-graph-up' },
+  { name: 'Graph Up Arrow', class: 'bi-graph-up-arrow' },
+  { name: 'Pie Chart', class: 'bi-pie-chart' },
+  { name: 'Pie Chart Fill', class: 'bi-pie-chart-fill' },
+  
+  // 複選框與單選按鈕
+  { name: 'Check Box', class: 'bi-check-box' },
+  { name: 'Check Box Fill', class: 'bi-check-box-fill' },
+  { name: 'Radio', class: 'bi-radio' },
+  { name: 'Radio Fill', class: 'bi-radio-fill' },
+  { name: 'Radio Button', class: 'bi-radio-button' },
+  { name: 'Radio Button Fill', class: 'bi-radio-button-fill' },
+  
+  // 時間線與流程
+  { name: 'Timeline', class: 'bi-timeline' },
+  { name: 'Timeline Fill', class: 'bi-timeline-fill' },
+  { name: 'Activity', class: 'bi-activity' },
+  
+  // 顯示模式
+  { name: 'Aspect Ratio', class: 'bi-aspect-ratio' },
+  { name: 'Aspect Ratio Fill', class: 'bi-aspect-ratio-fill' },
+  { name: 'Display', class: 'bi-display' },
+  { name: 'Display Fill', class: 'bi-display-fill' },
+  
+  // 導覽與路徑
+  { name: 'Signpost', class: 'bi-signpost' },
+  { name: 'Signpost 2', class: 'bi-signpost-2' },
+  { name: 'Signpost 2 Fill', class: 'bi-signpost-2-fill' },
+  { name: 'Signpost Fill', class: 'bi-signpost-fill' },
+  { name: 'Signpost Split', class: 'bi-signpost-split' },
+  { name: 'Signpost Split Fill', class: 'bi-signpost-split-fill' },
+  
+  // 使用者介面元件
+  { name: 'App', class: 'bi-app' },
+  { name: 'App Indicator', class: 'bi-app-indicator' },
+  { name: 'Back', class: 'bi-back' },
+  { name: 'Forward', class: 'bi-forward' },
+  { name: 'Forward Fill', class: 'bi-forward-fill' },
+  { name: 'Skip Backward', class: 'bi-skip-backward' },
+  { name: 'Skip Backward Btn', class: 'bi-skip-backward-btn' },
+  { name: 'Skip Backward Btn Fill', class: 'bi-skip-backward-btn-fill' },
+  { name: 'Skip Backward Circle', class: 'bi-skip-backward-circle' },
+  { name: 'Skip Backward Circle Fill', class: 'bi-skip-backward-circle-fill' },
+  { name: 'Skip Backward Fill', class: 'bi-skip-backward-fill' },
+  { name: 'Skip End', class: 'bi-skip-end' },
+  { name: 'Skip End Btn', class: 'bi-skip-end-btn' },
+  { name: 'Skip End Btn Fill', class: 'bi-skip-end-btn-fill' },
+  { name: 'Skip End Circle', class: 'bi-skip-end-circle' },
+  { name: 'Skip End Circle Fill', class: 'bi-skip-end-circle-fill' },
+  { name: 'Skip End Fill', class: 'bi-skip-end-fill' },
+  { name: 'Skip Forward', class: 'bi-skip-forward' },
+  { name: 'Skip Forward Btn', class: 'bi-skip-forward-btn' },
+  { name: 'Skip Forward Btn Fill', class: 'bi-skip-forward-btn-fill' },
+  { name: 'Skip Forward Circle', class: 'bi-skip-forward-circle' },
+  { name: 'Skip Forward Circle Fill', class: 'bi-skip-forward-circle-fill' },
+  { name: 'Skip Forward Fill', class: 'bi-skip-forward-fill' },
+  { name: 'Skip Start', class: 'bi-skip-start' },
+  { name: 'Skip Start Btn', class: 'bi-skip-start-btn' },
+  { name: 'Skip Start Btn Fill', class: 'bi-skip-start-btn-fill' },
+  { name: 'Skip Start Circle', class: 'bi-skip-start-circle' },
+  { name: 'Skip Start Circle Fill', class: 'bi-skip-start-circle-fill' },
+  { name: 'Skip Start Fill', class: 'bi-skip-start-fill' }
 ]
 
 export const categoryInfo = {
