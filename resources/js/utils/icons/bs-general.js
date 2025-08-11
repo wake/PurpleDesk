@@ -1,0 +1,145 @@
+// Bootstrap Icons - 通用基礎圖標分類
+// 包含：最常用的基礎圖標，如首頁、搜尋、設定等
+
+export const generalIcons = [
+  // 基本操作
+  { name: 'House', class: 'bi-house' },
+  { name: 'House Door', class: 'bi-house-door' },
+  { name: 'House Door Fill', class: 'bi-house-door-fill' },
+  { name: 'House Fill', class: 'bi-house-fill' },
+  { name: 'Search', class: 'bi-search' },
+  { name: 'Search Heart', class: 'bi-search-heart' },
+  { name: 'Search Heart Fill', class: 'bi-search-heart-fill' },
+  { name: 'Gear', class: 'bi-gear' },
+  { name: 'Gear Fill', class: 'bi-gear-fill' },
+  { name: 'Gear Wide', class: 'bi-gear-wide' },
+  { name: 'Gear Wide Connected', class: 'bi-gear-wide-connected' },
+  
+  // 導航與箭頭
+  { name: 'Arrow Up', class: 'bi-arrow-up' },
+  { name: 'Arrow Down', class: 'bi-arrow-down' },
+  { name: 'Arrow Left', class: 'bi-arrow-left' },
+  { name: 'Arrow Right', class: 'bi-arrow-right' },
+  { name: 'Arrow Up Circle', class: 'bi-arrow-up-circle' },
+  { name: 'Arrow Down Circle', class: 'bi-arrow-down-circle' },
+  { name: 'Arrow Left Circle', class: 'bi-arrow-left-circle' },
+  { name: 'Arrow Right Circle', class: 'bi-arrow-right-circle' },
+  { name: 'Arrow Up Circle Fill', class: 'bi-arrow-up-circle-fill' },
+  { name: 'Arrow Down Circle Fill', class: 'bi-arrow-down-circle-fill' },
+  { name: 'Arrow Left Circle Fill', class: 'bi-arrow-left-circle-fill' },
+  { name: 'Arrow Right Circle Fill', class: 'bi-arrow-right-circle-fill' },
+  { name: 'Arrow Up Short', class: 'bi-arrow-up-short' },
+  { name: 'Arrow Down Short', class: 'bi-arrow-down-short' },
+  { name: 'Arrow Left Short', class: 'bi-arrow-left-short' },
+  { name: 'Arrow Right Short', class: 'bi-arrow-right-short' },
+  { name: 'Arrow Clockwise', class: 'bi-arrow-clockwise' },
+  { name: 'Arrow Counterclockwise', class: 'bi-arrow-counterclockwise' },
+  { name: 'Arrow Repeat', class: 'bi-arrow-repeat' },
+  { name: 'Arrow Return Left', class: 'bi-arrow-return-left' },
+  { name: 'Arrow Return Right', class: 'bi-arrow-return-right' },
+  
+  // 基本形狀與符號
+  { name: 'Circle', class: 'bi-circle' },
+  { name: 'Circle Fill', class: 'bi-circle-fill' },
+  { name: 'Circle Half', class: 'bi-circle-half' },
+  { name: 'Square', class: 'bi-square' },
+  { name: 'Square Fill', class: 'bi-square-fill' },
+  { name: 'Square Half', class: 'bi-square-half' },
+  { name: 'Triangle', class: 'bi-triangle' },
+  { name: 'Triangle Fill', class: 'bi-triangle-fill' },
+  { name: 'Triangle Half', class: 'bi-triangle-half' },
+  { name: 'Diamond', class: 'bi-diamond' },
+  { name: 'Diamond Fill', class: 'bi-diamond-fill' },
+  { name: 'Diamond Half', class: 'bi-diamond-half' },
+  
+  // 常用操作符號
+  { name: 'Plus', class: 'bi-plus' },
+  { name: 'Plus Circle', class: 'bi-plus-circle' },
+  { name: 'Plus Circle Fill', class: 'bi-plus-circle-fill' },
+  { name: 'Plus Square', class: 'bi-plus-square' },
+  { name: 'Plus Square Fill', class: 'bi-plus-square-fill' },
+  { name: 'Plus Lg', class: 'bi-plus-lg' },
+  { name: 'Dash', class: 'bi-dash' },
+  { name: 'Dash Circle', class: 'bi-dash-circle' },
+  { name: 'Dash Circle Fill', class: 'bi-dash-circle-fill' },
+  { name: 'Dash Square', class: 'bi-dash-square' },
+  { name: 'Dash Square Fill', class: 'bi-dash-square-fill' },
+  { name: 'Dash Lg', class: 'bi-dash-lg' },
+  { name: 'X', class: 'bi-x' },
+  { name: 'X Circle', class: 'bi-x-circle' },
+  { name: 'X Circle Fill', class: 'bi-x-circle-fill' },
+  { name: 'X Square', class: 'bi-x-square' },
+  { name: 'X Square Fill', class: 'bi-x-square-fill' },
+  { name: 'X Lg', class: 'bi-x-lg' },
+  
+  // 檢查與確認
+  { name: 'Check', class: 'bi-check' },
+  { name: 'Check Circle', class: 'bi-check-circle' },
+  { name: 'Check Circle Fill', class: 'bi-check-circle-fill' },
+  { name: 'Check Square', class: 'bi-check-square' },
+  { name: 'Check Square Fill', class: 'bi-check-square-fill' },
+  { name: 'Check Lg', class: 'bi-check-lg' },
+  { name: 'Check2', class: 'bi-check2' },
+  { name: 'Check2 All', class: 'bi-check2-all' },
+  { name: 'Check2 Circle', class: 'bi-check2-circle' },
+  { name: 'Check2 Square', class: 'bi-check2-square' },
+  
+  // 星形與評級
+  { name: 'Star', class: 'bi-star' },
+  { name: 'Star Fill', class: 'bi-star-fill' },
+  { name: 'Star Half', class: 'bi-star-half' },
+  { name: 'Stars', class: 'bi-stars' },
+  
+  // 心形與喜愛
+  { name: 'Heart', class: 'bi-heart' },
+  { name: 'Heart Fill', class: 'bi-heart-fill' },
+  { name: 'Heart Half', class: 'bi-heart-half' },
+  { name: 'Hearts', class: 'bi-hearts' },
+  
+  // 訊息與通知
+  { name: 'Bell', class: 'bi-bell' },
+  { name: 'Bell Fill', class: 'bi-bell-fill' },
+  { name: 'Bell Slash', class: 'bi-bell-slash' },
+  { name: 'Bell Slash Fill', class: 'bi-bell-slash-fill' },
+  
+  // 問號與協助
+  { name: 'Question', class: 'bi-question' },
+  { name: 'Question Circle', class: 'bi-question-circle' },
+  { name: 'Question Circle Fill', class: 'bi-question-circle-fill' },
+  { name: 'Question Diamond', class: 'bi-question-diamond' },
+  { name: 'Question Diamond Fill', class: 'bi-question-diamond-fill' },
+  { name: 'Question Lg', class: 'bi-question-lg' },
+  { name: 'Question Octagon', class: 'bi-question-octagon' },
+  { name: 'Question Octagon Fill', class: 'bi-question-octagon-fill' },
+  { name: 'Question Square', class: 'bi-question-square' },
+  { name: 'Question Square Fill', class: 'bi-question-square-fill' },
+  
+  // 資訊與提示
+  { name: 'Info', class: 'bi-info' },
+  { name: 'Info Circle', class: 'bi-info-circle' },
+  { name: 'Info Circle Fill', class: 'bi-info-circle-fill' },
+  { name: 'Info Square', class: 'bi-info-square' },
+  { name: 'Info Square Fill', class: 'bi-info-square-fill' },
+  { name: 'Info Lg', class: 'bi-info-lg' },
+  
+  // 警告與錯誤
+  { name: 'Exclamation', class: 'bi-exclamation' },
+  { name: 'Exclamation Circle', class: 'bi-exclamation-circle' },
+  { name: 'Exclamation Circle Fill', class: 'bi-exclamation-circle-fill' },
+  { name: 'Exclamation Diamond', class: 'bi-exclamation-diamond' },
+  { name: 'Exclamation Diamond Fill', class: 'bi-exclamation-diamond-fill' },
+  { name: 'Exclamation Lg', class: 'bi-exclamation-lg' },
+  { name: 'Exclamation Octagon', class: 'bi-exclamation-octagon' },
+  { name: 'Exclamation Octagon Fill', class: 'bi-exclamation-octagon-fill' },
+  { name: 'Exclamation Square', class: 'bi-exclamation-square' },
+  { name: 'Exclamation Square Fill', class: 'bi-exclamation-square-fill' },
+  { name: 'Exclamation Triangle', class: 'bi-exclamation-triangle' },
+  { name: 'Exclamation Triangle Fill', class: 'bi-exclamation-triangle-fill' }
+]
+
+export const categoryInfo = {
+  id: 'general',
+  name: '通用圖標',
+  description: '最常用的基礎圖標',
+  priority: 'immediate'
+}

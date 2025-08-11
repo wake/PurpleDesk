@@ -1,10 +1,34 @@
-// 匯入完整的圖標列表
+// 整合的圖標管理系統 - 向下相容層
+import iconManager from './iconManager.js'
 import { allBootstrapIcons } from './allBootstrapIcons.js'
 import { cleanEmojis } from './cleanEmojis.js'
 
-// 匯出完整列表
+// 向下相容的同步匯出（使用舊系統作為備援）
 export const bootstrapIcons = allBootstrapIcons
 export const emojis = cleanEmojis
+
+// 新的非同步 API
+export async function getBootstrapIcons() {
+  await iconManager.loadAllIcons()
+  return iconManager.getAllLoadedIcons().icons
+}
+
+export async function getEmojis() {
+  await iconManager.loadAllIcons()
+  return iconManager.getAllLoadedIcons().emojis
+}
+
+// 同步版本（使用已載入的圖標）
+export function getLoadedBootstrapIcons() {
+  return iconManager.getAllLoadedIcons().icons
+}
+
+export function getLoadedEmojis() {
+  return iconManager.getAllLoadedIcons().emojis
+}
+
+// 匯出新的管理系統
+export { iconManager }
 
 // 保留精選列表供快速訪問
 export const featuredBootstrapIcons = [
