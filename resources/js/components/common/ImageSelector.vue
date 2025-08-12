@@ -613,33 +613,36 @@ export default {
     
     // 開啟 IconPicker（由子組件 IconPicker 控制）
     const openIconPicker = () => {
-      // 如果已經顯示，則關閉
-      if (showIconPicker.value) {
-        showIconPicker.value = false
-        return
+      // 如果尚未顯示組件，先顯示組件
+      if (!showIconPicker.value) {
+        showIconPicker.value = true
       }
       
-      // 開啟頭像下方的 IconPicker
-      showIconPicker.value = true
       // 等待 DOM 更新和組件掛載後再開啟 picker
       nextTick(() => {
-        setTimeout(() => {
-          if (avatarIconPickerRef.value) {
-            // 直接設置 isOpen 而不是調用 togglePicker
+        if (avatarIconPickerRef.value) {
+          // 確保 picker 是開啟狀態
+          if (!avatarIconPickerRef.value.isOpen) {
             avatarIconPickerRef.value.isOpen = true
             avatarIconPickerRef.value.calculatePosition()
+          } else {
+            // 如果已經開啟，則關閉
+            avatarIconPickerRef.value.isOpen = false
           }
-        }, 100)
+        }
       })
     }
     
     // 開啟背景顏色選擇器
     const openBgColorPicker = () => {
       // 找到 ColorPicker 並觸發它
-      const colorPicker = document.querySelector('.color-picker-wrapper button')
-      if (colorPicker) {
-        colorPicker.click()
-      }
+      // 使用更精確的選擇器，找到 ImageSelector 內的 ColorPicker
+      nextTick(() => {
+        const colorPicker = document.querySelector('.image-selector .color-picker button')
+        if (colorPicker) {
+          colorPicker.click()
+        }
+      })
     }
     
     // 處理圖標選擇
