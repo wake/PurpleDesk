@@ -682,14 +682,22 @@ export default {
       const isInsideIconPicker = iconPanel.value && iconPanel.value.contains(event.target)
       const isIconPickerButton = iconPickerRef.value && iconPickerRef.value.contains(event.target)
       
-      // 檢查是否點擊在 ColorPicker 內部（允許 ColorPicker 與 IconPicker 同時開啟）
-      const colorPickerPanel = document.querySelector('.color-picker .fixed.z-\\[9999\\]')
+      // 檢查是否點擊在 ColorPicker 內部
+      const colorPickerPanel = document.querySelector('.color-picker .fixed.z-\\[10000\\]')
       const isInsideColorPicker = colorPickerPanel && colorPickerPanel.contains(event.target)
       
       // 檢查是否點擊在任何 ColorPicker 按鈕上
       const isColorPickerButton = event.target.closest('.color-picker button')
       
-      // 只有在點擊外部且不在 ColorPicker 內部時才關閉
+      // 如果點擊在 IconPicker 內部，關閉任何開啟的 ColorPicker
+      if (isInsideIconPicker && !isInsideColorPicker) {
+        const colorPickerCloseButton = document.querySelector('.color-picker .fixed.z-\\[10000\\] button[title="關閉"]')
+        if (colorPickerCloseButton) {
+          colorPickerCloseButton.click()
+        }
+      }
+      
+      // 只有在點擊外部時才關閉 IconPicker
       if (!isInsideIconPicker && !isIconPickerButton && !isInsideColorPicker && !isColorPickerButton) {
         closePicker()
       }

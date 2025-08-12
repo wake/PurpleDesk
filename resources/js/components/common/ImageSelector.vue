@@ -484,7 +484,7 @@ export default {
       const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
       
       // 如果亮度大於 0.5，使用深色文字；否則使用白色文字
-      return luminance > 0.65 ? 'text-gray-800' : 'text-white'
+      return luminance > 0.7 ? 'text-gray-800' : 'text-white'
     }
     
     // 動態文字顏色
@@ -636,6 +636,27 @@ export default {
     
     // 開啟 IconPicker
     const openIconPicker = () => {
+      // 先關閉任何開啟的 ColorPicker
+      const openColorPickers = document.querySelectorAll('.color-picker .fixed')
+      openColorPickers.forEach(picker => {
+        const pickerComponent = picker.__vueParentComponent
+        if (pickerComponent && pickerComponent.exposed && pickerComponent.exposed.closePicker) {
+          pickerComponent.exposed.closePicker()
+        }
+      })
+      
+      // 使用更簡單的方法：觸發點擊事件關閉 ColorPicker
+      const colorPickerPanels = document.querySelectorAll('[class*="fixed z-[10000]"]')
+      colorPickerPanels.forEach(panel => {
+        if (panel && panel.style.display !== 'none') {
+          // 觸發一個外部點擊來關閉 ColorPicker
+          const closeButton = panel.querySelector('button[title="關閉"]')
+          if (closeButton) {
+            closeButton.click()
+          }
+        }
+      })
+      
       // 等待下一個 tick 確保 DOM 更新
       nextTick(() => {
         if (avatarIconPickerRef.value) {
