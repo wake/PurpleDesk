@@ -28,7 +28,7 @@
       <div 
         v-if="isOpen" 
         ref="iconPanel"
-        class="fixed z-[9999] p-4 bg-white border border-gray-200 rounded-lg shadow-xl w-80"
+        class="fixed z-[9999] p-4 bg-white border border-gray-200 rounded-lg shadow-xl w-96"
         :style="panelPosition"
         @click.stop
       >
@@ -126,7 +126,7 @@
           >
             <VirtualScroll
               :items="filteredHeroicons"
-              :items-per-row="6"
+              :items-per-row="7"
               :row-height="40"
               :container-height="192"
               :buffer="2"
@@ -153,7 +153,7 @@
           >
             <VirtualScroll
               :items="filteredBootstrapIcons"
-              :items-per-row="6"
+              :items-per-row="7"
               :row-height="40"
               :container-height="192"
               :buffer="2"
@@ -180,7 +180,7 @@
           >
             <VirtualScroll
               :items="filteredEmojis"
-              :items-per-row="6"
+              :items-per-row="7"
               :row-height="40"
               :container-height="192"
               :buffer="2"
@@ -325,8 +325,8 @@ export default {
       const viewportHeight = window.innerHeight
       const viewportWidth = window.innerWidth
       
-      // 彈窗預設尺寸
-      const panelWidth = 320
+      // 彈窗預設尺寸（調整為 384px = w-96）
+      const panelWidth = 384
       const panelHeight = 400
       
       let top = rect.bottom + 5
