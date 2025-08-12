@@ -89,18 +89,31 @@
 
         <!-- 圖標內容區域 -->
         <div class="border border-gray-100 rounded-md bg-gray-50">
-          <!-- Heroicons 標籤頁 -->
-          <div v-if="activeTab === 'heroicons'" class="grid grid-cols-6 gap-2 p-2 h-48 overflow-y-auto">
-            <button
-              v-for="icon in filteredHeroicons"
-              :key="icon.name"
-              @click="selectIcon(icon.component, 'heroicons')"
-              :class="selectedIcon === icon.component ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
-              class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-              :title="icon.name"
+          <!-- Heroicons 標籤頁 (使用虛擬滾動) -->
+          <div 
+            v-if="activeTab === 'heroicons'"
+            class="h-48 overflow-y-auto"
+          >
+            <VirtualScroll
+              :items="filteredHeroicons"
+              :items-per-row="6"
+              :row-height="40"
+              :container-height="192"
+              :buffer="2"
             >
-              <component :is="icon.component" class="w-5 h-5 mx-auto text-gray-600" />
-            </button>
+              <template #row="{ items }">
+                <button
+                  v-for="icon in items"
+                  :key="icon.name"
+                  @click="selectIcon(icon.component, 'heroicons')"
+                  :class="selectedIcon === icon.component ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
+                  class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                  :title="icon.name"
+                >
+                  <component :is="getHeroiconComponent(icon.component)" class="w-5 h-5 mx-auto text-gray-600" />
+                </button>
+              </template>
+            </VirtualScroll>
           </div>
 
           <!-- Bootstrap Icons 標籤頁 -->
@@ -191,50 +204,19 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
 import { applySkinTone, supportsSkinTone, removeSkinTone, getCurrentSkinTone } from '../../utils/emojiSkinTone.js'
+import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
 import VirtualScroll from './VirtualScroll.vue'
 import SkinToneSelector from './SkinToneSelector.vue'
-// Heroicons imports
-import { 
-  HomeIcon, 
-  UserIcon, 
-  CogIcon, 
-  DocumentIcon, 
-  FolderIcon, 
-  HeartIcon, 
-  StarIcon, 
-  BellIcon, 
-  ChatIcon, 
-  PlusIcon, 
-  MinusIcon, 
-  XIcon,
-  MailIcon,
-  PhoneIcon,
-  CalendarIcon,
-  ClockIcon,
-  SearchIcon,
-  EyeIcon,
-  PencilIcon,
-  TrashIcon,
-  DownloadIcon,
-  UploadIcon,
-  ShareIcon,
-  BookmarkIcon,
-  FlagIcon,
-  GiftIcon,
-  LightBulbIcon,
-  FireIcon,
-  ShieldCheckIcon,
-  ExclamationIcon
-} from '@heroicons/vue/outline'
+// 動態導入所有 Heroicons
+import * as HeroiconsOutline from '@heroicons/vue/outline'
 
 export default {
   name: 'IconPicker',
   components: {
     VirtualScroll,
     SkinToneSelector,
-    HomeIcon, UserIcon, CogIcon, DocumentIcon, FolderIcon, HeartIcon, StarIcon, BellIcon, ChatIcon, PlusIcon, MinusIcon, XIcon,
-    MailIcon, PhoneIcon, CalendarIcon, ClockIcon, SearchIcon, EyeIcon, PencilIcon, TrashIcon, DownloadIcon, UploadIcon,
-    ShareIcon, BookmarkIcon, FlagIcon, GiftIcon, LightBulbIcon, FireIcon, ShieldCheckIcon, ExclamationIcon
+    // 註冊所有 Heroicons
+    ...HeroiconsOutline
   },
   props: {
     modelValue: {
@@ -275,39 +257,8 @@ export default {
       }
     })
     
-    // Heroicons 圖標清單
-    const heroicons = [
-      { name: '首頁 Home', component: 'HomeIcon' },
-      { name: '使用者 User', component: 'UserIcon' },
-      { name: '設定 Settings', component: 'CogIcon' },
-      { name: '文件 Document', component: 'DocumentIcon' },
-      { name: '資料夾 Folder', component: 'FolderIcon' },
-      { name: '愛心 Heart', component: 'HeartIcon' },
-      { name: '星星 Star', component: 'StarIcon' },
-      { name: '鈴鐺 Bell', component: 'BellIcon' },
-      { name: '聊天 Chat', component: 'ChatIcon' },
-      { name: '加號 Plus', component: 'PlusIcon' },
-      { name: '減號 Minus', component: 'MinusIcon' },
-      { name: '關閉 Close', component: 'XIcon' },
-      { name: '信件 Mail', component: 'MailIcon' },
-      { name: '電話 Phone', component: 'PhoneIcon' },
-      { name: '日曆 Calendar', component: 'CalendarIcon' },
-      { name: '時鐘 Clock', component: 'ClockIcon' },
-      { name: '搜尋 Search', component: 'SearchIcon' },
-      { name: '眼睛 Eye', component: 'EyeIcon' },
-      { name: '編輯 Pencil', component: 'PencilIcon' },
-      { name: '刪除 Trash', component: 'TrashIcon' },
-      { name: '下載 Download', component: 'DownloadIcon' },
-      { name: '上傳 Upload', component: 'UploadIcon' },
-      { name: '分享 Share', component: 'ShareIcon' },
-      { name: '書籤 Bookmark', component: 'BookmarkIcon' },
-      { name: '旗幟 Flag', component: 'FlagIcon' },
-      { name: '禮物 Gift', component: 'GiftIcon' },
-      { name: '燈泡 Light Bulb', component: 'LightBulbIcon' },
-      { name: '火焰 Fire', component: 'FireIcon' },
-      { name: '盾牌 Shield Check', component: 'ShieldCheckIcon' },
-      { name: '驚嘆號 Exclamation', component: 'ExclamationIcon' }
-    ]
+    // 使用完整的 Heroicons 圖標清單 (230個圖標)
+    const heroicons = heroiconsOutline
     
     // 使用完整的圖標清單
     // bootstrapIcons 和 emojis 從 iconSets.js 導入
@@ -410,6 +361,11 @@ export default {
       
       // 使用專門的膚色工具函數
       return applySkinTone(emojiData.emoji, selectedSkinTone.value)
+    }
+    
+    // 獲取 Heroicon 組件
+    const getHeroiconComponent = (componentName) => {
+      return componentName // 因為組件已經全部註冊，直接返回組件名即可
     }
     
     // 當切換到 emoji 標籤頁時，檢測當前選中 emoji 的膚色
@@ -522,7 +478,8 @@ export default {
       clearSearch,
       selectedSkinTone,
       handleSkinToneChange,
-      getEmojiWithSkinTone
+      getEmojiWithSkinTone,
+      getHeroiconComponent
     }
   }
 }
