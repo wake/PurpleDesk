@@ -725,7 +725,7 @@ export default {
 }
 
 .image-selector .font-type-image {
-  font-size: 40px;
+  font-size: 24px;
 }
 
 .image-selector .bs-type-image {

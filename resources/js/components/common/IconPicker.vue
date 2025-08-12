@@ -169,7 +169,7 @@
               :class="customInitials ? 'bg-primary-600 hover:bg-primary-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
               class="w-full py-2 px-4 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
             >
-              應用字母
+              套用文字
             </button>
           </div>
           
@@ -178,7 +178,7 @@
             v-if="activeTab === 'emoji'"
           >
             <!-- Emoji 網格 -->
-            <div class="grid-wrapper h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
+            <div class="grid-wrapper emoji-grid-wrapper h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
                 :items="filteredEmojis"
                 :items-per-row="10"
@@ -209,7 +209,7 @@
             v-else-if="activeTab === 'icons'"
           >
             <!-- 圖標網格 -->
-            <div class="grid-wrapper h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
+            <div class="grid-wrapper icon-grid-wrapper h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
                 :items="filteredHeroicons"
                 :items-per-row="10"
@@ -766,5 +766,16 @@ export default {
 .icon-button {
   width: 30px;
   height: 30px;
+}
+.icon-button svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+</style>
+
+<style>
+.icon-grid-wrapper .virtual-scroll-container {
+  padding-left: 0.4rem;
+  padding-top: 0.3rem;
 }
 </style>
