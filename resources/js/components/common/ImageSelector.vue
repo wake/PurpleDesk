@@ -17,8 +17,8 @@
         <div 
           v-else-if="(mode === 'initials' || iconType === 'initials')"
           :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
-          class="font-type-image h-full w-full flex items-center justify-center text-white font-semibold"
-          :class="textSizeClass"
+          class="font-type-image h-full w-full flex items-center justify-center font-semibold"
+          :class="[textSizeClass, dynamicTextColor]"
         >
           {{ iconType === 'initials' ? selectedIcon : displayInitials }}
         </div>
@@ -33,14 +33,14 @@
           <component 
             v-if="iconType === 'heroicons'" 
             :is="getHeroiconComponent()" 
-            :class="iconSizeClass"
-            class="hero-type-image text-white"
+            :class="[iconSizeClass, dynamicTextColor]"
+            class="hero-type-image"
           />
           <!-- Bootstrap Icons -->
           <i 
             v-else-if="iconType === 'bootstrap'" 
-            :class="['bi', selectedIcon, bsIconSizeClass]"
-            class="bs-type-image text-white"
+            :class="['bi', selectedIcon, bsIconSizeClass, dynamicTextColor]"
+            class="bs-type-image"
           />
           <!-- Emoji -->
           <span 
@@ -57,7 +57,8 @@
         <div 
           v-else
           :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
-          class="h-full w-full flex items-center justify-center text-white"
+          class="h-full w-full flex items-center justify-center"
+          :class="dynamicTextColor"
         >
           <slot name="default-placeholder">
             <span :class="textSizeClass">{{ defaultInitials }}</span>
@@ -95,6 +96,7 @@
           @update:model-value="handleIconSelect"
           @update:icon-type="handleIconTypeUpdate"
           @close="handleIconPickerClose"
+          @close-color-picker="handleCloseColorPicker"
         />
       </div>
       
@@ -469,6 +471,28 @@ export default {
       return sizeClasses[props.size] || 'text-4xl'
     })
     
+    // 計算顏色亮度並決定文字顏色
+    const getTextColor = (bgColor) => {
+      if (!bgColor) return 'text-white'
+      
+      // 移除 # 符號並轉換為 RGB
+      const hex = bgColor.replace('#', '')
+      const r = parseInt(hex.substr(0, 2), 16)
+      const g = parseInt(hex.substr(2, 2), 16)
+      const b = parseInt(hex.substr(4, 2), 16)
+      
+      // 計算相對亮度（W3C 公式）
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+      
+      // 如果亮度大於 0.5，使用深色文字；否則使用白色文字
+      return luminance > 0.7 ? 'text-gray-800' : 'text-white'
+    }
+    
+    // 動態文字顏色
+    const dynamicTextColor = computed(() => {
+      return getTextColor(backgroundColor.value || defaultBackgroundColor)
+    })
+    
     // 顯示的字母縮寫
     const displayInitials = computed(() => {
       if (customInitials.value) {
@@ -613,6 +637,27 @@ export default {
     
     // 開啟 IconPicker
     const openIconPicker = () => {
+      // 先關閉任何開啟的 ColorPicker
+      const openColorPickers = document.querySelectorAll('.color-picker .fixed')
+      openColorPickers.forEach(picker => {
+        const pickerComponent = picker.__vueParentComponent
+        if (pickerComponent && pickerComponent.exposed && pickerComponent.exposed.closePicker) {
+          pickerComponent.exposed.closePicker()
+        }
+      })
+      
+      // 使用更簡單的方法：觸發點擊事件關閉 ColorPicker
+      const colorPickerPanels = document.querySelectorAll('[class*="fixed z-[10000]"]')
+      colorPickerPanels.forEach(panel => {
+        if (panel && panel.style.display !== 'none') {
+          // 觸發一個外部點擊來關閉 ColorPicker
+          const closeButton = panel.querySelector('button[title="關閉"]')
+          if (closeButton) {
+            closeButton.click()
+          }
+        }
+      })
+      
       // 等待下一個 tick 確保 DOM 更新
       nextTick(() => {
         if (avatarIconPickerRef.value) {
@@ -667,6 +712,13 @@ export default {
       // IconPicker 已經自行處理關閉邏輯，這裡不需要額外動作
     }
     
+    // 處理關閉 ColorPicker 事件
+    const handleCloseColorPicker = () => {
+      // 觸發一個外部點擊來關閉 ColorPicker
+      const event = new Event('click', { bubbles: true })
+      document.body.dispatchEvent(event)
+    }
+    
     return {
       mode,
       showSettings,
@@ -691,6 +743,7 @@ export default {
       emojiSizeClass,
       displayInitials,
       defaultInitials,
+      dynamicTextColor,
       setMode,
       handleFileChange,
       handleDragEnter,
@@ -707,6 +760,7 @@ export default {
       handleIconSelect,
       handleIconTypeUpdate,
       handleIconPickerClose,
+      handleCloseColorPicker,
       iconPickerRef,
       avatarIconPickerRef
     }

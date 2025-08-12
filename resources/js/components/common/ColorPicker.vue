@@ -13,35 +13,25 @@
       <div 
         v-if="isOpen" 
         ref="colorPanel"
-        class="fixed z-[10000] mt-2 p-4 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[280px]"
+        class="fixed z-[10000] mt-2 p-4 pt-5 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[280px]"
         :style="panelPosition"
         @click.stop
       >
-        <!-- 色彩搜尋欄位 -->
-        <div class="mb-4">
-          <div class="relative">
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="搜尋顏色名稱或輸入 Hex 值..."
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-            <button
-              v-if="searchQuery"
-              @click="clearSearch"
-              class="absolute right-2 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600"
-            >
-              ×
-            </button>
-          </div>
-        </div>
+        <!-- 關閉按鈕 -->
+        <button
+          @click="closePicker"
+          class="absolute top-2 right-2 w-6 h-6 text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center"
+          title="關閉"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
         
         <!-- 預設色彩調色盤 -->
-        <div class="mb-4" v-show="!searchQuery || showDefaultColors">
+        <div class="mb-4">
           <h4 class="text-sm font-medium text-gray-700 mb-2">預設顏色</h4>
           <div class="grid grid-cols-8 gap-2">
             <button
-              v-for="color in filteredDefaultColors"
+              v-for="color in defaultColors"
               :key="color.value"
               @click="selectColor(color.value)"
               :style="{ backgroundColor: color.value }"
@@ -53,11 +43,11 @@
         </div>
         
         <!-- 淡色系調色盤 -->
-        <div class="mb-4" v-show="!searchQuery || showLightColors">
+        <div class="mb-4">
           <h4 class="text-sm font-medium text-gray-700 mb-2">淡色系</h4>
           <div class="grid grid-cols-8 gap-2">
             <button
-              v-for="color in filteredLightColors"
+              v-for="color in lightColors"
               :key="color.value"
               @click="selectColor(color.value)"
               :style="{ backgroundColor: color.value }"
@@ -87,24 +77,6 @@
               class="flex-1 px-3 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
-        </div>
-        
-        <!-- 搜尋結果提示 -->
-        <div v-if="searchQuery && !showDefaultColors && !showLightColors && !isValidHexColor" class="mb-4 text-center py-4 text-gray-500">
-          <p class="text-sm">找不到符合的顏色</p>
-          <p class="text-xs text-gray-400 mt-1">請嘗試輸入 Hex 顏色碼（如 #ff6b6b）</p>
-        </div>
-        
-        <!-- Hex 顏色預覽 -->
-        <div v-if="searchQuery && isValidHexColor" class="mb-4">
-          <h4 class="text-sm font-medium text-gray-700 mb-2">預覽顏色</h4>
-          <button
-            @click="selectColor(searchQuery)"
-            :style="{ backgroundColor: searchQuery }"
-            class="w-full h-10 rounded border-2 border-gray-300 hover:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all flex items-center justify-center"
-          >
-            <span class="text-white text-sm font-medium drop-shadow-md">點擊使用 {{ searchQuery.toUpperCase() }}</span>
-          </button>
         </div>
         
         <!-- 隨機顏色按鈕 -->
@@ -144,7 +116,6 @@ export default {
     const isOpen = ref(false)
     const colorPanel = ref(null)
     const colorPickerRef = ref(null)
-    const searchQuery = ref('')
     const panelPosition = ref({ top: '0px', left: '0px' })
     
     // 預設顏色調色盤
@@ -263,62 +234,19 @@ export default {
       selectColor(randomColor.value)
     }
     
-    const clearSearch = () => {
-      searchQuery.value = ''
-    }
-    
     const clearColor = () => {
       emit('update:modelValue', '')
       closePicker()
     }
     
-    // 檢查是否為有效的 Hex 顏色
-    const isValidHexColor = computed(() => {
-      if (!searchQuery.value) return false
-      const hex = searchQuery.value.toLowerCase().trim()
-      return /^#([a-f0-9]{3}|[a-f0-9]{6})$/.test(hex)
-    })
-    
-    // 篩選後的顏色列表
-    const filteredDefaultColors = computed(() => {
-      if (!searchQuery.value) return defaultColors
-      const query = searchQuery.value.toLowerCase()
-      return defaultColors.filter(color => 
-        color.name.toLowerCase().includes(query) ||
-        color.value.toLowerCase().includes(query)
-      )
-    })
-    
-    const filteredLightColors = computed(() => {
-      if (!searchQuery.value) return lightColors
-      const query = searchQuery.value.toLowerCase()
-      return lightColors.filter(color => 
-        color.name.toLowerCase().includes(query) ||
-        color.value.toLowerCase().includes(query)
-      )
-    })
-    
-    // 是否顯示各個色盤區域
-    const showDefaultColors = computed(() => {
-      return !searchQuery.value || filteredDefaultColors.value.length > 0
-    })
-    
-    const showLightColors = computed(() => {
-      return !searchQuery.value || filteredLightColors.value.length > 0
-    })
-    
-    // 點擊外部關閉
+    // 點擊外部關閉 - 點擊 ColorPicker 以外的任何地方都關閉
     const handleClickOutside = (event) => {
       // 檢查是否點擊在 ColorPicker 內部
       const isInsideColorPicker = colorPanel.value && colorPanel.value.contains(event.target)
       const isColorPickerButton = colorPickerRef.value && colorPickerRef.value.contains(event.target)
       
-      // 檢查是否點擊在 IconPicker 內部（允許 IconPicker 與 ColorPicker 同時開啟）
-      const iconPickerPanel = document.querySelector('.icon-picker .fixed.z-\\[9999\\]')
-      const isInsideIconPicker = iconPickerPanel && iconPickerPanel.contains(event.target)
-      
-      // 只有在點擊外部且不在 IconPicker 內部時才關閉
-      if (!isInsideColorPicker && !isColorPickerButton && !isInsideIconPicker) {
+      // 點擊 ColorPicker 以外的任何地方都關閉 ColorPicker
+      if (!isInsideColorPicker && !isColorPickerButton) {
         closePicker()
       }
     }
@@ -343,23 +271,16 @@ export default {
       isOpen,
       colorPanel,
       colorPickerRef,
-      searchQuery,
       panelPosition,
       defaultColors,
       lightColors,
-      filteredDefaultColors,
-      filteredLightColors,
-      showDefaultColors,
-      showLightColors,
-      isValidHexColor,
       togglePicker,
       closePicker,
       selectColor,
       handleColorInput,
       handleTextInput,
       selectRandomColor,
-      clearColor,
-      clearSearch
+      clearColor
     }
   }
 }
