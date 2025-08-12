@@ -3,7 +3,7 @@
     <button
       type="button"
       @click="toggleDropdown"
-      class="p-2 rounded-md border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
+      class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
       :title="`圖標樣式: ${currentStyle === 'outline' ? 'Outline' : 'Solid'}`"
     >
       <!-- 顯示當前選擇的樣式圖標 -->
