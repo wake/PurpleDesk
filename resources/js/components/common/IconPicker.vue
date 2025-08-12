@@ -75,8 +75,7 @@
             <!-- 背景顏色選擇器按鈕 -->
             <button
               @click="openColorPicker"
-              class="p-0 me-3 pt-1 pb-2 text-sm transition-colors"
-              :style="{ color: backgroundColor || '#6366f1' }"
+              class="p-0 me-3 pt-1 pb-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
               title="選擇背景顏色"
             >
               <i class="bi bi-eyedropper"></i>
