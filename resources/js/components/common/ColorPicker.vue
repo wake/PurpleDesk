@@ -54,7 +54,7 @@
         
         <!-- 淡色系調色盤 -->
         <div class="mb-4" v-show="!searchQuery || showLightColors">
-          <h4 class="text-sm font-medium text-gray-700 mb-2">淡色系 (推薦)</h4>
+          <h4 class="text-sm font-medium text-gray-700 mb-2">淡色系</h4>
           <div class="grid grid-cols-8 gap-2">
             <button
               v-for="color in filteredLightColors"
