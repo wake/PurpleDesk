@@ -160,14 +160,14 @@ export default {
 
 .grid-row {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(10, 1fr);
   gap: 0;
   padding: 0;
 }
 
 .grid-row button {
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
   border: 1px solid red;
 }
 

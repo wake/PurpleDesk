@@ -119,7 +119,7 @@
             <div class="h-48 overflow-y-auto border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
                 :items="filteredEmojis"
-                :items-per-row="8"
+                :items-per-row="10"
                 :row-height="36"
                 :container-height="192"
                 :buffer="2"
@@ -150,7 +150,7 @@
             <div class="h-48 overflow-y-auto border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
                 :items="filteredHeroicons"
-                :items-per-row="8"
+                :items-per-row="10"
                 :row-height="36"
                 :container-height="192"
                 :buffer="2"
@@ -251,7 +251,7 @@ export default {
     const iconPanel = ref(null)
     const iconPickerRef = ref(null)
     const searchQuery = ref('')
-    const activeTab = ref('emoji')
+    const activeTab = ref('emoji') // 預設為 emoji 頁簽
     const panelPosition = ref({ top: '0px', left: '0px' })
     const selectedIcon = ref(props.modelValue)
     const iconType = ref(props.iconType || '')
@@ -343,15 +343,16 @@ export default {
         // 打開時根據當前 iconType 設定正確的標籤頁
         if (iconType.value === 'heroicons') {
           activeTab.value = 'icons'
-        } else if (iconType.value === 'emoji') {
+        } else if (iconType.value === 'upload') {
+          activeTab.value = 'upload'
+        } else {
+          // 預設或 emoji 類型都顯示 emoji 頁簽
           activeTab.value = 'emoji'
           // 如果當前選中的是 emoji，檢測它的膚色
-          if (selectedIcon.value) {
+          if (selectedIcon.value && iconType.value === 'emoji') {
             const detectedSkinTone = getCurrentSkinTone(selectedIcon.value)
             selectedSkinTone.value = detectedSkinTone
           }
-        } else if (iconType.value === 'upload') {
-          activeTab.value = 'upload'
         }
         await nextTick()
         calculatePosition()
@@ -624,7 +625,7 @@ export default {
 }
 .emoji-button,
 .icon-button {
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
 }
 </style>
