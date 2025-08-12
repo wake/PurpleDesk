@@ -239,13 +239,13 @@ export default {
       closePicker()
     }
     
-    // 點擊外部關閉
+    // 點擊外部關閉 - 點擊 ColorPicker 以外的任何地方都關閉
     const handleClickOutside = (event) => {
       // 檢查是否點擊在 ColorPicker 內部
       const isInsideColorPicker = colorPanel.value && colorPanel.value.contains(event.target)
       const isColorPickerButton = colorPickerRef.value && colorPickerRef.value.contains(event.target)
       
-      // 只有在點擊外部時才關閉 ColorPicker
+      // 點擊 ColorPicker 以外的任何地方都關閉 ColorPicker
       if (!isInsideColorPicker && !isColorPickerButton) {
         closePicker()
       }

@@ -468,11 +468,8 @@ export default {
     
     // 處理 IconPicker 內部點擊
     const handleIconPickerClick = () => {
-      // 關閉 ColorPicker 當點擊 IconPicker 內部時
-      const colorPickerCloseButton = document.querySelector('.color-picker .fixed button[title="關閉"]')
-      if (colorPickerCloseButton) {
-        colorPickerCloseButton.click()
-      }
+      // IconPicker 內部點擊不執行任何關閉動作
+      // ColorPicker 會由自己的 handleClickOutside 處理關閉
     }
     
     const selectIcon = (icon, type) => {
@@ -698,7 +695,8 @@ export default {
       // 檢查是否點擊在任何 ColorPicker 按鈕上
       const isColorPickerButton = event.target.closest('.color-picker button')
       
-      // 只有在點擊外部時才關閉 IconPicker
+      // IconPicker 只在點擊外部且非 ColorPicker 區域時關閉
+      // 這樣當點擊 ColorPicker 時，IconPicker 保持開啟
       if (!isInsideIconPicker && !isIconPickerButton && !isInsideColorPicker && !isColorPickerButton) {
         closePicker()
       }
