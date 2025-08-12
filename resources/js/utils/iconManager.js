@@ -21,43 +21,64 @@ class IconManager {
     console.log('🚀 IconManager: 開始初始化圖標管理系統')
     
     try {
-      // 並行初始化兩個系統
-      await Promise.all([
+      // 使用 allSettled 來避免單一失敗導致全部失敗
+      const results = await Promise.allSettled([
         bsIconsManager.preloadPopularCategories(),
         emojiManager.preloadPopularEmojiCategories()
       ])
       
-      // 開始漸進式載入
-      bsIconsManager.loadIconsByPriority()
-      emojiManager.loadEmojisByPriority()
+      // 檢查結果
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          const systemName = index === 0 ? 'Bootstrap Icons' : 'Emojis'
+          console.error(`⚠️ IconManager: ${systemName} 初始化失敗:`, result.reason)
+        }
+      })
+      
+      // 開始漸進式載入（即使部分初始化失敗）
+      if (typeof bsIconsManager.loadIconsByPriority === 'function') {
+        bsIconsManager.loadIconsByPriority()
+      }
+      if (typeof emojiManager.loadEmojisByPriority === 'function') {
+        emojiManager.loadEmojisByPriority()
+      }
       
       this.initialized = true
-      console.log('✅ IconManager: 初始化完成')
+      console.log('✅ IconManager: 初始化完成（可能有部分錯誤）')
       
       // 定期更新載入統計
       this.startStatsTracking()
       
     } catch (error) {
       console.error('❌ IconManager: 初始化失敗', error)
-      throw error
+      // 不再抛出錯誤，讓系統繼續運作
+      this.initialized = true // 標記為已初始化，避免重複嘗試
     }
   }
 
   // 開始統計追蹤
   startStatsTracking() {
     const updateStats = () => {
-      this.loadingStats.icons = bsIconsManager.getLoadingStatus()
-      this.loadingStats.emojis = emojiManager.getEmojiLoadingStatus()
-      
-      const totalProgress = Math.round(
-        (this.loadingStats.icons.progress + this.loadingStats.emojis.progress) / 2
-      )
-      
-      if (totalProgress < 100) {
-        setTimeout(updateStats, 1000) // 每秒更新一次
-      } else {
-        console.log('🎯 IconManager: 所有圖標載入完成')
-        this.logFinalStats()
+      try {
+        if (typeof bsIconsManager.getLoadingStatus === 'function') {
+          this.loadingStats.icons = bsIconsManager.getLoadingStatus()
+        }
+        if (typeof emojiManager.getEmojiLoadingStatus === 'function') {
+          this.loadingStats.emojis = emojiManager.getEmojiLoadingStatus()
+        }
+        
+        const iconProgress = this.loadingStats.icons.progress || 0
+        const emojiProgress = this.loadingStats.emojis.progress || 0
+        const totalProgress = Math.round((iconProgress + emojiProgress) / 2)
+        
+        if (totalProgress < 100) {
+          setTimeout(updateStats, 1000) // 每秒更新一次
+        } else {
+          console.log('🎯 IconManager: 所有圖標載入完成')
+          this.logFinalStats()
+        }
+      } catch (error) {
+        console.error('Stats tracking error:', error)
       }
     }
     
