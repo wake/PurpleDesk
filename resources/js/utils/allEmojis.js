@@ -6,6 +6,9 @@
 
 import emojiManager from './emojis/index.js';
 
+// 膚色修飾符的 Unicode 範圍
+const SKIN_TONE_REGEX = /[\u{1F3FB}-\u{1F3FF}]/gu;
+
 // 建立用於同步存取的 emoji 陣列
 let allEmojisCache = [];
 let isLoading = false;
@@ -34,14 +37,18 @@ async function loadAllEmojis() {
         try {
           const emojis = await emojiManager.getEmojisByCategory(category.id);
           // 將每個 emoji 加入陣列，保留分類資訊
+          // 過濾掉包含膚色修飾符的變體，只保留基礎 emoji
           emojis.forEach(emoji => {
-            allEmojis.push({
-              emoji: emoji.emoji,
-              name: emoji.name,
-              category: category.name,
-              categoryId: category.id,
-              subgroup: emoji.subgroup
-            });
+            // 檢查是否包含膚色修飾符
+            if (!SKIN_TONE_REGEX.test(emoji.emoji)) {
+              allEmojis.push({
+                emoji: emoji.emoji,
+                name: emoji.name,
+                category: category.name,
+                categoryId: category.id,
+                subgroup: emoji.subgroup
+              });
+            }
           });
         } catch (error) {
           console.warn(`載入 ${category.name} 分類失敗:`, error);

@@ -5,6 +5,9 @@
  * Total: 3,781 emojis across 9 categories
  */
 
+// 膚色修飾符的 Unicode 範圍
+const SKIN_TONE_REGEX = /[\u{1F3FB}-\u{1F3FF}]/gu;
+
 export { SMILEYS_EMOTION_EMOJIS } from './smileys-emotion.js';
 export { PEOPLE_BODY_EMOJIS } from './people-body.js';
 export { ANIMALS_NATURE_EMOJIS } from './animals-nature.js';
@@ -216,14 +219,17 @@ class EmojiManager {
     // Index all emojis in the category
     Object.entries(data).forEach(([subgroup, emojis]) => {
       emojis.forEach(item => {
-        const searchKey = `${item.emoji} ${item.name} ${categoryInfo.name} ${subgroup}`.toLowerCase();
-        this.searchIndex.set(item.emoji, {
-          ...item,
-          category: categoryInfo.name,
-          categoryId,
-          subgroup,
-          searchKey
-        });
+        // 只索引基礎 emoji，不索引膚色變體
+        if (!SKIN_TONE_REGEX.test(item.emoji)) {
+          const searchKey = `${item.emoji} ${item.name} ${categoryInfo.name} ${subgroup}`.toLowerCase();
+          this.searchIndex.set(item.emoji, {
+            ...item,
+            category: categoryInfo.name,
+            categoryId,
+            subgroup,
+            searchKey
+          });
+        }
       });
     });
   }
@@ -267,12 +273,15 @@ class EmojiManager {
     const emojis = [];
     Object.entries(data).forEach(([subgroup, items]) => {
       items.forEach(item => {
-        emojis.push({
-          ...item,
-          category: categoryInfo.name,
-          categoryId,
-          subgroup
-        });
+        // 過濾掉包含膚色修飾符的 emoji，只保留基礎版本
+        if (!SKIN_TONE_REGEX.test(item.emoji)) {
+          emojis.push({
+            ...item,
+            category: categoryInfo.name,
+            categoryId,
+            subgroup
+          });
+        }
       });
     });
     
