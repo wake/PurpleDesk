@@ -44,6 +44,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/test-icon-picker',
+    name: 'test-icon-picker',
+    component: () => import('./pages/TestIconPicker.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/admin',
     component: AdminLayout,
     meta: { requiresAuth: true, requiresAdmin: true },
