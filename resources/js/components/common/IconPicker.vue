@@ -114,11 +114,6 @@
           <div 
             v-if="activeTab === 'emoji'"
           >
-            <!-- Emoji 分類標題 -->
-            <div class="text-xs font-medium text-gray-500 mb-2">
-              {{ currentEmojiCategory }}
-            </div>
-            
             <!-- Emoji 網格 -->
             <div class="h-48 overflow-y-auto border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
@@ -143,20 +138,6 @@
                   </template>
                 </template>
               </VirtualScroll>
-            </div>
-            
-            <!-- Emoji 分類選擇器 -->
-            <div class="flex space-x-1 mt-3 justify-center">
-              <button
-                v-for="category in emojiCategories"
-                :key="category.id"
-                @click="selectedEmojiCategory = category.id"
-                :class="selectedEmojiCategory === category.id ? 'bg-gray-200' : 'hover:bg-gray-100'"
-                class="p-2 rounded transition-colors"
-                :title="category.name"
-              >
-                <span class="text-lg">{{ category.icon }}</span>
-              </button>
             </div>
           </div>
 
@@ -297,25 +278,6 @@ export default {
     const selectedHeroiconStyle = ref('outline') // 預設 Heroicon 樣式
     const fileInput = ref(null)
     const uploadedImage = ref(null)
-    const selectedEmojiCategory = ref('smileys')
-    
-    // Emoji 分類
-    const emojiCategories = [
-      { id: 'smileys', name: '表情', icon: '😀' },
-      { id: 'people', name: '人物', icon: '👤' },
-      { id: 'animals', name: '動物', icon: '🐾' },
-      { id: 'food', name: '食物', icon: '🍔' },
-      { id: 'travel', name: '旅遊', icon: '✈️' },
-      { id: 'activities', name: '活動', icon: '⚽' },
-      { id: 'objects', name: '物品', icon: '💡' },
-      { id: 'symbols', name: '符號', icon: '❤️' },
-      { id: 'flags', name: '旗幟', icon: '🏁' }
-    ]
-    
-    const currentEmojiCategory = computed(() => {
-      const category = emojiCategories.find(c => c.id === selectedEmojiCategory.value)
-      return category ? category.name : 'People'
-    })
     
     // 監聽 props 變化
     watch(() => props.modelValue, (newVal) => {
@@ -622,9 +584,6 @@ export default {
       triggerFileUpload,
       handleFileUpload,
       uploadedImage,
-      emojiCategories,
-      selectedEmojiCategory,
-      currentEmojiCategory,
       getDisplayIcon: (icon) => {
         // 如果圖標包含樣式前綴，移除它
         if (icon && icon.includes(':')) {
