@@ -315,7 +315,7 @@ export default {
       default: false
     }
   },
-  emits: ['update:modelValue', 'update:iconType', 'file-selected', 'color-picker-click'],
+  emits: ['update:modelValue', 'update:iconType', 'file-selected', 'color-picker-click', 'close'],
   setup(props, { emit }) {
     const isOpen = ref(false)
     const iconPanel = ref(null)
@@ -447,6 +447,7 @@ export default {
     
     const closePicker = () => {
       isOpen.value = false
+      emit('close')
     }
     
     const selectIcon = (icon, type) => {

@@ -94,6 +94,7 @@
             @color-picker-click="openBgColorPicker"
             @update:model-value="handleIconSelect"
             @update:icon-type="handleIconTypeUpdate"
+            @close="handleIconPickerClose"
           />
         </div>
       </div>
@@ -614,31 +615,19 @@ export default {
     
     // 開啟 IconPicker（由子組件 IconPicker 控制）
     const openIconPicker = () => {
-      // 簡單的切換邏輯
+      // 如果還沒顯示，先顯示組件
       if (!showIconPicker.value) {
-        // 第一次顯示組件
         showIconPicker.value = true
-        // 稍微延遲以確保組件渲染完成
-        setTimeout(() => {
+        // 稍微延遲以確保組件渲染完成後再開啟
+        nextTick(() => {
           if (avatarIconPickerRef.value) {
             avatarIconPickerRef.value.togglePicker()
           }
-        }, 10)
+        })
       } else {
-        // 如果組件已經存在，檢查是否有 ref
+        // 如果已經顯示，則切換開關狀態
         if (avatarIconPickerRef.value) {
           avatarIconPickerRef.value.togglePicker()
-        } else {
-          // 如果沒有 ref，隱藏再顯示
-          showIconPicker.value = false
-          setTimeout(() => {
-            showIconPicker.value = true
-            setTimeout(() => {
-              if (avatarIconPickerRef.value) {
-                avatarIconPickerRef.value.togglePicker()
-              }
-            }, 10)
-          }, 10)
         }
       }
     }
@@ -675,6 +664,11 @@ export default {
       } else {
         mode.value = 'icon'
       }
+    }
+    
+    // 處理 IconPicker 關閉事件
+    const handleIconPickerClose = () => {
+      showIconPicker.value = false
     }
     
     return {
@@ -717,6 +711,7 @@ export default {
       openBgColorPicker,
       handleIconSelect,
       handleIconTypeUpdate,
+      handleIconPickerClose,
       iconPickerRef,
       avatarIconPickerRef
     }
