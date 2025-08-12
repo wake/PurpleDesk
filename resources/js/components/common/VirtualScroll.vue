@@ -1,7 +1,7 @@
 <template>
   <div 
     ref="scrollContainer"
-    class="virtual-scroll-container"
+    class="virtual-scroll-container px-1"
     :style="{ height: containerHeight + 'px' }"
     @scroll="handleScroll"
   >
@@ -145,7 +145,7 @@ export default {
 .virtual-scroll-container {
   overflow-y: auto;
   position: relative;
-  padding: 0.25rem 0.125rem 0.25rem 0.25rem; /* 右側較少內邊距 */
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem; /* 右側較少內邊距 */
   border-radius: 6px;
 }
 

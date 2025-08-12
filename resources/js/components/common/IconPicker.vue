@@ -178,7 +178,7 @@
             v-if="activeTab === 'emoji'"
           >
             <!-- Emoji 網格 -->
-            <div class="h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
+            <div class="grid-wrapper h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
                 :items="filteredEmojis"
                 :items-per-row="10"
@@ -209,12 +209,12 @@
             v-else-if="activeTab === 'icons'"
           >
             <!-- 圖標網格 -->
-            <div class="h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
+            <div class="grid-wrapper h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
                 :items="filteredHeroicons"
                 :items-per-row="10"
                 :row-height="36"
-                :container-height="178"
+                :container-height="176"
                 :buffer="2"
               >
                 <template #row="{ items }">
@@ -755,6 +755,10 @@ export default {
 </script>
 
 <style scoped>
+.grid-wrapper {
+  padding-left: 0.125rem;
+  padding-right: 0.125rem;
+}
 .icon-picker {
   @apply relative inline-block;
 }
