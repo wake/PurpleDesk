@@ -39,7 +39,7 @@
         ref="iconPanel"
         class="fixed z-[9999] px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-xl w-96"
         :style="panelPosition"
-        @click.stop
+        @click.stop="handleIconPickerClick"
       >
         <!-- 頂部標籤切換 -->
         <div class="flex border-b border-gray-200 mb-4">
@@ -466,6 +466,15 @@ export default {
       emit('close')
     }
     
+    // 處理 IconPicker 內部點擊
+    const handleIconPickerClick = () => {
+      // 關閉 ColorPicker 當點擊 IconPicker 內部時
+      const colorPickerCloseButton = document.querySelector('.color-picker .fixed button[title="關閉"]')
+      if (colorPickerCloseButton) {
+        colorPickerCloseButton.click()
+      }
+    }
+    
     const selectIcon = (icon, type) => {
       // 如果是 Heroicons，儲存樣式資訊
       let iconValue = icon
@@ -683,19 +692,11 @@ export default {
       const isIconPickerButton = iconPickerRef.value && iconPickerRef.value.contains(event.target)
       
       // 檢查是否點擊在 ColorPicker 內部
-      const colorPickerPanel = document.querySelector('.color-picker .fixed.z-\\[10000\\]')
+      const colorPickerPanel = document.querySelector('.color-picker .fixed')
       const isInsideColorPicker = colorPickerPanel && colorPickerPanel.contains(event.target)
       
       // 檢查是否點擊在任何 ColorPicker 按鈕上
       const isColorPickerButton = event.target.closest('.color-picker button')
-      
-      // 如果點擊在 IconPicker 內部，關閉任何開啟的 ColorPicker
-      if (isInsideIconPicker && !isInsideColorPicker) {
-        const colorPickerCloseButton = document.querySelector('.color-picker .fixed.z-\\[10000\\] button[title="關閉"]')
-        if (colorPickerCloseButton) {
-          colorPickerCloseButton.click()
-        }
-      }
       
       // 只有在點擊外部時才關閉 IconPicker
       if (!isInsideIconPicker && !isIconPickerButton && !isInsideColorPicker && !isColorPickerButton) {
@@ -749,6 +750,7 @@ export default {
       isSearchEmpty,
       togglePicker,
       closePicker,
+      handleIconPickerClick,
       selectIcon,
       clearIcon,
       clearSearch,

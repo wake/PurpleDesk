@@ -245,11 +245,7 @@ export default {
       const isInsideColorPicker = colorPanel.value && colorPanel.value.contains(event.target)
       const isColorPickerButton = colorPickerRef.value && colorPickerRef.value.contains(event.target)
       
-      // 檢查是否點擊在 IconPicker 內部
-      const iconPickerPanel = document.querySelector('.icon-picker .fixed.z-\\[9999\\]')
-      const isInsideIconPicker = iconPickerPanel && iconPickerPanel.contains(event.target)
-      
-      // 如果點擊在 IconPicker 內部或外部（但不在 ColorPicker 內部），則關閉 ColorPicker
+      // 只有在點擊外部時才關閉 ColorPicker
       if (!isInsideColorPicker && !isColorPickerButton) {
         closePicker()
       }
