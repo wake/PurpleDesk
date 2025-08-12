@@ -1,191 +1,227 @@
-// Emoji - 表情與情緒分類
-// 包含：各種臉部表情、情緒狀態相關的 emoji
+/**
+ * Smileys & Emotion Emojis
+ * Source: Unicode 16.0 emoji-test.txt
+ * Auto-generated from official Unicode data
+ */
 
-export const smileysEmotionEmojis = [
-  // 開心微笑
-  { name: '微笑', emoji: '😀', category: '表情與情緒' },
-  { name: '露齒笑', emoji: '😃', category: '表情與情緒' },
-  { name: '大笑', emoji: '😄', category: '表情與情緒' },
-  { name: '眯眼笑', emoji: '😁', category: '表情與情緒' },
-  { name: '笑哭', emoji: '😆', category: '表情與情緒' },
-  { name: '汗笑', emoji: '😅', category: '表情與情緒' },
-  { name: '笑翻', emoji: '🤣', category: '表情與情緒' },
-  { name: '喜極而泣', emoji: '😂', category: '表情與情緒' },
-  { name: '微微笑', emoji: '🙂', category: '表情與情緒' },
-  { name: '倒臉', emoji: '🙃', category: '表情與情緒' },
-  { name: '對稱笑', emoji: '😉', category: '表情與情緒' },
-  { name: '羞笑', emoji: '😊', category: '表情與情緒' },
-  { name: '天使', emoji: '😇', category: '表情與情緒' },
-  
-  // 愛心眼睛
-  { name: '愛心眼', emoji: '😍', category: '表情與情緒' },
-  { name: '星星眼', emoji: '🤩', category: '表情與情緒' },
-  { name: '飛吻', emoji: '😘', category: '表情與情緒' },
-  { name: '親吻', emoji: '😗', category: '表情與情緒' },
-  { name: '微笑親吻', emoji: '😚', category: '表情與情緒' },
-  { name: '親親', emoji: '😙', category: '表情與情緒' },
-  { name: '品嚐', emoji: '😋', category: '表情與情緒' },
-  
-  // 吐舌頭
-  { name: '吐舌眨眼', emoji: '😜', category: '表情與情緒' },
-  { name: '瘋狂', emoji: '🤪', category: '表情與情緒' },
-  { name: '吐舌笑', emoji: '😝', category: '表情與情緒' },
-  { name: '金錢臉', emoji: '🤑', category: '表情與情緒' },
-  
-  // 擁抱與手勢
-  { name: '擁抱', emoji: '🤗', category: '表情與情緒' },
-  { name: '捂嘴笑', emoji: '🤭', category: '表情與情緒' },
-  { name: '安靜', emoji: '🤫', category: '表情與情緒' },
-  { name: '沉思', emoji: '🤔', category: '表情與情緒' },
-  
-  // 中性表情
-  { name: '拉鍊嘴', emoji: '🤐', category: '表情與情緒' },
-  { name: '挑眉', emoji: '🤨', category: '表情與情緒' },
-  { name: '無語', emoji: '😐', category: '表情與情緒' },
-  { name: '面無表情', emoji: '😑', category: '表情與情緒' },
-  { name: '無口', emoji: '😶', category: '表情與情緒' },
-  { name: '假笑', emoji: '😏', category: '表情與情緒' },
-  { name: '不爽', emoji: '😒', category: '表情與情緒' },
-  { name: '翻白眼', emoji: '🙄', category: '表情與情緒' },
-  { name: '做鬼臉', emoji: '😬', category: '表情與情緒' },
-  { name: '說謊', emoji: '🤥', category: '表情與情緒' },
-  
-  // 放鬆與疲憊
-  { name: '鬆口氣', emoji: '😌', category: '表情與情緒' },
-  { name: '疲憊', emoji: '😔', category: '表情與情緒' },
-  { name: '睏', emoji: '😪', category: '表情與情緒' },
-  { name: '睡覺', emoji: '😴', category: '表情與情緒' },
-  
-  // 口罩與生病
-  { name: '口罩', emoji: '😷', category: '表情與情緒' },
-  { name: '發燒', emoji: '🤒', category: '表情與情緒' },
-  { name: '包紮', emoji: '🤕', category: '表情與情緒' },
-  { name: '嘔吐', emoji: '🤢', category: '表情與情緒' },
-  { name: '吐', emoji: '🤮', category: '表情與情緒' },
-  { name: '打噴嚏', emoji: '🤧', category: '表情與情緒' },
-  { name: '發熱', emoji: '🥵', category: '表情與情緒' },
-  { name: '冰冷', emoji: '🥶', category: '表情與情緒' },
-  { name: '暈', emoji: '🥴', category: '表情與情緒' },
-  { name: '暈倒', emoji: '😵', category: '表情與情緒' },
-  { name: '爆炸頭', emoji: '🤯', category: '表情與情緒' },
-  
-  // 牛仔帽與酷炫
-  { name: '牛仔帽臉', emoji: '🤠', category: '表情與情緒' },
-  { name: '派對臉', emoji: '🥳', category: '表情與情緒' },
-  { name: '變裝臉', emoji: '🥸', category: '表情與情緒' },
-  
-  // 太陽眼鏡與酷表情
-  { name: '太陽眼鏡', emoji: '😎', category: '表情與情緒' },
-  { name: '書呆子', emoji: '🤓', category: '表情與情緒' },
-  
-  // 困惑與擔心
-  { name: '困惑', emoji: '😕', category: '表情與情緒' },
-  { name: '擔心', emoji: '😟', category: '表情與情緒' },
-  { name: '輕微皺眉', emoji: '🙁', category: '表情與情緒' },
-  { name: '失望', emoji: '☹️', category: '表情與情緒' },
-  { name: '張嘴', emoji: '😮', category: '表情與情緒' },
-  { name: '安靜張嘴', emoji: '😯', category: '表情與情緒' },
-  { name: '喘氣', emoji: '😲', category: '表情與情緒' },
-  { name: '臉紅', emoji: '😳', category: '表情與情緒' },
-  { name: '懇求', emoji: '🥺', category: '表情與情緒' },
-  
-  // 悲傷哭泣
-  { name: '哭泣', emoji: '😢', category: '表情與情緒' },
-  { name: '大哭', emoji: '😭', category: '表情與情緒' },
-  { name: '大聲哭', emoji: '😤', category: '表情與情緒' },
-  { name: '生氣', emoji: '😠', category: '表情與情緒' },
-  { name: '憤怒', emoji: '😡', category: '表情與情緒' },
-  { name: '咒罵', emoji: '🤬', category: '表情與情緒' },
-  
-  // 恐懼與驚訝
-  { name: '恐懼', emoji: '😨', category: '表情與情緒' },
-  { name: '焦慮', emoji: '😰', category: '表情與情緒' },
-  { name: '哭臉', emoji: '😥', category: '表情與情緒' },
-  { name: '失望放鬆', emoji: '😓', category: '表情與情緒' },
-  { name: '冷汗', emoji: '🤗', category: '表情與情緒' },
-  { name: '尖叫', emoji: '😱', category: '表情與情緒' },
-  { name: '疲累', emoji: '😫', category: '表情與情緒' },
-  { name: '打哈欠', emoji: '🥱', category: '表情與情緒' },
-  
-  // 蒸氣與生氣
-  { name: '蒸氣鼻孔', emoji: '😤', category: '表情與情緒' },
-  { name: '惡魔微笑', emoji: '😈', category: '表情與情緒' },
-  { name: '惡魔', emoji: '👿', category: '表情與情緒' },
-  
-  // 骷髏與死亡
-  { name: '骷髏', emoji: '💀', category: '表情與情緒' },
-  { name: '骷髏交叉骨', emoji: '☠️', category: '表情與情緒' },
-  
-  // 便便與搞笑
-  { name: '便便', emoji: '💩', category: '表情與情緒' },
-  { name: '小丑臉', emoji: '🤡', category: '表情與情緒' },
-  { name: '食人魔', emoji: '👹', category: '表情與情緒' },
-  { name: '日本食人魔', emoji: '👺', category: '表情與情緒' },
-  { name: '幽靈', emoji: '👻', category: '表情與情緒' },
-  { name: '外星人', emoji: '👽', category: '表情與情緒' },
-  { name: '外星怪物', emoji: '👾', category: '表情與情緒' },
-  { name: '機器人', emoji: '🤖', category: '表情與情緒' },
-  
-  // 貓臉表情
-  { name: '微笑貓', emoji: '😺', category: '表情與情緒' },
-  { name: '笑貓', emoji: '😸', category: '表情與情緒' },
-  { name: '喜極而泣貓', emoji: '😹', category: '表情與情緒' },
-  { name: '愛心眼貓', emoji: '😻', category: '表情與情緒' },
-  { name: '微笑貓', emoji: '😼', category: '表情與情緒' },
-  { name: '飛吻貓', emoji: '😽', category: '表情與情緒' },
-  { name: '疲憊貓', emoji: '🙀', category: '表情與情緒' },
-  { name: '哭貓', emoji: '😿', category: '表情與情緒' },
-  { name: '生氣貓', emoji: '😾', category: '表情與情緒' },
-  
-  // 猴臉表情
-  { name: '不看猴', emoji: '🙈', category: '表情與情緒' },
-  { name: '不聽猴', emoji: '🙉', category: '表情與情緒' },
-  { name: '不說猴', emoji: '🙊', category: '表情與情緒' },
-  
-  // 愛心系列
-  { name: '紅心', emoji: '❤️', category: '表情與情緒' },
-  { name: '橘心', emoji: '🧡', category: '表情與情緒' },
-  { name: '黃心', emoji: '💛', category: '表情與情緒' },
-  { name: '綠心', emoji: '💚', category: '表情與情緒' },
-  { name: '藍心', emoji: '💙', category: '表情與情緒' },
-  { name: '紫心', emoji: '💜', category: '表情與情緒' },
-  { name: '棕心', emoji: '🤎', category: '表情與情緒' },
-  { name: '黑心', emoji: '🖤', category: '表情與情緒' },
-  { name: '白心', emoji: '🤍', category: '表情與情緒' },
-  { name: '破心', emoji: '💔', category: '表情與情緒' },
-  { name: '愛心感嘆號', emoji: '❣️', category: '表情與情緒' },
-  { name: '兩個心', emoji: '💕', category: '表情與情緒' },
-  { name: '轉心', emoji: '💞', category: '表情與情緒' },
-  { name: '跳心', emoji: '💓', category: '表情與情緒' },
-  { name: '成長心', emoji: '💗', category: '表情與情緒' },
-  { name: '閃心', emoji: '💖', category: '表情與情緒' },
-  { name: '心裝飾', emoji: '💝', category: '表情與情緒' },
-  
-  // 情緒符號
-  { name: '100 分', emoji: '💯', category: '表情與情緒' },
-  { name: '生氣符號', emoji: '💢', category: '表情與情緒' },
-  { name: '撞擊', emoji: '💥', category: '表情與情緒' },
-  { name: '暈眩', emoji: '💫', category: '表情與情緒' },
-  { name: '汗滴', emoji: '💦', category: '表情與情緒' },
-  { name: '衝刺', emoji: '💨', category: '表情與情緒' },
-  { name: '洞', emoji: '🕳️', category: '表情與情緒' },
-  { name: '炸彈', emoji: '💣', category: '表情與情緒' },
-  { name: 'Zzz', emoji: '💤', category: '表情與情緒' },
-  
-  // 手勢愛心
-  { name: '愛你手勢', emoji: '🫶', category: '表情與情緒' },
-  
-  // 親吻印記
-  { name: '親吻印記', emoji: '💋', category: '表情與情緒' },
-  
-  // 思考泡泡
-  { name: '思考泡泡', emoji: '💭', category: '表情與情緒' },
-  { name: '對話泡泡', emoji: '💬', category: '表情與情緒' }
-]
+export const SMILEYS_EMOTION_EMOJIS = {
+  faceSmiling: [
+    { emoji: '😀', name: 'grinning face' },
+    { emoji: '😃', name: 'grinning face with big eyes' },
+    { emoji: '😄', name: 'grinning face with smiling eyes' },
+    { emoji: '😁', name: 'beaming face with smiling eyes' },
+    { emoji: '😆', name: 'grinning squinting face' },
+    { emoji: '😅', name: 'grinning face with sweat' },
+    { emoji: '🤣', name: 'rolling on the floor laughing' },
+    { emoji: '😂', name: 'face with tears of joy' },
+    { emoji: '🙂', name: 'slightly smiling face' },
+    { emoji: '🙃', name: 'upside-down face' },
+    { emoji: '🫠', name: 'melting face' },
+    { emoji: '😉', name: 'winking face' },
+    { emoji: '😊', name: 'smiling face with smiling eyes' },
+    { emoji: '😇', name: 'smiling face with halo' },
+  ],
 
-export const categoryInfo = {
-  id: 'smileys-emotion',
-  name: '表情與情緒',
-  description: '各種臉部表情、情緒狀態、愛心等',
-  priority: 'immediate'
-}
+  faceAffection: [
+    { emoji: '🥰', name: 'smiling face with hearts' },
+    { emoji: '😍', name: 'smiling face with heart-eyes' },
+    { emoji: '🤩', name: 'star-struck' },
+    { emoji: '😘', name: 'face blowing a kiss' },
+    { emoji: '😗', name: 'kissing face' },
+    { emoji: '☺️', name: 'smiling face' },
+    { emoji: '😚', name: 'kissing face with closed eyes' },
+    { emoji: '😙', name: 'kissing face with smiling eyes' },
+    { emoji: '🥲', name: 'smiling face with tear' },
+  ],
+
+  faceTongue: [
+    { emoji: '😋', name: 'face savoring food' },
+    { emoji: '😛', name: 'face with tongue' },
+    { emoji: '😜', name: 'winking face with tongue' },
+    { emoji: '🤪', name: 'zany face' },
+    { emoji: '😝', name: 'squinting face with tongue' },
+    { emoji: '🤑', name: 'money-mouth face' },
+  ],
+
+  faceHand: [
+    { emoji: '🤗', name: 'smiling face with open hands' },
+    { emoji: '🤭', name: 'face with hand over mouth' },
+    { emoji: '🫢', name: 'face with open eyes and hand over mouth' },
+    { emoji: '🫣', name: 'face with peeking eye' },
+    { emoji: '🤫', name: 'shushing face' },
+    { emoji: '🤔', name: 'thinking face' },
+    { emoji: '🫡', name: 'saluting face' },
+  ],
+
+  faceNeutralSkeptical: [
+    { emoji: '🤐', name: 'zipper-mouth face' },
+    { emoji: '🤨', name: 'face with raised eyebrow' },
+    { emoji: '😐', name: 'neutral face' },
+    { emoji: '😑', name: 'expressionless face' },
+    { emoji: '😶', name: 'face without mouth' },
+    { emoji: '🫥', name: 'dotted line face' },
+    { emoji: '😶‍🌫️', name: 'face in clouds' },
+    { emoji: '😏', name: 'smirking face' },
+    { emoji: '😒', name: 'unamused face' },
+    { emoji: '🙄', name: 'face with rolling eyes' },
+    { emoji: '😬', name: 'grimacing face' },
+    { emoji: '😮‍💨', name: 'face exhaling' },
+    { emoji: '🤥', name: 'lying face' },
+    { emoji: '🫨', name: 'shaking face' },
+    { emoji: '🙂‍↔️', name: 'head shaking horizontally' },
+    { emoji: '🙂‍↕️', name: 'head shaking vertically' },
+  ],
+
+  faceSleepy: [
+    { emoji: '😌', name: 'relieved face' },
+    { emoji: '😔', name: 'pensive face' },
+    { emoji: '😪', name: 'sleepy face' },
+    { emoji: '🤤', name: 'drooling face' },
+    { emoji: '😴', name: 'sleeping face' },
+    { emoji: '🫩', name: 'face with bags under eyes' },
+  ],
+
+  faceUnwell: [
+    { emoji: '😷', name: 'face with medical mask' },
+    { emoji: '🤒', name: 'face with thermometer' },
+    { emoji: '🤕', name: 'face with head-bandage' },
+    { emoji: '🤢', name: 'nauseated face' },
+    { emoji: '🤮', name: 'face vomiting' },
+    { emoji: '🤧', name: 'sneezing face' },
+    { emoji: '🥵', name: 'hot face' },
+    { emoji: '🥶', name: 'cold face' },
+    { emoji: '🥴', name: 'woozy face' },
+    { emoji: '😵', name: 'face with crossed-out eyes' },
+    { emoji: '😵‍💫', name: 'face with spiral eyes' },
+    { emoji: '🤯', name: 'exploding head' },
+  ],
+
+  faceHat: [
+    { emoji: '🤠', name: 'cowboy hat face' },
+    { emoji: '🥳', name: 'partying face' },
+    { emoji: '🥸', name: 'disguised face' },
+  ],
+
+  faceGlasses: [
+    { emoji: '😎', name: 'smiling face with sunglasses' },
+    { emoji: '🤓', name: 'nerd face' },
+    { emoji: '🧐', name: 'face with monocle' },
+  ],
+
+  faceConcerned: [
+    { emoji: '😕', name: 'confused face' },
+    { emoji: '🫤', name: 'face with diagonal mouth' },
+    { emoji: '😟', name: 'worried face' },
+    { emoji: '🙁', name: 'slightly frowning face' },
+    { emoji: '☹️', name: 'frowning face' },
+    { emoji: '😮', name: 'face with open mouth' },
+    { emoji: '😯', name: 'hushed face' },
+    { emoji: '😲', name: 'astonished face' },
+    { emoji: '😳', name: 'flushed face' },
+    { emoji: '🥺', name: 'pleading face' },
+    { emoji: '🥹', name: 'face holding back tears' },
+    { emoji: '😦', name: 'frowning face with open mouth' },
+    { emoji: '😧', name: 'anguished face' },
+    { emoji: '😨', name: 'fearful face' },
+    { emoji: '😰', name: 'anxious face with sweat' },
+    { emoji: '😥', name: 'sad but relieved face' },
+    { emoji: '😢', name: 'crying face' },
+    { emoji: '😭', name: 'loudly crying face' },
+    { emoji: '😱', name: 'face screaming in fear' },
+    { emoji: '😖', name: 'confounded face' },
+    { emoji: '😣', name: 'persevering face' },
+    { emoji: '😞', name: 'disappointed face' },
+    { emoji: '😓', name: 'downcast face with sweat' },
+    { emoji: '😩', name: 'weary face' },
+    { emoji: '😫', name: 'tired face' },
+    { emoji: '🥱', name: 'yawning face' },
+  ],
+
+  faceNegative: [
+    { emoji: '😤', name: 'face with steam from nose' },
+    { emoji: '😡', name: 'enraged face' },
+    { emoji: '😠', name: 'angry face' },
+    { emoji: '🤬', name: 'face with symbols on mouth' },
+    { emoji: '😈', name: 'smiling face with horns' },
+    { emoji: '👿', name: 'angry face with horns' },
+    { emoji: '💀', name: 'skull' },
+    { emoji: '☠️', name: 'skull and crossbones' },
+  ],
+
+  faceCostume: [
+    { emoji: '💩', name: 'pile of poo' },
+    { emoji: '🤡', name: 'clown face' },
+    { emoji: '👹', name: 'ogre' },
+    { emoji: '👺', name: 'goblin' },
+    { emoji: '👻', name: 'ghost' },
+    { emoji: '👽', name: 'alien' },
+    { emoji: '👾', name: 'alien monster' },
+    { emoji: '🤖', name: 'robot' },
+  ],
+
+  catFace: [
+    { emoji: '😺', name: 'grinning cat' },
+    { emoji: '😸', name: 'grinning cat with smiling eyes' },
+    { emoji: '😹', name: 'cat with tears of joy' },
+    { emoji: '😻', name: 'smiling cat with heart-eyes' },
+    { emoji: '😼', name: 'cat with wry smile' },
+    { emoji: '😽', name: 'kissing cat' },
+    { emoji: '🙀', name: 'weary cat' },
+    { emoji: '😿', name: 'crying cat' },
+    { emoji: '😾', name: 'pouting cat' },
+  ],
+
+  monkeyFace: [
+    { emoji: '🙈', name: 'see-no-evil monkey' },
+    { emoji: '🙉', name: 'hear-no-evil monkey' },
+    { emoji: '🙊', name: 'speak-no-evil monkey' },
+  ],
+
+  heart: [
+    { emoji: '💌', name: 'love letter' },
+    { emoji: '💘', name: 'heart with arrow' },
+    { emoji: '💝', name: 'heart with ribbon' },
+    { emoji: '💖', name: 'sparkling heart' },
+    { emoji: '💗', name: 'growing heart' },
+    { emoji: '💓', name: 'beating heart' },
+    { emoji: '💞', name: 'revolving hearts' },
+    { emoji: '💕', name: 'two hearts' },
+    { emoji: '💟', name: 'heart decoration' },
+    { emoji: '❣️', name: 'heart exclamation' },
+    { emoji: '💔', name: 'broken heart' },
+    { emoji: '❤️‍🔥', name: 'heart on fire' },
+    { emoji: '❤️‍🩹', name: 'mending heart' },
+    { emoji: '❤️', name: 'red heart' },
+    { emoji: '🩷', name: 'pink heart' },
+    { emoji: '🧡', name: 'orange heart' },
+    { emoji: '💛', name: 'yellow heart' },
+    { emoji: '💚', name: 'green heart' },
+    { emoji: '💙', name: 'blue heart' },
+    { emoji: '🩵', name: 'light blue heart' },
+    { emoji: '💜', name: 'purple heart' },
+    { emoji: '🤎', name: 'brown heart' },
+    { emoji: '🖤', name: 'black heart' },
+    { emoji: '🩶', name: 'grey heart' },
+    { emoji: '🤍', name: 'white heart' },
+  ],
+
+  emotion: [
+    { emoji: '💋', name: 'kiss mark' },
+    { emoji: '💯', name: 'hundred points' },
+    { emoji: '💢', name: 'anger symbol' },
+    { emoji: '💥', name: 'collision' },
+    { emoji: '💫', name: 'dizzy' },
+    { emoji: '💦', name: 'sweat droplets' },
+    { emoji: '💨', name: 'dashing away' },
+    { emoji: '🕳️', name: 'hole' },
+    { emoji: '💬', name: 'speech balloon' },
+    { emoji: '👁️‍🗨️', name: 'eye in speech bubble' },
+    { emoji: '🗨️', name: 'left speech bubble' },
+    { emoji: '🗯️', name: 'right anger bubble' },
+    { emoji: '💭', name: 'thought balloon' },
+    { emoji: '💤', name: 'ZZZ' },
+  ],
+
+};
+
+export default SMILEYS_EMOTION_EMOJIS;
