@@ -16,7 +16,7 @@
         <div 
           v-else-if="mode === 'initials'"
           :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
-          class="h-full w-full flex items-center justify-center text-white font-semibold"
+          class="font-type-image h-full w-full flex items-center justify-center text-white font-semibold"
           :class="textSizeClass"
         >
           {{ displayInitials }}
@@ -33,18 +33,19 @@
             v-if="iconType === 'heroicons'" 
             :is="getHeroiconComponent()" 
             :class="iconSizeClass"
-            class="text-white"
+            class="hero-type-image text-white"
           />
           <!-- Bootstrap Icons -->
           <i 
             v-else-if="iconType === 'bootstrap'" 
             :class="['bi', selectedIcon, bsIconSizeClass]"
-            class="text-white"
+            class="bs-type-image text-white"
           />
           <!-- Emoji -->
           <span 
             v-else-if="iconType === 'emoji'"
             :class="emojiSizeClass"
+            class="emoji-type-image"
             style="transform: translateY(2px);"
           >
             {{ selectedIcon }}
@@ -697,5 +698,25 @@ export default {
 
 .image-selector .bg-primary-25 {
   background-color: rgb(254 249 195 / 0.25);
+}
+
+.image-selector .font-type-image {
+  font-size: 40px;
+}
+
+.image-selector .bs-type-image {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-selector .emoji-type-image {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
