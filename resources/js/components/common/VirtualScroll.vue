@@ -145,6 +145,26 @@ export default {
 .virtual-scroll-container {
   overflow-y: auto;
   position: relative;
+  padding: 0.25rem;
+}
+
+/* 自訂滾動條樣式 */
+.virtual-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.virtual-scroll-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.virtual-scroll-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.virtual-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .virtual-scroll-spacer {
@@ -161,17 +181,12 @@ export default {
 .grid-row {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  gap: 0;
-  padding: 0;
+  gap: 2px;
+  padding: 2px 0;
 }
 
 .grid-row button {
   width: 30px;
   height: 30px;
-  border: 1px solid red;
-}
-
-.virtual-scroll-container {
-  padding: 0.25rem 0;
 }
 </style>
