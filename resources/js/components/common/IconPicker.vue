@@ -72,7 +72,7 @@
         </div>
 
         <!-- 搜尋與選擇器區域 -->
-        <div class="mb-4">
+        <div v-if="activeTab !== 'upload'" class="mb-4">
           <div class="flex space-x-2">
             <!-- 搜尋欄位 -->
             <div class="relative flex-1">
@@ -176,18 +176,22 @@
           <!-- Upload 標籤頁 -->
           <div 
             v-else-if="activeTab === 'upload'"
-            class="h-48 flex flex-col items-center justify-center border border-gray-100 rounded-md bg-gray-50"
+            @dragover.prevent="handleDragOver"
+            @dragleave.prevent="handleDragLeave"
+            @drop.prevent="handleDrop"
+            :class="isDragging ? 'border-primary-400 bg-primary-50' : 'border-gray-100 bg-gray-50'"
+            class="h-48 flex flex-col items-center justify-center border-2 border-dashed rounded-md transition-colors"
           >
-            <div class="text-center">
-              <CloudUploadIcon class="w-12 h-12 mx-auto text-gray-400 mb-4" />
+            <div class="text-center pointer-events-none">
+              <i class="bi bi-cloud-arrow-up-fill text-5xl text-gray-400 mb-4"></i>
               <button
-                @click="triggerFileUpload"
-                class="text-primary-600 hover:text-primary-700 font-medium text-sm"
+                @click.stop="triggerFileUpload"
+                class="text-primary-600 hover:text-primary-700 font-medium text-sm pointer-events-auto"
               >
                 Upload an image
               </button>
               <p class="text-xs text-gray-500 mt-2">
-                or ⌘+V to paste an image or link
+                or drag and drop / ⌘+V to paste
               </p>
             </div>
           </div>
@@ -231,7 +235,6 @@
 
 <script>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import { CloudUploadIcon } from '@heroicons/vue/outline'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
 import { applySkinTone, supportsSkinTone, removeSkinTone, getCurrentSkinTone } from '../../utils/emojiSkinTone.js'
 import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
@@ -248,7 +251,6 @@ export default {
     VirtualScroll,
     SkinToneSelector,
     HeroiconStyleSelector,
-    CloudUploadIcon,
     // 註冊所有 Heroicons (Outline 和 Solid)
     ...HeroiconsOutline,
     ...HeroiconsSolid
@@ -278,6 +280,7 @@ export default {
     const selectedHeroiconStyle = ref('outline') // 預設 Heroicon 樣式
     const fileInput = ref(null)
     const uploadedImage = ref(null)
+    const isDragging = ref(false)
     
     // 監聽 props 變化
     watch(() => props.modelValue, (newVal) => {
@@ -445,7 +448,11 @@ export default {
     const handleFileUpload = (event) => {
       const file = event.target.files?.[0]
       if (!file) return
-      
+      processFile(file)
+    }
+    
+    // 處理檔案處理邏輯
+    const processFile = (file) => {
       // 驗證檔案類型
       if (!file.type.startsWith('image/')) {
         alert('請選擇圖片檔案')
@@ -474,6 +481,26 @@ export default {
       // 清空輸入以便下次使用
       if (fileInput.value) {
         fileInput.value.value = ''
+      }
+    }
+    
+    // 處理拖曳進入
+    const handleDragOver = () => {
+      isDragging.value = true
+    }
+    
+    // 處理拖曳離開
+    const handleDragLeave = () => {
+      isDragging.value = false
+    }
+    
+    // 處理拖放
+    const handleDrop = (event) => {
+      isDragging.value = false
+      
+      const files = event.dataTransfer?.files
+      if (files && files.length > 0) {
+        processFile(files[0])
       }
     }
     
@@ -584,6 +611,10 @@ export default {
       triggerFileUpload,
       handleFileUpload,
       uploadedImage,
+      isDragging,
+      handleDragOver,
+      handleDragLeave,
+      handleDrop,
       getDisplayIcon: (icon) => {
         // 如果圖標包含樣式前綴，移除它
         if (icon && icon.includes(':')) {
