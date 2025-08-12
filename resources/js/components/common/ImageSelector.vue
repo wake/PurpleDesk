@@ -96,6 +96,7 @@
           @update:model-value="handleIconSelect"
           @update:icon-type="handleIconTypeUpdate"
           @close="handleIconPickerClose"
+          @close-color-picker="handleCloseColorPicker"
         />
       </div>
       
@@ -711,6 +712,13 @@ export default {
       // IconPicker 已經自行處理關閉邏輯，這裡不需要額外動作
     }
     
+    // 處理關閉 ColorPicker 事件
+    const handleCloseColorPicker = () => {
+      // 觸發一個外部點擊來關閉 ColorPicker
+      const event = new Event('click', { bubbles: true })
+      document.body.dispatchEvent(event)
+    }
+    
     return {
       mode,
       showSettings,
@@ -752,6 +760,7 @@ export default {
       handleIconSelect,
       handleIconTypeUpdate,
       handleIconPickerClose,
+      handleCloseColorPicker,
       iconPickerRef,
       avatarIconPickerRef
     }

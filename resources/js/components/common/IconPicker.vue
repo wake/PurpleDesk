@@ -314,7 +314,7 @@ export default {
       default: false
     }
   },
-  emits: ['update:modelValue', 'update:iconType', 'file-selected', 'color-picker-click', 'close'],
+  emits: ['update:modelValue', 'update:iconType', 'file-selected', 'color-picker-click', 'close', 'close-color-picker'],
   setup(props, { emit }) {
     const isOpen = ref(false)
     const iconPanel = ref(null)
@@ -463,12 +463,8 @@ export default {
     const closePicker = () => {
       isOpen.value = false
       
-      // 當 IconPicker 關閉時，一併關閉 ColorPicker
-      const colorPickerCloseButton = document.querySelector('.color-picker .fixed button[title="關閉"]')
-      if (colorPickerCloseButton) {
-        colorPickerCloseButton.click()
-      }
-      
+      // 發射事件通知父組件關閉 ColorPicker
+      emit('close-color-picker')
       emit('close')
     }
     
