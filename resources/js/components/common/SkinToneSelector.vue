@@ -8,7 +8,7 @@
       class="skin-tone-button"
       :class="{ 'active': isOpen }"
     >
-      <span class="text-lg">{{ currentTone.emoji }}</span>
+      <span class="skin-tone-icon" :style="{ backgroundColor: currentToneColor }"></span>
     </button>
 
     <!-- 膚色選項下拉選單 -->
@@ -189,6 +189,10 @@ export default {
 
 .skin-tone-button.active {
   @apply border-primary-500 ring-2 ring-primary-500 ring-offset-2;
+}
+
+.skin-tone-icon {
+  @apply w-4 h-4 rounded-full border border-gray-400;
 }
 
 .skin-tone-dropdown {
