@@ -59,22 +59,31 @@
           </div>
         </div>
 
-        <!-- 搜尋欄位 -->
+        <!-- 搜尋與膚色選擇區域 -->
         <div class="mb-4">
-          <div class="relative">
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="搜尋圖標名稱..."
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          <div class="flex space-x-2">
+            <!-- 搜尋欄位 -->
+            <div class="relative flex-1">
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="搜尋圖標名稱..."
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+              <button
+                v-if="searchQuery"
+                @click="clearSearch"
+                class="absolute right-2 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
+            </div>
+            <!-- 膚色選擇器（僅在 emoji 標籤頁顯示） -->
+            <SkinToneSelector
+              v-if="activeTab === 'emoji'"
+              v-model="selectedSkinTone"
+              @update:modelValue="handleSkinToneChange"
             />
-            <button
-              v-if="searchQuery"
-              @click="clearSearch"
-              class="absolute right-2 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600"
-            >
-              ×
-            </button>
           </div>
         </div>
 
@@ -137,12 +146,12 @@
                 <template v-for="emoji in items" :key="emoji ? emoji.name : Math.random()">
                   <button
                     v-if="emoji"
-                    @click="selectIcon(emoji.emoji, 'emoji')"
-                    :class="selectedIcon === emoji.emoji ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
+                    @click="selectIcon(getEmojiWithSkinTone(emoji), 'emoji')"
+                    :class="selectedIcon === getEmojiWithSkinTone(emoji) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
                     class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                     :title="emoji.name"
                   >
-                    <span class="w-5 h-5 flex items-center justify-center" style="font-size: 1.25rem; line-height: 1;">{{ emoji.emoji }}</span>
+                    <span class="w-5 h-5 flex items-center justify-center" style="font-size: 1.25rem; line-height: 1;">{{ getEmojiWithSkinTone(emoji) }}</span>
                   </button>
                   <div v-else class="p-2"></div>
                 </template>
@@ -181,7 +190,9 @@
 <script>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
+import { applySkinTone, supportsSkinTone, removeSkinTone } from '../../utils/emojiSkinTone.js'
 import VirtualScroll from './VirtualScroll.vue'
+import SkinToneSelector from './SkinToneSelector.vue'
 // Heroicons imports
 import { 
   HomeIcon, 
@@ -220,6 +231,7 @@ export default {
   name: 'IconPicker',
   components: {
     VirtualScroll,
+    SkinToneSelector,
     HomeIcon, UserIcon, CogIcon, DocumentIcon, FolderIcon, HeartIcon, StarIcon, BellIcon, ChatIcon, PlusIcon, MinusIcon, XIcon,
     MailIcon, PhoneIcon, CalendarIcon, ClockIcon, SearchIcon, EyeIcon, PencilIcon, TrashIcon, DownloadIcon, UploadIcon,
     ShareIcon, BookmarkIcon, FlagIcon, GiftIcon, LightBulbIcon, FireIcon, ShieldCheckIcon, ExclamationIcon
@@ -245,6 +257,7 @@ export default {
     const selectedIcon = ref(props.modelValue)
     const iconType = ref(props.iconType || 'heroicons')
     const emojisLoaded = ref(false)
+    const selectedSkinTone = ref('') // 預設膚色
     
     // 監聽 props 變化
     watch(() => props.modelValue, (newVal) => {
@@ -376,6 +389,19 @@ export default {
       searchQuery.value = ''
     }
     
+    // 處理膚色變更
+    const handleSkinToneChange = (tone) => {
+      selectedSkinTone.value = tone
+    }
+    
+    // 獲取帶有膚色的 emoji
+    const getEmojiWithSkinTone = (emojiData) => {
+      if (!emojiData || !emojiData.emoji) return ''
+      
+      // 使用專門的膚色工具函數
+      return applySkinTone(emojiData.emoji, selectedSkinTone.value)
+    }
+    
     // 篩選後的圖標列表
     const filteredHeroicons = computed(() => {
       if (!searchQuery.value) return heroicons
@@ -475,7 +501,10 @@ export default {
       closePicker,
       selectIcon,
       clearIcon,
-      clearSearch
+      clearSearch,
+      selectedSkinTone,
+      handleSkinToneChange,
+      getEmojiWithSkinTone
     }
   }
 }
