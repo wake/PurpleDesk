@@ -155,7 +155,8 @@
             <!-- 預覽區 -->
             <div class="flex items-center justify-center py-4">
               <div 
-                class="w-24 h-24 rounded-full flex items-center justify-center text-white font-semibold text-3xl"
+                class="w-24 h-24 rounded-full flex items-center justify-center font-semibold text-3xl"
+                :class="getTextColorClass(backgroundColor || '#6366f1')"
                 :style="{ backgroundColor: backgroundColor || '#6366f1' }"
               >
                 {{ customInitials || 'AB' }}
@@ -606,6 +607,23 @@ export default {
       }
     }
     
+    // 計算文字顏色
+    const getTextColorClass = (bgColor) => {
+      if (!bgColor) return 'text-white'
+      
+      // 移除 # 符號並轉換為 RGB
+      const hex = bgColor.replace('#', '')
+      const r = parseInt(hex.substr(0, 2), 16)
+      const g = parseInt(hex.substr(2, 2), 16)
+      const b = parseInt(hex.substr(4, 2), 16)
+      
+      // 計算相對亮度（W3C 公式）
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+      
+      // 如果亮度大於 0.5，使用深色文字；否則使用白色文字
+      return luminance > 0.5 ? 'text-gray-800' : 'text-white'
+    }
+    
     // 應用字母作為圖標
     const applyInitials = () => {
       if (!customInitials.value) return
@@ -746,6 +764,7 @@ export default {
       customInitials,
       handleInitialsInput,
       applyInitials,
+      getTextColorClass,
       getDisplayIcon: (icon) => {
         // 如果圖標包含樣式前綴，移除它
         if (icon && icon.includes(':')) {

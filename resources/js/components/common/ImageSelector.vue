@@ -17,8 +17,8 @@
         <div 
           v-else-if="(mode === 'initials' || iconType === 'initials')"
           :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
-          class="font-type-image h-full w-full flex items-center justify-center text-white font-semibold"
-          :class="textSizeClass"
+          class="font-type-image h-full w-full flex items-center justify-center font-semibold"
+          :class="[textSizeClass, dynamicTextColor]"
         >
           {{ iconType === 'initials' ? selectedIcon : displayInitials }}
         </div>
@@ -33,14 +33,14 @@
           <component 
             v-if="iconType === 'heroicons'" 
             :is="getHeroiconComponent()" 
-            :class="iconSizeClass"
-            class="hero-type-image text-white"
+            :class="[iconSizeClass, dynamicTextColor]"
+            class="hero-type-image"
           />
           <!-- Bootstrap Icons -->
           <i 
             v-else-if="iconType === 'bootstrap'" 
-            :class="['bi', selectedIcon, bsIconSizeClass]"
-            class="bs-type-image text-white"
+            :class="['bi', selectedIcon, bsIconSizeClass, dynamicTextColor]"
+            class="bs-type-image"
           />
           <!-- Emoji -->
           <span 
@@ -57,7 +57,8 @@
         <div 
           v-else
           :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
-          class="h-full w-full flex items-center justify-center text-white"
+          class="h-full w-full flex items-center justify-center"
+          :class="dynamicTextColor"
         >
           <slot name="default-placeholder">
             <span :class="textSizeClass">{{ defaultInitials }}</span>
@@ -469,6 +470,28 @@ export default {
       return sizeClasses[props.size] || 'text-4xl'
     })
     
+    // 計算顏色亮度並決定文字顏色
+    const getTextColor = (bgColor) => {
+      if (!bgColor) return 'text-white'
+      
+      // 移除 # 符號並轉換為 RGB
+      const hex = bgColor.replace('#', '')
+      const r = parseInt(hex.substr(0, 2), 16)
+      const g = parseInt(hex.substr(2, 2), 16)
+      const b = parseInt(hex.substr(4, 2), 16)
+      
+      // 計算相對亮度（W3C 公式）
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+      
+      // 如果亮度大於 0.5，使用深色文字；否則使用白色文字
+      return luminance > 0.5 ? 'text-gray-800' : 'text-white'
+    }
+    
+    // 動態文字顏色
+    const dynamicTextColor = computed(() => {
+      return getTextColor(backgroundColor.value || defaultBackgroundColor)
+    })
+    
     // 顯示的字母縮寫
     const displayInitials = computed(() => {
       if (customInitials.value) {
@@ -691,6 +714,7 @@ export default {
       emojiSizeClass,
       displayInitials,
       defaultInitials,
+      dynamicTextColor,
       setMode,
       handleFileChange,
       handleDragEnter,
