@@ -83,17 +83,16 @@
         </div>
         
         <!-- 隱藏的 IconPicker (頭像點擊時顯示) -->
-        <div class="absolute top-full left-0 mt-2 z-50">
-          <IconPicker 
-            v-show="showIconPicker"
-            ref="avatarIconPickerRef"
-            v-model="selectedIcon"
-            v-model:icon-type="iconType"
-            :background-color="backgroundColor"
-            @file-selected="handleIconPickerFile"
-            @color-picker-click="openBgColorPicker"
-          />
-        </div>
+        <IconPicker 
+          v-if="showIconPicker"
+          ref="avatarIconPickerRef"
+          v-model="selectedIcon"
+          v-model:icon-type="iconType"
+          :background-color="backgroundColor"
+          @file-selected="handleIconPickerFile"
+          @color-picker-click="openBgColorPicker"
+          @update:model-value="handleIconSelect"
+        />
       </div>
       
       <!-- 快速操作區域 -->
@@ -687,12 +686,23 @@ export default {
     
     // 開啟 IconPicker（由子組件 IconPicker 控制）
     const openIconPicker = () => {
-      // 直接開啟頭像下方的 IconPicker
+      // 如果已經顯示，則關閉
+      if (showIconPicker.value) {
+        showIconPicker.value = false
+        return
+      }
+      
+      // 開啟頭像下方的 IconPicker
       showIconPicker.value = true
+      // 等待 DOM 更新和組件掛載後再開啟 picker
       nextTick(() => {
-        if (avatarIconPickerRef.value && avatarIconPickerRef.value.togglePicker) {
-          avatarIconPickerRef.value.togglePicker()
-        }
+        setTimeout(() => {
+          if (avatarIconPickerRef.value) {
+            // 直接設置 isOpen 而不是調用 togglePicker
+            avatarIconPickerRef.value.isOpen = true
+            avatarIconPickerRef.value.calculatePosition()
+          }
+        }, 100)
       })
     }
     
@@ -702,6 +712,14 @@ export default {
       const colorPicker = document.querySelector('.color-picker-wrapper button')
       if (colorPicker) {
         colorPicker.click()
+      }
+    }
+    
+    // 處理圖標選擇
+    const handleIconSelect = (value) => {
+      // 選擇圖標後關閉 picker
+      if (value) {
+        showIconPicker.value = false
       }
     }
     
@@ -743,6 +761,7 @@ export default {
       handleIconPickerFile,
       openIconPicker,
       openBgColorPicker,
+      handleIconSelect,
       iconPickerRef,
       avatarIconPickerRef
     }

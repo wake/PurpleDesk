@@ -68,7 +68,7 @@
               :style="{ color: backgroundColor || '#6366f1' }"
               title="選擇背景顏色"
             >
-              <i class="bi bi-eyedropper-fill"></i>
+              <i class="bi bi-eyedropper"></i>
             </button>
             <!-- Reset Icon 按鈕 -->
             <button
@@ -600,6 +600,7 @@ export default {
       searchQuery,
       activeTab,
       panelPosition,
+      calculatePosition,
       selectedIcon,
       iconType,
       heroicons,
