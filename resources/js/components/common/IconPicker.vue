@@ -64,8 +64,8 @@
             <button
               @click="clearIcon"
               :disabled="!selectedIcon"
-              :class="selectedIcon ? 'text-red-600 hover:text-red-700' : 'text-gray-400 cursor-not-allowed'"
-              class="px-2 me-3 pt-1 pb-2 text-sm transition-colors"
+              :class="selectedIcon ? 'text-gray-500 hover:text-gray-700' : 'text-gray-400 cursor-not-allowed'"
+              class="p-0 me-3 pt-1 pb-2 text-sm transition-colors"
             >
               Remove
             </button>
