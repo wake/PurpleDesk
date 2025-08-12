@@ -5,7 +5,7 @@
       type="button"
       @click="toggleSelector"
       :title="currentToneName"
-      class="skin-tone-button"
+      class="skin-tone-button me-2"
       :class="{ 'active': isOpen }"
     >
       <span class="text-xl">{{ currentTone.emoji }}</span>
@@ -188,6 +188,8 @@ export default {
 
 .skin-tone-button.active {
   @apply ring-2 ring-primary-500 ring-offset-2;
+  width: 38px;
+  height: 38px;
 }
 
 .skin-tone-dropdown {

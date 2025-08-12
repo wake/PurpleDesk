@@ -3,7 +3,7 @@
     <button
       type="button"
       @click="toggleDropdown"
-      class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
+      class="p-2 me-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
       :title="`圖標樣式: ${currentStyle === 'outline' ? 'Outline' : 'Solid'}`"
     >
       <!-- 顯示當前選擇的樣式圖標 -->
@@ -157,4 +157,8 @@ export default {
 </script>
 
 <style scoped>
+.relative > button {
+  width: 38px;
+  height: 38px;
+}
 </style>
