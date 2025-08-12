@@ -20,6 +20,11 @@
       <span v-else-if="selectedIcon && iconType === 'emoji'" class="text-sm">
         {{ selectedIcon }}
       </span>
+      <img 
+        v-else-if="selectedIcon && iconType === 'upload'" 
+        :src="selectedIcon"
+        class="w-full h-full object-cover rounded"
+      />
       <span v-else class="text-gray-400 text-xs">圖標</span>
     </button>
     
@@ -28,52 +33,41 @@
       <div 
         v-if="isOpen" 
         ref="iconPanel"
-        class="fixed z-[9999] p-4 bg-white border border-gray-200 rounded-lg shadow-xl w-80"
+        class="fixed z-[9999] p-4 bg-white border border-gray-200 rounded-lg shadow-xl w-96"
         :style="panelPosition"
         @click.stop
       >
-        <!-- 標籤頁 -->
-        <div class="mb-4">
-          <div class="flex items-center space-x-2">
-            <div class="flex-1 flex space-x-1 bg-gray-100 rounded-md p-1">
-              <button
-                @click="activeTab = 'heroicons'"
-                :class="activeTab === 'heroicons' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
-                class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
-              >
-                Heroicons
-              </button>
-              <button
-                @click="activeTab = 'bootstrap'"
-                :class="activeTab === 'bootstrap' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
-                class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
-              >
-                Bootstrap
-              </button>
-              <button
-                @click="activeTab = 'emoji'"
-                :class="activeTab === 'emoji' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
-                class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
-              >
-                表情符號
-              </button>
-            </div>
-            <!-- 上傳按鈕 -->
+        <!-- 頂部標籤切換 -->
+        <div class="flex border-b border-gray-200 mb-4">
+          <button
+            @click="activeTab = 'emoji'"
+            :class="activeTab === 'emoji' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
+            class="px-4 py-2 text-sm font-medium transition-colors"
+          >
+            Emoji
+          </button>
+          <button
+            @click="activeTab = 'icons'"
+            :class="activeTab === 'icons' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
+            class="px-4 py-2 text-sm font-medium transition-colors"
+          >
+            Icons
+          </button>
+          <button
+            @click="activeTab = 'upload'"
+            :class="activeTab === 'upload' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
+            class="px-4 py-2 text-sm font-medium transition-colors"
+          >
+            Upload
+          </button>
+          <div class="ml-auto">
             <button
-              @click="triggerFileUpload"
-              class="p-2 rounded-md border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
-              title="上傳圖片"
+              v-if="selectedIcon"
+              @click="clearIcon"
+              class="px-4 py-2 text-sm text-red-600 hover:text-red-700 transition-colors"
             >
-              <CloudUploadIcon class="w-5 h-5 text-gray-600" />
+              Remove
             </button>
-            <!-- 隱藏的檔案輸入 -->
-            <input
-              ref="fileInput"
-              type="file"
-              accept="image/*"
-              @change="handleFileUpload"
-              class="hidden"
-            />
           </div>
         </div>
 
@@ -85,7 +79,7 @@
               <input
                 v-model="searchQuery"
                 type="text"
-                placeholder="搜尋圖標名稱..."
+                placeholder="Filter..."
                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
               <button
@@ -96,110 +90,125 @@
                 ×
               </button>
             </div>
-            <!-- Heroicon 樣式選擇器（僅在 heroicons 標籤頁顯示） -->
-            <HeroiconStyleSelector
-              v-if="activeTab === 'heroicons'"
-              v-model="selectedHeroiconStyle"
-              @update:modelValue="handleHeroiconStyleChange"
-            />
-            <!-- Bootstrap Icons 變體選擇器（僅在 bootstrap 標籤頁顯示） -->
-            <BSIconVariantSelector
-              v-if="activeTab === 'bootstrap'"
-              v-model="selectedBSVariant"
-              @update:modelValue="handleBSVariantChange"
-            />
-            <!-- 膚色選擇器（僅在 emoji 標籤頁顯示） -->
-            <SkinToneSelector
-              v-if="activeTab === 'emoji'"
-              v-model="selectedSkinTone"
-              @update:modelValue="handleSkinToneChange"
-            />
+            <!-- 功能按鈕組 -->
+            <div class="flex space-x-2">
+              <!-- Heroicon 樣式選擇器 -->
+              <HeroiconStyleSelector
+                v-if="activeTab === 'icons'"
+                v-model="selectedHeroiconStyle"
+                @update:modelValue="handleHeroiconStyleChange"
+              />
+              <!-- 膚色選擇器 -->
+              <SkinToneSelector
+                v-if="activeTab === 'emoji'"
+                v-model="selectedSkinTone"
+                @update:modelValue="handleSkinToneChange"
+              />
+            </div>
           </div>
         </div>
 
-        <!-- 圖標內容區域 -->
-        <div class="border border-gray-100 rounded-md bg-gray-50">
-          <!-- Heroicons 標籤頁 (使用虛擬滾動) -->
+        <!-- 內容區域 -->
+        <div>
+          <!-- Emoji 標籤頁 -->
           <div 
-            v-if="activeTab === 'heroicons'"
-            class="h-48 overflow-y-auto"
+            v-if="activeTab === 'emoji'"
           >
-            <VirtualScroll
-              :items="filteredHeroicons"
-              :items-per-row="6"
-              :row-height="40"
-              :container-height="192"
-              :buffer="2"
-            >
-              <template #row="{ items }">
-                <button
-                  v-for="icon in items"
-                  :key="icon.name"
-                  @click="selectIcon(icon.component, 'heroicons')"
-                  :class="isIconSelected(icon.component) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
-                  class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-                  :title="icon.name"
-                >
-                  <component :is="getHeroiconComponent(icon.component)" class="w-5 h-5 mx-auto text-gray-600" />
-                </button>
-              </template>
-            </VirtualScroll>
-          </div>
-
-          <!-- Bootstrap Icons 標籤頁 -->
-          <div 
-            v-else-if="activeTab === 'bootstrap'"
-            class="h-48 overflow-y-auto"
-          >
-            <VirtualScroll
-              :items="filteredBootstrapIcons"
-              :items-per-row="6"
-              :row-height="40"
-              :container-height="192"
-              :buffer="2"
-            >
-              <template #row="{ items }">
-                <button
-                  v-for="icon in items"
-                  :key="icon.name"
-                  @click="selectIcon(icon.class, 'bootstrap')"
-                  :class="selectedIcon === icon.class ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
-                  class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-                  :title="icon.name"
-                >
-                  <i :class="`bi ${icon.class} text-gray-600`" class="w-5 h-5 flex items-center justify-center" style="font-size: 1.25rem; line-height: 1;"></i>
-                </button>
-              </template>
-            </VirtualScroll>
-          </div>
-
-          <!-- 表情符號標籤頁 -->
-          <div 
-            v-else-if="activeTab === 'emoji'"
-            class="h-48 overflow-y-auto"
-          >
-            <VirtualScroll
-              :items="filteredEmojis"
-              :items-per-row="6"
-              :row-height="40"
-              :container-height="192"
-              :buffer="2"
-            >
-              <template #row="{ items }">
-                <template v-for="emoji in items" :key="emoji ? emoji.name : Math.random()">
-                  <button
-                    v-if="emoji"
-                    @click="selectIcon(getEmojiWithSkinTone(emoji), 'emoji')"
-                    :class="selectedIcon === getEmojiWithSkinTone(emoji) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
-                    class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-                    :title="emoji.name"
-                  >
-                    <span class="w-5 h-5 flex items-center justify-center" style="font-size: 1.25rem; line-height: 1;">{{ getEmojiWithSkinTone(emoji) }}</span>
-                  </button>
-                  <div v-else class="p-2"></div>
+            <!-- Emoji 分類標題 -->
+            <div class="text-xs font-medium text-gray-500 mb-2">
+              {{ currentEmojiCategory }}
+            </div>
+            
+            <!-- Emoji 網格 -->
+            <div class="h-48 overflow-y-auto border border-gray-100 rounded-md bg-gray-50 p-2">
+              <VirtualScroll
+                :items="filteredEmojis"
+                :items-per-row="8"
+                :row-height="36"
+                :container-height="192"
+                :buffer="2"
+              >
+                <template #row="{ items }">
+                  <template v-for="emoji in items" :key="emoji ? emoji.name : Math.random()">
+                    <button
+                      v-if="emoji"
+                      @click="selectIcon(getEmojiWithSkinTone(emoji), 'emoji')"
+                      :class="selectedIcon === getEmojiWithSkinTone(emoji) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
+                      class="p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                      :title="emoji.name"
+                    >
+                      <span class="text-xl">{{ getEmojiWithSkinTone(emoji) }}</span>
+                    </button>
+                    <div v-else class="p-1"></div>
+                  </template>
                 </template>
-              </template>
-            </VirtualScroll>
+              </VirtualScroll>
+            </div>
+            
+            <!-- Emoji 分類選擇器 -->
+            <div class="flex space-x-1 mt-3 justify-center">
+              <button
+                v-for="category in emojiCategories"
+                :key="category.id"
+                @click="selectedEmojiCategory = category.id"
+                :class="selectedEmojiCategory === category.id ? 'bg-gray-200' : 'hover:bg-gray-100'"
+                class="p-2 rounded transition-colors"
+                :title="category.name"
+              >
+                <span class="text-lg">{{ category.icon }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Icons 標籤頁 (只有 Heroicons) -->
+          <div 
+            v-else-if="activeTab === 'icons'"
+          >
+            <!-- 圖標網格 -->
+            <div class="h-48 overflow-y-auto border border-gray-100 rounded-md bg-gray-50 p-2">
+              <VirtualScroll
+                :items="filteredHeroicons"
+                :items-per-row="8"
+                :row-height="36"
+                :container-height="192"
+                :buffer="2"
+              >
+                <template #row="{ items }">
+                  <button
+                    v-for="icon in items"
+                    :key="icon.name"
+                    @click="selectIcon(icon.component, 'heroicons')"
+                    :class="isIconSelected(icon.component) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
+                    class="p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                    :title="icon.name"
+                  >
+                    <component 
+                      :is="getHeroiconComponent(icon.component)" 
+                      class="w-5 h-5 mx-auto text-gray-600" 
+                    />
+                  </button>
+                </template>
+              </VirtualScroll>
+            </div>
+          </div>
+          
+          <!-- Upload 標籤頁 -->
+          <div 
+            v-else-if="activeTab === 'upload'"
+            class="h-48 flex flex-col items-center justify-center border border-gray-100 rounded-md bg-gray-50"
+          >
+            <div class="text-center">
+              <CloudUploadIcon class="w-12 h-12 mx-auto text-gray-400 mb-4" />
+              <button
+                @click="triggerFileUpload"
+                class="text-primary-600 hover:text-primary-700 font-medium text-sm"
+              >
+                Upload an image
+              </button>
+              <p class="text-xs text-gray-500 mt-2">
+                or ⌘+V to paste an image or link
+              </p>
+            </div>
           </div>
         </div>
 
@@ -210,23 +219,32 @@
         </div>
 
         <!-- 底部按鈕 -->
-        <div class="flex space-x-2 mt-4 pt-3 border-t border-gray-200">
-          <button
-            @click="clearIcon"
-            class="flex-1 px-3 py-2 text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            清除圖標
-          </button>
+        <div class="flex justify-between mt-4 pt-3 border-t border-gray-200">
           <button
             @click="closePicker"
-            class="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+            class="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 transition-colors"
           >
-            取消
+            Cancel
+          </button>
+          <button
+            v-if="selectedIcon || uploadedImage"
+            @click="confirmSelection"
+            class="px-4 py-2 text-sm bg-primary-600 hover:bg-primary-700 text-white rounded transition-colors"
+          >
+            Save
           </button>
         </div>
       </div>
     </Teleport>
     
+    <!-- 隱藏的檔案輸入 -->
+    <input
+      ref="fileInput"
+      type="file"
+      accept="image/*"
+      @change="handleFileUpload"
+      class="hidden"
+    />
   </div>
 </template>
 
@@ -239,7 +257,6 @@ import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
 import VirtualScroll from './VirtualScroll.vue'
 import SkinToneSelector from './SkinToneSelector.vue'
 import HeroiconStyleSelector from './HeroiconStyleSelector.vue'
-import BSIconVariantSelector from './BSIconVariantSelector.vue'
 // 動態導入所有 Heroicons
 import * as HeroiconsOutline from '@heroicons/vue/outline'
 import * as HeroiconsSolid from '@heroicons/vue/solid'
@@ -250,7 +267,6 @@ export default {
     VirtualScroll,
     SkinToneSelector,
     HeroiconStyleSelector,
-    BSIconVariantSelector,
     CloudUploadIcon,
     // 註冊所有 Heroicons (Outline 和 Solid)
     ...HeroiconsOutline,
@@ -272,15 +288,34 @@ export default {
     const iconPanel = ref(null)
     const iconPickerRef = ref(null)
     const searchQuery = ref('')
-    const activeTab = ref('heroicons')
+    const activeTab = ref('emoji')
     const panelPosition = ref({ top: '0px', left: '0px' })
     const selectedIcon = ref(props.modelValue)
-    const iconType = ref(props.iconType || 'heroicons')
+    const iconType = ref(props.iconType || '')
     const emojisLoaded = ref(false)
     const selectedSkinTone = ref('') // 預設膚色
     const selectedHeroiconStyle = ref('outline') // 預設 Heroicon 樣式
-    const selectedBSVariant = ref('auto') // 預設 Bootstrap Icons 變體
     const fileInput = ref(null)
+    const uploadedImage = ref(null)
+    const selectedEmojiCategory = ref('smileys')
+    
+    // Emoji 分類
+    const emojiCategories = [
+      { id: 'smileys', name: '表情', icon: '😀' },
+      { id: 'people', name: '人物', icon: '👤' },
+      { id: 'animals', name: '動物', icon: '🐾' },
+      { id: 'food', name: '食物', icon: '🍔' },
+      { id: 'travel', name: '旅遊', icon: '✈️' },
+      { id: 'activities', name: '活動', icon: '⚽' },
+      { id: 'objects', name: '物品', icon: '💡' },
+      { id: 'symbols', name: '符號', icon: '❤️' },
+      { id: 'flags', name: '旗幟', icon: '🏁' }
+    ]
+    
+    const currentEmojiCategory = computed(() => {
+      const category = emojiCategories.find(c => c.id === selectedEmojiCategory.value)
+      return category ? category.name : 'People'
+    })
     
     // 監聽 props 變化
     watch(() => props.modelValue, (newVal) => {
@@ -315,9 +350,6 @@ export default {
       solid: HeroiconsSolid
     }
     
-    // 使用完整的圖標清單
-    // bootstrapIcons 和 emojis 從 iconSets.js 導入
-    
     const calculatePosition = () => {
       if (!iconPickerRef.value) return
       
@@ -325,8 +357,8 @@ export default {
       const viewportHeight = window.innerHeight
       const viewportWidth = window.innerWidth
       
-      // 彈窗預設尺寸
-      const panelWidth = 320
+      // 彈窗預設尺寸（調整為 384px = w-96）
+      const panelWidth = 384
       const panelHeight = 400
       
       let top = rect.bottom + 5
@@ -364,8 +396,8 @@ export default {
       isOpen.value = !isOpen.value
       if (isOpen.value) {
         // 打開時根據當前 iconType 設定正確的標籤頁
-        if (iconType.value === 'bootstrap') {
-          activeTab.value = 'bootstrap'
+        if (iconType.value === 'heroicons') {
+          activeTab.value = 'icons'
         } else if (iconType.value === 'emoji') {
           activeTab.value = 'emoji'
           // 如果當前選中的是 emoji，檢測它的膚色
@@ -373,8 +405,8 @@ export default {
             const detectedSkinTone = getCurrentSkinTone(selectedIcon.value)
             selectedSkinTone.value = detectedSkinTone
           }
-        } else {
-          activeTab.value = 'heroicons'
+        } else if (iconType.value === 'upload') {
+          activeTab.value = 'upload'
         }
         await nextTick()
         calculatePosition()
@@ -394,17 +426,20 @@ export default {
       }
       selectedIcon.value = iconValue
       iconType.value = type
-      emit('update:modelValue', iconValue)
-      emit('update:iconType', type)
+    }
+    
+    const confirmSelection = () => {
+      emit('update:modelValue', selectedIcon.value)
+      emit('update:iconType', iconType.value)
       closePicker()
     }
     
     const clearIcon = () => {
       selectedIcon.value = ''
       iconType.value = ''
+      uploadedImage.value = null
       emit('update:modelValue', '')
       emit('update:iconType', '')
-      closePicker()
     }
     
     const clearSearch = () => {
@@ -437,11 +472,6 @@ export default {
       selectedHeroiconStyle.value = style
     }
     
-    // 處理 Bootstrap Icons 變體變更
-    const handleBSVariantChange = (variant) => {
-      selectedBSVariant.value = variant
-    }
-    
     // 觸發檔案上傳
     const triggerFileUpload = () => {
       if (fileInput.value) {
@@ -467,6 +497,15 @@ export default {
         return
       }
       
+      // 創建預覽 URL
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        uploadedImage.value = e.target.result
+        selectedIcon.value = e.target.result
+        iconType.value = 'upload'
+      }
+      reader.readAsDataURL(file)
+      
       // 發送檔案給父組件
       emit('file-selected', file)
       
@@ -474,9 +513,6 @@ export default {
       if (fileInput.value) {
         fileInput.value.value = ''
       }
-      
-      // 關閉選擇器
-      closePicker()
     }
     
     // 當切換到 emoji 標籤頁時，檢測當前選中 emoji 的膚色
@@ -496,28 +532,6 @@ export default {
       )
     })
     
-    const filteredBootstrapIcons = computed(() => {
-      let icons = bootstrapIcons
-      
-      // 根據選擇的變體過濾圖標
-      if (selectedBSVariant.value === 'fill') {
-        icons = icons.filter(icon => icon.class.endsWith('-fill'))
-      } else if (selectedBSVariant.value === 'standard') {
-        icons = icons.filter(icon => !icon.class.endsWith('-fill'))
-      }
-      // 'auto' 模式顯示所有圖標
-      
-      // 搜尋過濾
-      if (searchQuery.value) {
-        const query = searchQuery.value.toLowerCase()
-        icons = icons.filter(icon => 
-          icon.name.toLowerCase().includes(query)
-        )
-      }
-      
-      return icons
-    })
-    
     const filteredEmojis = computed(() => {
       // 確保 emojis 是陣列，處理 Proxy 情況
       const emojiArray = Array.isArray(emojis) ? emojis : []
@@ -532,10 +546,8 @@ export default {
     const isSearchEmpty = computed(() => {
       if (!searchQuery.value) return false
       
-      if (activeTab.value === 'heroicons') {
+      if (activeTab.value === 'icons') {
         return filteredHeroicons.value.length === 0
-      } else if (activeTab.value === 'bootstrap') {
-        return filteredBootstrapIcons.value.length === 0
       } else if (activeTab.value === 'emoji') {
         return filteredEmojis.value.length === 0
       }
@@ -589,16 +601,15 @@ export default {
       selectedIcon,
       iconType,
       heroicons,
-      bootstrapIcons: bootstrapIcons,
       emojis: emojis,
       emojisLoaded,
       filteredHeroicons,
-      filteredBootstrapIcons,
       filteredEmojis,
       isSearchEmpty,
       togglePicker,
       closePicker,
       selectIcon,
+      confirmSelection,
       clearIcon,
       clearSearch,
       selectedSkinTone,
@@ -607,11 +618,13 @@ export default {
       getHeroiconComponent,
       selectedHeroiconStyle,
       handleHeroiconStyleChange,
-      selectedBSVariant,
-      handleBSVariantChange,
       fileInput,
       triggerFileUpload,
       handleFileUpload,
+      uploadedImage,
+      emojiCategories,
+      selectedEmojiCategory,
+      currentEmojiCategory,
       getDisplayIcon: (icon) => {
         // 如果圖標包含樣式前綴，移除它
         if (icon && icon.includes(':')) {
