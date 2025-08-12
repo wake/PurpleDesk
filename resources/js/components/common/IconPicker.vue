@@ -59,7 +59,7 @@
           </div>
         </div>
 
-        <!-- 搜尋與膚色選擇區域 -->
+        <!-- 搜尋與選擇器區域 -->
         <div class="mb-4">
           <div class="flex space-x-2">
             <!-- 搜尋欄位 -->
@@ -78,6 +78,12 @@
                 ×
               </button>
             </div>
+            <!-- Heroicon 樣式選擇器（僅在 heroicons 標籤頁顯示） -->
+            <HeroiconStyleSelector
+              v-if="activeTab === 'heroicons'"
+              v-model="selectedHeroiconStyle"
+              @update:modelValue="handleHeroiconStyleChange"
+            />
             <!-- 膚色選擇器（僅在 emoji 標籤頁顯示） -->
             <SkinToneSelector
               v-if="activeTab === 'emoji'"
@@ -207,16 +213,20 @@ import { applySkinTone, supportsSkinTone, removeSkinTone, getCurrentSkinTone } f
 import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
 import VirtualScroll from './VirtualScroll.vue'
 import SkinToneSelector from './SkinToneSelector.vue'
+import HeroiconStyleSelector from './HeroiconStyleSelector.vue'
 // 動態導入所有 Heroicons
 import * as HeroiconsOutline from '@heroicons/vue/outline'
+import * as HeroiconsSolid from '@heroicons/vue/solid'
 
 export default {
   name: 'IconPicker',
   components: {
     VirtualScroll,
     SkinToneSelector,
-    // 註冊所有 Heroicons
-    ...HeroiconsOutline
+    HeroiconStyleSelector,
+    // 註冊所有 Heroicons (Outline 和 Solid)
+    ...HeroiconsOutline,
+    ...HeroiconsSolid
   },
   props: {
     modelValue: {
@@ -240,6 +250,7 @@ export default {
     const iconType = ref(props.iconType || 'heroicons')
     const emojisLoaded = ref(false)
     const selectedSkinTone = ref('') // 預設膚色
+    const selectedHeroiconStyle = ref('outline') // 預設 Heroicon 樣式
     
     // 監聽 props 變化
     watch(() => props.modelValue, (newVal) => {
@@ -259,6 +270,12 @@ export default {
     
     // 使用完整的 Heroicons 圖標清單 (230個圖標)
     const heroicons = heroiconsOutline
+    
+    // 儲存 Heroicons 組件的引用
+    const HeroiconsComponents = {
+      outline: HeroiconsOutline,
+      solid: HeroiconsSolid
+    }
     
     // 使用完整的圖標清單
     // bootstrapIcons 和 emojis 從 iconSets.js 導入
@@ -363,9 +380,17 @@ export default {
       return applySkinTone(emojiData.emoji, selectedSkinTone.value)
     }
     
-    // 獲取 Heroicon 組件
+    // 獲取 Heroicon 組件（根據樣式選擇）
     const getHeroiconComponent = (componentName) => {
-      return componentName // 因為組件已經全部註冊，直接返回組件名即可
+      const components = selectedHeroiconStyle.value === 'solid' 
+        ? HeroiconsSolid 
+        : HeroiconsOutline
+      return components[componentName] || HeroiconsOutline[componentName]
+    }
+    
+    // 處理 Heroicon 樣式變更
+    const handleHeroiconStyleChange = (style) => {
+      selectedHeroiconStyle.value = style
     }
     
     // 當切換到 emoji 標籤頁時，檢測當前選中 emoji 的膚色
@@ -479,7 +504,9 @@ export default {
       selectedSkinTone,
       handleSkinToneChange,
       getEmojiWithSkinTone,
-      getHeroiconComponent
+      getHeroiconComponent,
+      selectedHeroiconStyle,
+      handleHeroiconStyleChange
     }
   }
 }
