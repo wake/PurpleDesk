@@ -134,16 +134,18 @@
               :buffer="2"
             >
               <template #row="{ items }">
-                <button
-                  v-for="emoji in items"
-                  :key="emoji.name"
-                  @click="selectIcon(emoji.emoji, 'emoji')"
-                  :class="selectedIcon === emoji.emoji ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
-                  class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-                  :title="emoji.name"
-                >
-                  <span class="w-5 h-5 flex items-center justify-center" style="font-size: 1.25rem; line-height: 1;">{{ emoji.emoji }}</span>
-                </button>
+                <template v-for="emoji in items" :key="emoji ? emoji.name : Math.random()">
+                  <button
+                    v-if="emoji"
+                    @click="selectIcon(emoji.emoji, 'emoji')"
+                    :class="selectedIcon === emoji.emoji ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
+                    class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                    :title="emoji.name"
+                  >
+                    <span class="w-5 h-5 flex items-center justify-center" style="font-size: 1.25rem; line-height: 1;">{{ emoji.emoji }}</span>
+                  </button>
+                  <div v-else class="p-2"></div>
+                </template>
               </template>
             </VirtualScroll>
           </div>
@@ -242,6 +244,7 @@ export default {
     const panelPosition = ref({ top: '0px', left: '0px' })
     const selectedIcon = ref(props.modelValue)
     const iconType = ref(props.iconType || 'heroicons')
+    const emojisLoaded = ref(false)
     
     // 監聽 props 變化
     watch(() => props.modelValue, (newVal) => {
@@ -391,10 +394,12 @@ export default {
     })
     
     const filteredEmojis = computed(() => {
-      if (!searchQuery.value) return emojis
+      // 確保 emojis 是陣列，處理 Proxy 情況
+      const emojiArray = Array.isArray(emojis) ? emojis : []
+      if (!searchQuery.value) return emojiArray
       const query = searchQuery.value.toLowerCase()
-      return emojis.filter(emoji => 
-        emoji.name.toLowerCase().includes(query)
+      return emojiArray.filter(emoji => 
+        emoji && emoji.name && emoji.name.toLowerCase().includes(query)
       )
     })
     
@@ -429,6 +434,18 @@ export default {
       window.addEventListener('scroll', () => {
         if (isOpen.value) calculatePosition()
       })
+      
+      // 觸發 emoji 載入（如果還沒載入）
+      if (Array.isArray(emojis) && emojis.length === 0) {
+        // Proxy 會自動觸發載入
+        console.log('Triggering emoji loading...')
+        // 存取 length 屬性會觸發載入
+        const emojiCount = emojis.length
+        // 一秒後強制更新
+        setTimeout(() => {
+          emojisLoaded.value = true
+        }, 2000)
+      }
     })
     
     onUnmounted(() => {
@@ -449,6 +466,7 @@ export default {
       heroicons,
       bootstrapIcons: bootstrapIcons,
       emojis: emojis,
+      emojisLoaded,
       filteredHeroicons,
       filteredBootstrapIcons,
       filteredEmojis,

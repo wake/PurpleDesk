@@ -1,11 +1,11 @@
 // 整合的圖標管理系統 - 向下相容層
 import iconManager from './iconManager.js'
 import { allBootstrapIcons } from './allBootstrapIcons.js'
-import { cleanEmojis } from './cleanEmojis.js'
+import allEmojis, { ensureEmojisLoaded, getLoadedEmojis as getAllEmojis } from './allEmojis.js'
 
-// 向下相容的同步匯出（使用舊系統作為備援）
+// 向下相容的同步匯出
 export const bootstrapIcons = allBootstrapIcons
-export const emojis = cleanEmojis
+export const emojis = allEmojis  // 使用新的完整 emoji 系統
 
 // 新的非同步 API
 export async function getBootstrapIcons() {
@@ -14,8 +14,8 @@ export async function getBootstrapIcons() {
 }
 
 export async function getEmojis() {
-  await iconManager.loadAllIcons()
-  return iconManager.getAllLoadedIcons().emojis
+  // 使用新的 allEmojis 系統
+  return await ensureEmojisLoaded()
 }
 
 // 同步版本（使用已載入的圖標）
@@ -24,7 +24,8 @@ export function getLoadedBootstrapIcons() {
 }
 
 export function getLoadedEmojis() {
-  return iconManager.getAllLoadedIcons().emojis
+  // 使用新的 allEmojis 系統
+  return getAllEmojis()
 }
 
 // 匯出新的管理系統

@@ -284,6 +284,28 @@ class EmojiManager {
     return Object.values(EMOJI_CATEGORY_INFO);
   }
 
+  // Get memory statistics
+  getMemoryStats() {
+    let totalEmojis = 0;
+    let searchIndexSize = this.searchIndex ? this.searchIndex.size : 0;
+    
+    // Count total emojis in loaded categories
+    for (const [categoryId, data] of this.categoryCache.entries()) {
+      Object.values(data).forEach(subgroup => {
+        if (Array.isArray(subgroup)) {
+          totalEmojis += subgroup.length;
+        }
+      });
+    }
+    
+    return {
+      loadedCategories: this.loadedCategories.size,
+      totalEmojis,
+      searchIndexSize,
+      estimatedMemoryKB: Math.round((totalEmojis * 150 + searchIndexSize * 50) / 1024)
+    };
+  }
+
   // Clear cache
   clearCache() {
     this.categoryCache.clear();

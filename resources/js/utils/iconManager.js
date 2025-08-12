@@ -155,16 +155,36 @@ class IconManager {
   // 取得記憶體使用統計
   getMemoryStats() {
     const iconStats = bsIconsManager.getMemoryStats()
-    const emojiStats = emojiManager.getEmojiMemoryStats()
+    
+    // EmojiManager 可能還沒有實作 getMemoryStats，使用預設值
+    let emojiStats = {
+      loadedCategories: 0,
+      totalEmojis: 0,
+      searchIndexSize: 0,
+      estimatedMemoryKB: 0
+    }
+    
+    if (typeof emojiManager.getMemoryStats === 'function') {
+      emojiStats = emojiManager.getMemoryStats()
+    } else {
+      // 使用載入狀態來估算
+      const loadingStatus = emojiManager.getEmojiLoadingStatus()
+      emojiStats = {
+        loadedCategories: loadingStatus.loaded,
+        totalEmojis: loadingStatus.loaded * 200, // 估算每個分類約 200 個 emoji
+        searchIndexSize: loadingStatus.loaded * 100,
+        estimatedMemoryKB: loadingStatus.loaded * 50
+      }
+    }
 
     return {
       icons: iconStats,
       emojis: emojiStats,
       total: {
         loadedCategories: iconStats.loadedCategories + emojiStats.loadedCategories,
-        totalIcons: iconStats.totalIcons + emojiStats.totalEmojis,
-        searchIndexSize: iconStats.searchIndexSize + emojiStats.searchIndexSize,
-        estimatedMemoryKB: iconStats.estimatedMemoryKB + emojiStats.estimatedMemoryKB
+        totalIcons: iconStats.totalIcons + (emojiStats.totalEmojis || 0),
+        searchIndexSize: iconStats.searchIndexSize + (emojiStats.searchIndexSize || 0),
+        estimatedMemoryKB: iconStats.estimatedMemoryKB + (emojiStats.estimatedMemoryKB || 0)
       }
     }
   }
@@ -173,7 +193,11 @@ class IconManager {
   getCategoryMaps() {
     return {
       icons: bsIconsManager.categoryMap,
-      emojis: emojiManager.emojiCategoryMap
+      emojis: emojiManager.getCategoriesInfo ? 
+        emojiManager.getCategoriesInfo().reduce((map, cat) => {
+          map[cat.id] = { name: cat.name, icon: cat.icon, count: cat.count };
+          return map;
+        }, {}) : {}
     }
   }
 

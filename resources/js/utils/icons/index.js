@@ -38,38 +38,50 @@ async function loadCategory(categoryId) {
   
   const loadPromise = (async () => {
     try {
-      let categoryModule
+      let icons
       
       switch (categoryId) {
         case 'general':
-          categoryModule = await import('./bs-general.js')
+          const generalModule = await import('./bs-general.js')
+          icons = generalModule.generalIcons
           break
         case 'ui':
-          categoryModule = await import('./bs-ui.js')
+          const uiModule = await import('./bs-ui.js')
+          icons = uiModule.uiIcons
           break
         case 'communications':
-          categoryModule = await import('./bs-communications.js')
+          const commModule = await import('./bs-communications.js')
+          icons = commModule.communicationsIcons
           break
         case 'files':
-          categoryModule = await import('./bs-files.js')
+          const filesModule = await import('./bs-files.js')
+          icons = filesModule.filesIcons
           break
         case 'media':
-          categoryModule = await import('./bs-media.js')
+          const mediaModule = await import('./bs-media.js')
+          icons = mediaModule.mediaIcons
           break
         case 'people':
-          categoryModule = await import('./bs-people.js')
+          const peopleModule = await import('./bs-people.js')
+          icons = peopleModule.peopleIcons
           break
         case 'alphanumeric':
-          categoryModule = await import('./bs-alphanumeric.js')
+          const alphaModule = await import('./bs-alphanumeric.js')
+          icons = alphaModule.alphanumericIcons
           break
         case 'others':
-          categoryModule = await import('./bs-others.js')
+          const othersModule = await import('./bs-others.js')
+          icons = othersModule.othersIcons
           break
         default:
           throw new Error(`Unknown category: ${categoryId}`)
       }
       
-      const icons = categoryModule[Object.keys(categoryModule)[0]] // 取得第一個匯出的陣列
+      // 確保 icons 是陣列
+      if (!Array.isArray(icons)) {
+        throw new Error(`Category ${categoryId} did not return an array`)
+      }
+      
       iconCache.set(categoryId, icons)
       
       // 建立搜尋索引
