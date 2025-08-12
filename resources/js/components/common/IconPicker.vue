@@ -190,7 +190,7 @@
 <script>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
-import { applySkinTone, supportsSkinTone, removeSkinTone } from '../../utils/emojiSkinTone.js'
+import { applySkinTone, supportsSkinTone, removeSkinTone, getCurrentSkinTone } from '../../utils/emojiSkinTone.js'
 import VirtualScroll from './VirtualScroll.vue'
 import SkinToneSelector from './SkinToneSelector.vue'
 // Heroicons imports
@@ -262,6 +262,11 @@ export default {
     // 監聽 props 變化
     watch(() => props.modelValue, (newVal) => {
       selectedIcon.value = newVal
+      // 如果是 emoji，檢測膚色
+      if (newVal && props.iconType === 'emoji') {
+        const detectedSkinTone = getCurrentSkinTone(newVal)
+        selectedSkinTone.value = detectedSkinTone
+      }
     })
     
     watch(() => props.iconType, (newVal) => {
@@ -357,6 +362,11 @@ export default {
           activeTab.value = 'bootstrap'
         } else if (iconType.value === 'emoji') {
           activeTab.value = 'emoji'
+          // 如果當前選中的是 emoji，檢測它的膚色
+          if (selectedIcon.value) {
+            const detectedSkinTone = getCurrentSkinTone(selectedIcon.value)
+            selectedSkinTone.value = detectedSkinTone
+          }
         } else {
           activeTab.value = 'heroicons'
         }
@@ -401,6 +411,14 @@ export default {
       // 使用專門的膚色工具函數
       return applySkinTone(emojiData.emoji, selectedSkinTone.value)
     }
+    
+    // 當切換到 emoji 標籤頁時，檢測當前選中 emoji 的膚色
+    watch(activeTab, (newTab) => {
+      if (newTab === 'emoji' && selectedIcon.value && iconType.value === 'emoji') {
+        const detectedSkinTone = getCurrentSkinTone(selectedIcon.value)
+        selectedSkinTone.value = detectedSkinTone
+      }
+    })
     
     // 篩選後的圖標列表
     const filteredHeroicons = computed(() => {
