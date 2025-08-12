@@ -14,12 +14,12 @@
         
         <!-- 字母縮寫 -->
         <div 
-          v-else-if="mode === 'initials'"
+          v-else-if="(mode === 'initials' || iconType === 'initials')"
           :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
           class="font-type-image h-full w-full flex items-center justify-center text-white font-semibold"
           :class="textSizeClass"
         >
-          {{ displayInitials }}
+          {{ iconType === 'initials' ? selectedIcon : displayInitials }}
         </div>
         
         <!-- 圖標顯示 -->
@@ -89,93 +89,20 @@
           v-model="selectedIcon"
           v-model:icon-type="iconType"
           :background-color="backgroundColor"
+          :hide-preview="true"
           @file-selected="handleIconPickerFile"
           @color-picker-click="openBgColorPicker"
           @update:model-value="handleIconSelect"
+          @update:icon-type="handleIconTypeUpdate"
         />
       </div>
       
       <!-- 快速操作區域 -->
       <div class="flex-1 space-y-3">
-        <!-- 模式切換按鈕 -->
-        <div class="flex space-x-2">
-          <button
-            type="button"
-            @click="setMode('initials')"
-            class="px-3 py-2 text-sm rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-            :class="mode === 'initials' 
-              ? 'bg-primary-100 border-primary-300 text-primary-700' 
-              : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'"
-          >
-            字母
-          </button>
-          <button
-            type="button"
-            @click="setMode('icon')"
-            class="px-3 py-2 text-sm rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-            :class="mode === 'icon' 
-              ? 'bg-primary-100 border-primary-300 text-primary-700' 
-              : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'"
-          >
-            圖標
-          </button>
-          <button
-            type="button"
-            @click="setMode('upload')"
-            class="px-3 py-2 text-sm rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-            :class="mode === 'upload' 
-              ? 'bg-primary-100 border-primary-300 text-primary-700' 
-              : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'"
-          >
-            上傳
-          </button>
-        </div>
-        
-        <!-- 快速設定區 -->
-        <div v-if="mode !== 'upload'" class="flex items-center space-x-2">
-          <span class="text-sm text-gray-600">背景：</span>
+        <!-- 背景顏色選擇器 -->
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-600">背景顏色：</span>
           <ColorPicker v-model="backgroundColor" />
-          
-          <span v-if="mode === 'icon'" class="text-sm text-gray-600 ml-4">圖標：</span>
-          <IconPicker 
-            v-if="mode === 'icon'"
-            ref="iconPickerRef"
-            v-model="selectedIcon"
-            v-model:icon-type="iconType"
-            @file-selected="handleIconPickerFile"
-          />
-        </div>
-        
-        <!-- 上傳區域 -->
-        <div v-if="mode === 'upload'" class="space-y-3">
-          <div
-            ref="dropZone"
-            @drop="handleDrop"
-            @dragover="handleDragOver"
-            @dragenter="handleDragEnter"
-            @dragleave="handleDragLeave"
-            :class="{
-              'border-primary-500 bg-primary-50': isDragOver,
-              'border-gray-300': !isDragOver
-            }"
-            class="border-2 border-dashed rounded-lg p-3 text-center transition-colors cursor-pointer hover:border-primary-400 hover:bg-primary-25"
-            @click="triggerFileInput"
-          >
-            <CloudUploadIcon class="mx-auto h-6 w-6 text-gray-400" />
-            <p class="mt-1 text-sm text-gray-600">
-              <span class="font-medium text-primary-500">點擊上傳</span>
-              或拖曳檔案至此
-            </p>
-            <p class="text-xs text-gray-500">{{ fileHint }}</p>
-          </div>
-          
-          <input
-            ref="fileInput"
-            type="file"
-            :accept="accept"
-            @change="handleFileChange"
-            class="hidden"
-          />
         </div>
         
         <!-- 錯誤訊息 -->
@@ -719,7 +646,21 @@ export default {
     const handleIconSelect = (value) => {
       // 選擇圖標後關閉 picker
       if (value) {
+        selectedIcon.value = value
         showIconPicker.value = false
+      }
+    }
+    
+    // 處理圖標類型更新
+    const handleIconTypeUpdate = (type) => {
+      iconType.value = type
+      // 根據類型更新模式
+      if (type === 'initials') {
+        mode.value = 'initials'
+      } else if (type === 'upload') {
+        mode.value = 'upload'
+      } else {
+        mode.value = 'icon'
       }
     }
     
@@ -762,6 +703,7 @@ export default {
       openIconPicker,
       openBgColorPicker,
       handleIconSelect,
+      handleIconTypeUpdate,
       iconPickerRef,
       avatarIconPickerRef
     }

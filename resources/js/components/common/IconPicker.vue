@@ -2,6 +2,7 @@
   <div class="icon-picker" ref="iconPickerRef">
     <!-- 圖標預覽按鈕 -->
     <button
+      v-if="!hidePreview"
       type="button"
       @click="togglePicker"
       class="w-8 h-8 rounded border-2 border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors bg-white flex items-center justify-center"
@@ -18,6 +19,9 @@
         class="text-gray-600 text-sm"
       />
       <span v-else-if="selectedIcon && iconType === 'emoji'" class="text-sm">
+        {{ selectedIcon }}
+      </span>
+      <span v-else-if="selectedIcon && iconType === 'initials'" class="text-xs font-semibold text-gray-600">
         {{ selectedIcon }}
       </span>
       <img 
@@ -39,6 +43,13 @@
       >
         <!-- 頂部標籤切換 -->
         <div class="flex border-b border-gray-200 mb-4">
+          <button
+            @click="activeTab = 'initials'"
+            :class="activeTab === 'initials' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
+            class="px-2 me-3 pt-1 pb-2 text-sm font-medium transition-colors"
+          >
+            字母
+          </button>
           <button
             @click="activeTab = 'emoji'"
             :class="activeTab === 'emoji' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
@@ -84,7 +95,7 @@
         </div>
 
         <!-- 搜尋與選擇器區域 -->
-        <div v-if="activeTab !== 'upload'" class="mb-4">
+        <div v-if="activeTab !== 'upload' && activeTab !== 'initials'" class="mb-4">
           <div class="flex space-x-2">
             <!-- 搜尋欄位 -->
             <div class="relative flex-1">
@@ -122,6 +133,46 @@
 
         <!-- 內容區域 -->
         <div>
+          <!-- 字母標籤頁 -->
+          <div 
+            v-if="activeTab === 'initials'"
+            class="space-y-4"
+          >
+            <!-- 字母輸入區 -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">輸入字母或文字</label>
+              <input
+                v-model="customInitials"
+                type="text"
+                maxlength="3"
+                placeholder="最多3個字元 (如: AB)"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                @input="handleInitialsInput"
+              />
+              <p class="mt-1 text-xs text-gray-500">輸入 1-3 個字元作為圖標顯示</p>
+            </div>
+            
+            <!-- 預覽區 -->
+            <div class="flex items-center justify-center py-4">
+              <div 
+                class="w-24 h-24 rounded-full flex items-center justify-center text-white font-semibold text-3xl"
+                :style="{ backgroundColor: backgroundColor || '#6366f1' }"
+              >
+                {{ customInitials || 'AB' }}
+              </div>
+            </div>
+            
+            <!-- 應用按鈕 -->
+            <button
+              @click="applyInitials"
+              :disabled="!customInitials"
+              :class="customInitials ? 'bg-primary-600 hover:bg-primary-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
+              class="w-full py-2 px-4 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            >
+              應用字母
+            </button>
+          </div>
+          
           <!-- Emoji 標籤頁 -->
           <div 
             v-if="activeTab === 'emoji'"
@@ -258,6 +309,10 @@ export default {
     backgroundColor: {
       type: String,
       default: '#6366f1'
+    },
+    hidePreview: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['update:modelValue', 'update:iconType', 'file-selected', 'color-picker-click'],
@@ -266,7 +321,7 @@ export default {
     const iconPanel = ref(null)
     const iconPickerRef = ref(null)
     const searchQuery = ref('')
-    const activeTab = ref('emoji') // 預設為 emoji 頁簽
+    const activeTab = ref('initials') // 預設為字母頁簽
     const panelPosition = ref({ top: '0px', left: '0px' })
     const selectedIcon = ref(props.modelValue)
     const iconType = ref(props.iconType || '')
@@ -277,6 +332,7 @@ export default {
     const uploadedImage = ref(null)
     const isDragging = ref(false)
     const backgroundColor = ref(props.backgroundColor || '#6366f1')
+    const customInitials = ref('') // 字母模式的輸入值
     
     // 監聽 props 變化
     watch(() => props.backgroundColor, (newVal) => {
@@ -363,18 +419,26 @@ export default {
       isOpen.value = !isOpen.value
       if (isOpen.value) {
         // 打開時根據當前 iconType 設定正確的標籤頁
-        if (iconType.value === 'heroicons') {
+        if (iconType.value === 'initials') {
+          activeTab.value = 'initials'
+          // 如果有選中的字母，設定到輸入框
+          if (selectedIcon.value) {
+            customInitials.value = selectedIcon.value
+          }
+        } else if (iconType.value === 'heroicons') {
           activeTab.value = 'icons'
         } else if (iconType.value === 'upload') {
           activeTab.value = 'upload'
-        } else {
-          // 預設或 emoji 類型都顯示 emoji 頁簽
+        } else if (iconType.value === 'emoji') {
           activeTab.value = 'emoji'
           // 如果當前選中的是 emoji，檢測它的膚色
-          if (selectedIcon.value && iconType.value === 'emoji') {
+          if (selectedIcon.value) {
             const detectedSkinTone = getCurrentSkinTone(selectedIcon.value)
             selectedSkinTone.value = detectedSkinTone
           }
+        } else {
+          // 預設顯示字母頁簽
+          activeTab.value = 'initials'
         }
         await nextTick()
         calculatePosition()
@@ -517,6 +581,27 @@ export default {
       emit('color-picker-click')
     }
     
+    // 處理字母輸入
+    const handleInitialsInput = () => {
+      // 限制為3個字元，自動大寫
+      if (customInitials.value) {
+        customInitials.value = customInitials.value.toUpperCase().slice(0, 3)
+      }
+    }
+    
+    // 應用字母作為圖標
+    const applyInitials = () => {
+      if (!customInitials.value) return
+      
+      selectedIcon.value = customInitials.value
+      iconType.value = 'initials'
+      
+      // 發送更新
+      emit('update:modelValue', customInitials.value)
+      emit('update:iconType', 'initials')
+      closePicker()
+    }
+    
     // 當切換到 emoji 標籤頁時，檢測當前選中 emoji 的膚色
     watch(activeTab, (newTab) => {
       if (newTab === 'emoji' && selectedIcon.value && iconType.value === 'emoji') {
@@ -630,6 +715,9 @@ export default {
       handleDrop,
       backgroundColor,
       openColorPicker,
+      customInitials,
+      handleInitialsInput,
+      applyInitials,
       getDisplayIcon: (icon) => {
         // 如果圖標包含樣式前綴，移除它
         if (icon && icon.includes(':')) {
