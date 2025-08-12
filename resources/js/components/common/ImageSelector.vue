@@ -81,6 +81,19 @@
         >
           <CogIcon class="w-5 h-5 text-white" />
         </div>
+        
+        <!-- 隱藏的 IconPicker (頭像點擊時顯示) -->
+        <div class="absolute top-full left-0 mt-2 z-50">
+          <IconPicker 
+            v-show="showIconPicker"
+            ref="avatarIconPickerRef"
+            v-model="selectedIcon"
+            v-model:icon-type="iconType"
+            :background-color="backgroundColor"
+            @file-selected="handleIconPickerFile"
+            @color-picker-click="openBgColorPicker"
+          />
+        </div>
       </div>
       
       <!-- 快速操作區域 -->
@@ -420,6 +433,7 @@ export default {
   setup(props, { emit }) {
     const mode = ref('initials') // 'initials', 'icon', 'upload'
     const showSettings = ref(false)
+    const showIconPicker = ref(false)
     const backgroundColor = ref('#6366f1')
     const customInitials = ref('')
     
@@ -669,22 +683,32 @@ export default {
     }
     
     const iconPickerRef = ref(null)
+    const avatarIconPickerRef = ref(null)
     
     // 開啟 IconPicker（由子組件 IconPicker 控制）
     const openIconPicker = () => {
-      // 先切換到 icon 模式
-      mode.value = 'icon'
-      // 等待 DOM 更新後再開啟 picker
+      // 直接開啟頭像下方的 IconPicker
+      showIconPicker.value = true
       nextTick(() => {
-        if (iconPickerRef.value && iconPickerRef.value.togglePicker) {
-          iconPickerRef.value.togglePicker()
+        if (avatarIconPickerRef.value && avatarIconPickerRef.value.togglePicker) {
+          avatarIconPickerRef.value.togglePicker()
         }
       })
+    }
+    
+    // 開啟背景顏色選擇器
+    const openBgColorPicker = () => {
+      // 找到 ColorPicker 並觸發它
+      const colorPicker = document.querySelector('.color-picker-wrapper button')
+      if (colorPicker) {
+        colorPicker.click()
+      }
     }
     
     return {
       mode,
       showSettings,
+      showIconPicker,
       backgroundColor,
       customInitials,
       selectedIcon,
@@ -718,7 +742,9 @@ export default {
       cancelSettings,
       handleIconPickerFile,
       openIconPicker,
-      iconPickerRef
+      openBgColorPicker,
+      iconPickerRef,
+      avatarIconPickerRef
     }
   }
 }

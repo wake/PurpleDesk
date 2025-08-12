@@ -60,7 +60,16 @@
           >
             Upload
           </button>
-          <div class="ml-auto">
+          <div class="ml-auto flex items-center">
+            <!-- 背景顏色選擇器按鈕 -->
+            <button
+              @click="openColorPicker"
+              class="p-0 me-3 pt-1 pb-2 text-sm transition-colors"
+              :style="{ color: backgroundColor || '#6366f1' }"
+              title="選擇背景顏色"
+            >
+              <i class="bi bi-eyedropper-fill"></i>
+            </button>
             <!-- Reset Icon 按鈕 -->
             <button
               @click="clearIcon"
@@ -245,9 +254,13 @@ export default {
     iconType: {
       type: String,
       default: ''
+    },
+    backgroundColor: {
+      type: String,
+      default: '#6366f1'
     }
   },
-  emits: ['update:modelValue', 'update:iconType', 'file-selected'],
+  emits: ['update:modelValue', 'update:iconType', 'file-selected', 'color-picker-click'],
   setup(props, { emit }) {
     const isOpen = ref(false)
     const iconPanel = ref(null)
@@ -263,8 +276,15 @@ export default {
     const fileInput = ref(null)
     const uploadedImage = ref(null)
     const isDragging = ref(false)
+    const backgroundColor = ref(props.backgroundColor || '#6366f1')
     
     // 監聽 props 變化
+    watch(() => props.backgroundColor, (newVal) => {
+      if (newVal) {
+        backgroundColor.value = newVal
+      }
+    })
+    
     watch(() => props.modelValue, (newVal) => {
       selectedIcon.value = newVal
       // 如果是 emoji，檢測膚色
@@ -492,6 +512,11 @@ export default {
       }
     }
     
+    // 開啟顏色選擇器（通知父組件）
+    const openColorPicker = () => {
+      emit('color-picker-click')
+    }
+    
     // 當切換到 emoji 標籤頁時，檢測當前選中 emoji 的膚色
     watch(activeTab, (newTab) => {
       if (newTab === 'emoji' && selectedIcon.value && iconType.value === 'emoji') {
@@ -602,6 +627,8 @@ export default {
       handleDragOver,
       handleDragLeave,
       handleDrop,
+      backgroundColor,
+      openColorPicker,
       getDisplayIcon: (icon) => {
         // 如果圖標包含樣式前綴，移除它
         if (icon && icon.includes(':')) {
