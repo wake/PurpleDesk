@@ -33,7 +33,7 @@
       <div 
         v-if="isOpen" 
         ref="iconPanel"
-        class="fixed z-[9999] p-4 bg-white border border-gray-200 rounded-lg shadow-xl w-96"
+        class="fixed z-[9999] px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-xl w-96"
         :style="panelPosition"
         @click.stop
       >
@@ -42,21 +42,21 @@
           <button
             @click="activeTab = 'emoji'"
             :class="activeTab === 'emoji' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
-            class="px-4 py-2 text-sm font-medium transition-colors"
+            class="px-2 me-3 pt-1 pb-2 text-sm font-medium transition-colors"
           >
             Emoji
           </button>
           <button
             @click="activeTab = 'icons'"
             :class="activeTab === 'icons' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
-            class="px-4 py-2 text-sm font-medium transition-colors"
+            class="px-2 me-3 pt-1 pb-2 text-sm font-medium transition-colors"
           >
             Icons
           </button>
           <button
             @click="activeTab = 'upload'"
             :class="activeTab === 'upload' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
-            class="px-4 py-2 text-sm font-medium transition-colors"
+            class="px-2 me-3 pt-1 pb-2 text-sm font-medium transition-colors"
           >
             Upload
           </button>
@@ -64,7 +64,7 @@
             <button
               v-if="selectedIcon"
               @click="clearIcon"
-              class="px-4 py-2 text-sm text-red-600 hover:text-red-700 transition-colors"
+              class="px-2 me-3 pt-1 pb-2 text-sm text-red-600 hover:text-red-700 transition-colors"
             >
               Remove
             </button>
