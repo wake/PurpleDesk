@@ -160,9 +160,15 @@ export default {
 
 .grid-row {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 0;
+  padding: 0;
+}
+
+.grid-row button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid red;
 }
 
 .virtual-scroll-container {

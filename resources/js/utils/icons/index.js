@@ -79,6 +79,7 @@ async function loadCategory(categoryId) {
       
       // 確保 icons 是陣列
       if (!Array.isArray(icons)) {
+        console.error(`Category ${categoryId} returned:`, icons)
         throw new Error(`Category ${categoryId} did not return an array`)
       }
       
@@ -216,9 +217,27 @@ export function getLoadingStatus() {
 }
 
 // 預載入熱門分類
-export function preloadPopularCategories() {
+export async function preloadPopularCategories() {
   const popular = ['general', 'ui', 'communications']
-  return Promise.all(popular.map(cat => loadCategory(cat)))
+  
+  try {
+    const results = await Promise.allSettled(popular.map(cat => loadCategory(cat)))
+    
+    // 檢查哪些分類載入失敗
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        console.error(`Failed to preload category ${popular[index]}:`, result.reason)
+      }
+    })
+    
+    // 只返回成功載入的結果
+    return results
+      .filter(r => r.status === 'fulfilled')
+      .map(r => r.value)
+  } catch (error) {
+    console.error('Failed to preload popular categories:', error)
+    return []
+  }
 }
 
 // 清除快取

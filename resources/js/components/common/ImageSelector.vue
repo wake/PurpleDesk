@@ -16,7 +16,7 @@
         <div 
           v-else-if="mode === 'initials'"
           :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
-          class="h-full w-full flex items-center justify-center text-white font-semibold"
+          class="font-type-image h-full w-full flex items-center justify-center text-white font-semibold"
           :class="textSizeClass"
         >
           {{ displayInitials }}
@@ -31,20 +31,21 @@
           <!-- Heroicons -->
           <component 
             v-if="iconType === 'heroicons'" 
-            :is="selectedIcon" 
+            :is="getHeroiconComponent()" 
             :class="iconSizeClass"
-            class="text-white"
+            class="hero-type-image text-white"
           />
           <!-- Bootstrap Icons -->
           <i 
             v-else-if="iconType === 'bootstrap'" 
             :class="['bi', selectedIcon, bsIconSizeClass]"
-            class="text-white"
+            class="bs-type-image text-white"
           />
           <!-- Emoji -->
           <span 
             v-else-if="iconType === 'emoji'"
             :class="emojiSizeClass"
+            class="emoji-type-image"
             style="transform: translateY(2px);"
           >
             {{ selectedIcon }}
@@ -76,10 +77,22 @@
           v-if="!isUploading && !isRemoving" 
           class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer"
           :class="shapeClass"
-          @click="showSettings = true"
+          @click="openIconPicker"
         >
           <CogIcon class="w-5 h-5 text-white" />
         </div>
+        
+        <!-- 隱藏的 IconPicker (頭像點擊時顯示) -->
+        <IconPicker 
+          v-if="showIconPicker"
+          ref="avatarIconPickerRef"
+          v-model="selectedIcon"
+          v-model:icon-type="iconType"
+          :background-color="backgroundColor"
+          @file-selected="handleIconPickerFile"
+          @color-picker-click="openBgColorPicker"
+          @update:model-value="handleIconSelect"
+        />
       </div>
       
       <!-- 快速操作區域 -->
@@ -126,8 +139,10 @@
           <span v-if="mode === 'icon'" class="text-sm text-gray-600 ml-4">圖標：</span>
           <IconPicker 
             v-if="mode === 'icon'"
+            ref="iconPickerRef"
             v-model="selectedIcon"
             v-model:icon-type="iconType"
+            @file-selected="handleIconPickerFile"
           />
         </div>
         
@@ -267,6 +282,7 @@
                 <IconPicker 
                   v-model="selectedIcon"
                   v-model:icon-type="iconType"
+                  @file-selected="handleIconPickerFile"
                 />
               </div>
               
@@ -334,10 +350,11 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { CloudUploadIcon, CogIcon, StarIcon } from '@heroicons/vue/outline'
-// 導入所有可能用到的 Heroicons
-import * as HeroIcons from '@heroicons/vue/outline'
+// 導入所有可能用到的 Heroicons (outline 和 solid)
+import * as HeroIconsOutline from '@heroicons/vue/outline'
+import * as HeroIconsSolid from '@heroicons/vue/solid'
 import ColorPicker from './ColorPicker.vue'
 import IconPicker from './IconPicker.vue'
 
@@ -349,7 +366,8 @@ export default {
     StarIcon,
     ColorPicker,
     IconPicker,
-    ...HeroIcons // 註冊所有 Heroicons
+    ...HeroIconsOutline, // 註冊所有 Heroicons Outline
+    ...HeroIconsSolid // 註冊所有 Heroicons Solid
   },
   props: {
     // 基本設定
@@ -414,10 +432,33 @@ export default {
   setup(props, { emit }) {
     const mode = ref('initials') // 'initials', 'icon', 'upload'
     const showSettings = ref(false)
+    const showIconPicker = ref(false)
     const backgroundColor = ref('#6366f1')
     const customInitials = ref('')
+    
+    // 解析 Heroicon 圖標名稱和樣式
+    const parseHeroicon = (icon) => {
+      if (icon && icon.includes(':')) {
+        const [style, name] = icon.split(':')
+        return { style, name }
+      }
+      return { style: 'outline', name: icon }
+    }
+    
+    // 獲取 Heroicon 組件
+    const getHeroiconComponent = () => {
+      if (!selectedIcon.value) return null
+      
+      const { style, name } = parseHeroicon(selectedIcon.value)
+      heroiconStyle.value = style
+      
+      // 根據樣式選擇正確的組件庫
+      const icons = style === 'solid' ? HeroIconsSolid : HeroIconsOutline
+      return icons[name] || HeroIconsOutline[name]
+    }
     const selectedIcon = ref('')
     const iconType = ref('heroicons')
+    const heroiconStyle = ref('outline') // 儲存 Heroicon 樣式
     const selectedFile = ref(null)
     const previewUrl = ref(null)
     const isDragOver = ref(false)
@@ -573,6 +614,19 @@ export default {
       }
     }
     
+    // 處理從 IconPicker 上傳的檔案
+    const handleIconPickerFile = (file) => {
+      // 切換到上傳模式
+      mode.value = 'upload'
+      
+      // 處理檔案
+      selectedFile.value = file
+      processFile(file)
+      
+      // 關閉設定彈窗（如果開啟）
+      showSettings.value = false
+    }
+    
     const handleDragEnter = (e) => {
       e.preventDefault()
       isDragOver.value = true
@@ -627,13 +681,58 @@ export default {
       showSettings.value = false
     }
     
+    const iconPickerRef = ref(null)
+    const avatarIconPickerRef = ref(null)
+    
+    // 開啟 IconPicker（由子組件 IconPicker 控制）
+    const openIconPicker = () => {
+      // 如果已經顯示，則關閉
+      if (showIconPicker.value) {
+        showIconPicker.value = false
+        return
+      }
+      
+      // 開啟頭像下方的 IconPicker
+      showIconPicker.value = true
+      // 等待 DOM 更新和組件掛載後再開啟 picker
+      nextTick(() => {
+        setTimeout(() => {
+          if (avatarIconPickerRef.value) {
+            // 直接設置 isOpen 而不是調用 togglePicker
+            avatarIconPickerRef.value.isOpen = true
+            avatarIconPickerRef.value.calculatePosition()
+          }
+        }, 100)
+      })
+    }
+    
+    // 開啟背景顏色選擇器
+    const openBgColorPicker = () => {
+      // 找到 ColorPicker 並觸發它
+      const colorPicker = document.querySelector('.color-picker-wrapper button')
+      if (colorPicker) {
+        colorPicker.click()
+      }
+    }
+    
+    // 處理圖標選擇
+    const handleIconSelect = (value) => {
+      // 選擇圖標後關閉 picker
+      if (value) {
+        showIconPicker.value = false
+      }
+    }
+    
     return {
       mode,
       showSettings,
+      showIconPicker,
       backgroundColor,
       customInitials,
       selectedIcon,
       iconType,
+      heroiconStyle,
+      getHeroiconComponent,
       selectedFile,
       previewUrl,
       isDragOver,
@@ -658,7 +757,13 @@ export default {
       triggerFileInput,
       formatFileSize,
       applySettings,
-      cancelSettings
+      cancelSettings,
+      handleIconPickerFile,
+      openIconPicker,
+      openBgColorPicker,
+      handleIconSelect,
+      iconPickerRef,
+      avatarIconPickerRef
     }
   }
 }
@@ -671,5 +776,25 @@ export default {
 
 .image-selector .bg-primary-25 {
   background-color: rgb(254 249 195 / 0.25);
+}
+
+.image-selector .font-type-image {
+  font-size: 40px;
+}
+
+.image-selector .bs-type-image {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-selector .emoji-type-image {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
