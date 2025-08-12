@@ -374,9 +374,25 @@ export default {
     }
     
     const calculatePosition = () => {
-      if (!iconPickerRef.value) return
+      let targetElement = iconPickerRef.value
       
-      const rect = iconPickerRef.value.getBoundingClientRect()
+      // 如果 hidePreview 為 true，嘗試找到父元素作為定位參考
+      if (props.hidePreview && iconPickerRef.value) {
+        // 尋找最近的有實際尺寸的父元素（通常是 ImageSelector 的預覽區域）
+        let parent = iconPickerRef.value.parentElement
+        while (parent) {
+          const rect = parent.getBoundingClientRect()
+          if (rect.width > 0 && rect.height > 0) {
+            targetElement = parent
+            break
+          }
+          parent = parent.parentElement
+        }
+      }
+      
+      if (!targetElement) return
+      
+      const rect = targetElement.getBoundingClientRect()
       const viewportHeight = window.innerHeight
       const viewportWidth = window.innerWidth
       

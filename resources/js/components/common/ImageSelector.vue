@@ -1,5 +1,6 @@
 <template>
   <div class="image-selector">
+    
     <!-- 主要顯示區域 -->
     <div class="flex items-start space-x-6">
       <!-- 預覽區域 -->
@@ -77,26 +78,24 @@
           v-if="!isUploading && !isRemoving" 
           class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer"
           :class="shapeClass"
-          @click="openIconPicker"
+          @click.stop="openIconPicker"
         >
           <CogIcon class="w-5 h-5 text-white" />
         </div>
         
         <!-- 嵌入的 IconPicker (頭像點擊時顯示) -->
-        <div v-show="showIconPicker" style="position: absolute; top: 100%; left: 0; margin-top: 5px; z-index: 50;">
-          <IconPicker 
-            ref="avatarIconPickerRef"
-            v-model="selectedIcon"
-            v-model:icon-type="iconType"
-            :background-color="backgroundColor"
-            :hide-preview="true"
-            @file-selected="handleIconPickerFile"
-            @color-picker-click="openBgColorPicker"
-            @update:model-value="handleIconSelect"
-            @update:icon-type="handleIconTypeUpdate"
-            @close="handleIconPickerClose"
-          />
-        </div>
+        <IconPicker 
+          ref="avatarIconPickerRef"
+          v-model="selectedIcon"
+          v-model:icon-type="iconType"
+          :background-color="backgroundColor"
+          :hide-preview="true"
+          @file-selected="handleIconPickerFile"
+          @color-picker-click="openBgColorPicker"
+          @update:model-value="handleIconSelect"
+          @update:icon-type="handleIconTypeUpdate"
+          @close="handleIconPickerClose"
+        />
       </div>
       
       <!-- 快速操作區域 -->
@@ -361,7 +360,6 @@ export default {
   setup(props, { emit }) {
     const mode = ref('initials') // 'initials', 'icon', 'upload'
     const showSettings = ref(false)
-    const showIconPicker = ref(false)
     const backgroundColor = ref('#6366f1')
     const customInitials = ref('')
     
@@ -613,15 +611,12 @@ export default {
     const iconPickerRef = ref(null)
     const avatarIconPickerRef = ref(null)
     
-    // 開啟 IconPicker（由子組件 IconPicker 控制）
+    // 開啟 IconPicker
     const openIconPicker = () => {
-      // 顯示容器
-      showIconPicker.value = true
-      
       // 等待下一個 tick 確保 DOM 更新
       nextTick(() => {
         if (avatarIconPickerRef.value) {
-          // 直接開啟 picker（togglePicker 會處理開關狀態）
+          // 直接開啟 picker
           avatarIconPickerRef.value.togglePicker()
         }
       })
@@ -641,10 +636,17 @@ export default {
     
     // 處理圖標選擇
     const handleIconSelect = (value) => {
-      // 選擇圖標後關閉 picker
+      // 選擇圖標後更新本地狀態
       if (value) {
         selectedIcon.value = value
-        showIconPicker.value = false
+        // 通知父組件有設定變更
+        emit('settings-changed', {
+          mode: mode.value,
+          backgroundColor: backgroundColor.value,
+          customInitials: customInitials.value,
+          selectedIcon: selectedIcon.value,
+          iconType: iconType.value
+        })
       }
     }
     
@@ -663,18 +665,12 @@ export default {
     
     // 處理 IconPicker 關閉事件
     const handleIconPickerClose = () => {
-      // 暫時保留容器，只是關閉 picker
-      // showIconPicker.value = false
-      // 可以選擇延遲隱藏容器
-      setTimeout(() => {
-        showIconPicker.value = false
-      }, 100)
+      // IconPicker 已經自行處理關閉邏輯，這裡不需要額外動作
     }
     
     return {
       mode,
       showSettings,
-      showIconPicker,
       backgroundColor,
       customInitials,
       selectedIcon,
