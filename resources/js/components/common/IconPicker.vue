@@ -17,7 +17,7 @@
         :class="['bi', selectedIcon]"
         class="text-gray-600 text-sm"
       />
-      <span v-else-if="selectedIcon && iconType === 'emoji'" class="text-sm">
+      <span v-else-if="selectedIcon && (iconType === 'emoji' || iconType === 'emojiMart')" class="text-sm">
         {{ selectedIcon }}
       </span>
       <span v-else class="text-gray-400 text-xs">圖標</span>
@@ -55,6 +55,13 @@
               class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
             >
               表情符號
+            </button>
+            <button
+              @click="activeTab = 'emojiMart'"
+              :class="activeTab === 'emojiMart' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
+              class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
+            >
+              Emoji+
             </button>
           </div>
         </div>
@@ -149,6 +156,51 @@
               </template>
             </VirtualScroll>
           </div>
+
+          <!-- Emoji Mart 標籤頁 -->
+          <div 
+            v-else-if="activeTab === 'emojiMart'"
+            class="h-48 overflow-y-auto"
+          >
+            <!-- Emoji Mart 分類選擇 -->
+            <div v-if="emojiMartCategories.length > 0" class="sticky top-0 bg-white z-10 border-b border-gray-200 p-2">
+              <div class="flex flex-wrap gap-1">
+                <button
+                  v-for="category in emojiMartCategories"
+                  :key="category.id"
+                  @click="selectedEmojiMartCategory = category.id"
+                  :class="selectedEmojiMartCategory === category.id ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+                  class="px-2 py-1 text-xs rounded transition-colors"
+                >
+                  {{ category.name }}
+                </button>
+              </div>
+            </div>
+            
+            <!-- Emoji 網格 -->
+            <VirtualScroll
+              :items="filteredEmojiMartEmojis"
+              :items-per-row="6"
+              :row-height="40"
+              :container-height="192"
+              :buffer="2"
+            >
+              <template #row="{ items }">
+                <template v-for="emoji in items" :key="emoji ? emoji.id : Math.random()">
+                  <button
+                    v-if="emoji"
+                    @click="selectIcon(emoji.native, 'emojiMart')"
+                    :class="selectedIcon === emoji.native ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
+                    class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                    :title="emoji.name"
+                  >
+                    <span class="w-5 h-5 flex items-center justify-center" style="font-size: 1.25rem; line-height: 1;">{{ emoji.native }}</span>
+                  </button>
+                  <div v-else class="p-2"></div>
+                </template>
+              </template>
+            </VirtualScroll>
+          </div>
         </div>
 
         <!-- 搜尋結果為空的提示 -->
@@ -182,6 +234,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
 import VirtualScroll from './VirtualScroll.vue'
+import emojiMartService from '../../utils/emoji-mart-service.js'
 // Heroicons imports
 import { 
   HomeIcon, 
@@ -245,6 +298,12 @@ export default {
     const selectedIcon = ref(props.modelValue)
     const iconType = ref(props.iconType || 'heroicons')
     const emojisLoaded = ref(false)
+    
+    // Emoji Mart 相關資料
+    const emojiMartInitialized = ref(false)
+    const emojiMartCategories = ref([])
+    const emojiMartEmojis = ref([])
+    const selectedEmojiMartCategory = ref('people')
     
     // 監聽 props 變化
     watch(() => props.modelValue, (newVal) => {
@@ -344,11 +403,33 @@ export default {
           activeTab.value = 'bootstrap'
         } else if (iconType.value === 'emoji') {
           activeTab.value = 'emoji'
+        } else if (iconType.value === 'emojiMart') {
+          activeTab.value = 'emojiMart'
+          // 初始化 emoji-mart
+          if (!emojiMartInitialized.value) {
+            await initEmojiMart()
+          }
         } else {
           activeTab.value = 'heroicons'
         }
         await nextTick()
         calculatePosition()
+      }
+    }
+    
+    // 初始化 Emoji Mart
+    const initEmojiMart = async () => {
+      try {
+        await emojiMartService.init()
+        emojiMartCategories.value = emojiMartService.getCategories()
+        emojiMartEmojis.value = emojiMartService.getAllEmojis()
+        emojiMartInitialized.value = true
+        console.log('✅ Emoji Mart 初始化成功', {
+          categories: emojiMartCategories.value.length,
+          emojis: emojiMartEmojis.value.length
+        })
+      } catch (error) {
+        console.error('❌ Emoji Mart 初始化失敗:', error)
       }
     }
     
@@ -403,6 +484,23 @@ export default {
       )
     })
     
+    // Emoji Mart 過濾邏輯
+    const filteredEmojiMartEmojis = computed(() => {
+      if (!emojiMartInitialized.value) return []
+      
+      // 如果有搜尋查詢
+      if (searchQuery.value) {
+        return emojiMartService.searchEmojis(searchQuery.value)
+      }
+      
+      // 根據選擇的分類返回 emoji
+      if (selectedEmojiMartCategory.value === 'all') {
+        return emojiMartEmojis.value
+      }
+      
+      return emojiMartService.getCategoryEmojis(selectedEmojiMartCategory.value)
+    })
+    
     // 檢查搜尋結果是否為空
     const isSearchEmpty = computed(() => {
       if (!searchQuery.value) return false
@@ -413,6 +511,8 @@ export default {
         return filteredBootstrapIcons.value.length === 0
       } else if (activeTab.value === 'emoji') {
         return filteredEmojis.value.length === 0
+      } else if (activeTab.value === 'emojiMart') {
+        return filteredEmojiMartEmojis.value.length === 0
       }
       
       return false
@@ -448,6 +548,13 @@ export default {
       }
     })
     
+    // 監聽 activeTab 變化，當切換到 emojiMart 時初始化
+    watch(activeTab, async (newTab) => {
+      if (newTab === 'emojiMart' && !emojiMartInitialized.value) {
+        await initEmojiMart()
+      }
+    })
+    
     onUnmounted(() => {
       document.removeEventListener('click', handleClickOutside)
       window.removeEventListener('resize', calculatePosition)
@@ -467,6 +574,13 @@ export default {
       bootstrapIcons: bootstrapIcons,
       emojis: emojis,
       emojisLoaded,
+      // Emoji Mart
+      emojiMartInitialized,
+      emojiMartCategories,
+      emojiMartEmojis,
+      selectedEmojiMartCategory,
+      filteredEmojiMartEmojis,
+      // Methods
       filteredHeroicons,
       filteredBootstrapIcons,
       filteredEmojis,
