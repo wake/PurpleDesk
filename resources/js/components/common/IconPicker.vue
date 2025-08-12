@@ -47,7 +47,7 @@
             :class="activeTab === 'initials' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
             class="px-2 me-3 pt-1 pb-2 text-sm font-medium transition-colors"
           >
-            字母
+            文字
           </button>
           <button
             @click.stop="activeTab = 'emoji'"
@@ -138,7 +138,7 @@
           >
             <!-- 字母輸入區 -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">輸入字母或文字</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">輸入文字或字母</label>
               <input
                 v-model="customInitials"
                 type="text"
@@ -147,7 +147,6 @@
                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 @input="handleInitialsInput"
               />
-              <p class="mt-1 text-xs text-gray-500">輸入 1-3 個字元作為圖標顯示</p>
             </div>
             
             <!-- 預覽區 -->
