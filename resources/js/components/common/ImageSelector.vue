@@ -77,7 +77,7 @@
           v-if="!isUploading && !isRemoving" 
           class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer"
           :class="shapeClass"
-          @click="showSettings = true"
+          @click="openIconPicker"
         >
           <CogIcon class="w-5 h-5 text-white" />
         </div>
@@ -667,6 +667,16 @@ export default {
       showSettings.value = false
     }
     
+    // 開啟 IconPicker（由子組件 IconPicker 控制）
+    const openIconPicker = () => {
+      // IconPicker 會通過 ref 直接控制
+      // 這裡只是觸發事件，讓父組件或自身的 IconPicker 開啟
+      const iconPicker = document.querySelector('.icon-picker button')
+      if (iconPicker) {
+        iconPicker.click()
+      }
+    }
+    
     return {
       mode,
       showSettings,
@@ -701,7 +711,8 @@ export default {
       formatFileSize,
       applySettings,
       cancelSettings,
-      handleIconPickerFile
+      handleIconPickerFile,
+      openIconPicker
     }
   }
 }
