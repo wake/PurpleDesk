@@ -176,23 +176,19 @@
           <!-- Upload 標籤頁 -->
           <div 
             v-else-if="activeTab === 'upload'"
+            @click="triggerFileUpload"
             @dragover.prevent="handleDragOver"
             @dragleave.prevent="handleDragLeave"
             @drop.prevent="handleDrop"
-            :class="isDragging ? 'border-primary-400 bg-primary-50' : 'border-gray-100 bg-gray-50'"
-            class="h-48 flex flex-col items-center justify-center border-2 border-dashed rounded-md transition-colors"
+            :class="isDragging ? 'border-primary-400 bg-primary-50' : 'border-gray-200 bg-gray-50 hover:bg-gray-100'"
+            class="h-48 flex flex-col items-center justify-center border-2 border-dashed rounded-md transition-colors cursor-pointer"
           >
-            <div class="text-center pointer-events-none">
-              <i class="bi bi-cloud-arrow-up-fill text-5xl text-gray-400 mb-4"></i>
-              <button
-                @click.stop="triggerFileUpload"
-                class="text-primary-600 hover:text-primary-700 font-medium text-sm pointer-events-auto"
-              >
-                Upload an image
-              </button>
-              <p class="text-xs text-gray-500 mt-2">
-                or drag and drop / ⌘+V to paste
-              </p>
+            <div class="text-center pointer-events-none space-y-3">
+              <i class="bi bi-cloud-arrow-up-fill text-4xl text-gray-400"></i>
+              <div>
+                <p class="text-sm font-medium text-gray-700">Upload an image</p>
+                <p class="text-xs text-gray-500 mt-1">or drag and drop</p>
+              </div>
             </div>
           </div>
         </div>
