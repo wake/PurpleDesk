@@ -8,7 +8,7 @@
       class="skin-tone-button"
       :class="{ 'active': isOpen }"
     >
-      <span class="skin-tone-icon" :style="{ backgroundColor: currentToneColor }"></span>
+      <span class="text-xl">{{ currentTone.emoji }}</span>
     </button>
 
     <!-- 膚色選項下拉選單 -->
@@ -181,18 +181,13 @@ export default {
 }
 
 .skin-tone-button {
-  @apply w-8 h-8 rounded border-2 border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors bg-white flex items-center justify-center;
+  @apply w-8 h-8 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors bg-white flex items-center justify-center;
   width: 38px;
   height: 38px;
-  border-width: 1px;
 }
 
 .skin-tone-button.active {
-  @apply border-primary-500 ring-2 ring-primary-500 ring-offset-2;
-}
-
-.skin-tone-icon {
-  @apply w-4 h-4 rounded-full border border-gray-400;
+  @apply ring-2 ring-primary-500 ring-offset-2;
 }
 
 .skin-tone-dropdown {
