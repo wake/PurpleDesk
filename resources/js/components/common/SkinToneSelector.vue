@@ -58,12 +58,12 @@ export default {
 
     // 膚色選項
     const skinTones = [
-      { value: '', name: '預設', color: '#FFC83D', emoji: '👋' },
-      { value: '🏻', name: '淺膚色', color: '#F7DECE', emoji: '👋🏻' },
-      { value: '🏼', name: '中淺膚色', color: '#F3D2A2', emoji: '👋🏼' },
-      { value: '🏽', name: '中膚色', color: '#D5AB88', emoji: '👋🏽' },
-      { value: '🏾', name: '中深膚色', color: '#AF7E57', emoji: '👋🏾' },
-      { value: '🏿', name: '深膚色', color: '#7C533E', emoji: '👋🏿' }
+      { value: '', name: '預設', color: '#FFC83D', emoji: '✋' },
+      { value: '🏻', name: '淺膚色', color: '#F7DECE', emoji: '✋🏻' },
+      { value: '🏼', name: '中淺膚色', color: '#F3D2A2', emoji: '✋🏼' },
+      { value: '🏽', name: '中膚色', color: '#D5AB88', emoji: '✋🏽' },
+      { value: '🏾', name: '中深膚色', color: '#AF7E57', emoji: '✋🏾' },
+      { value: '🏿', name: '深膚色', color: '#7C533E', emoji: '✋🏿' }
     ]
 
     // 當前選中的膚色
