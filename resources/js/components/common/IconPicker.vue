@@ -209,7 +209,7 @@
             v-else-if="activeTab === 'icons'"
           >
             <!-- 圖標網格 -->
-            <div class="h-48 overflow-y-auto border border-gray-100 rounded-md bg-gray-50 p-2">
+            <div class="h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
                 :items="filteredHeroicons"
                 :items-per-row="10"
