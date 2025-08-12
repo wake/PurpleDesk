@@ -168,6 +168,7 @@ export default {
 .grid-row button {
   width: 38px;
   height: 38px;
+  border: 1px solid red;
 }
 
 .virtual-scroll-container {

@@ -129,7 +129,7 @@
                       v-if="emoji"
                       @click="selectIcon(getEmojiWithSkinTone(emoji), 'emoji')"
                       :class="selectedIcon === getEmojiWithSkinTone(emoji) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
-                      class="p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                      class="emoji-button p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                       :title="emoji.name"
                     >
                       <span class="text-xl">{{ getEmojiWithSkinTone(emoji) }}</span>
@@ -160,7 +160,7 @@
                     :key="icon.name"
                     @click="selectIcon(icon.component, 'heroicons')"
                     :class="isIconSelected(icon.component) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
-                    class="p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                    class="icon-button p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                     :title="icon.name"
                   >
                     <component 
@@ -606,5 +606,10 @@ export default {
 <style scoped>
 .icon-picker {
   @apply relative inline-block;
+}
+.emoji-button,
+.icon-button {
+  width: 38px;
+  height: 38px;
 }
 </style>
