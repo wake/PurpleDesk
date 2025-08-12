@@ -75,7 +75,7 @@
             <!-- 背景顏色選擇器按鈕 -->
             <button
               @click="openColorPicker"
-              class="p-0 me-3 pt-1 pb-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              class="p-0 me-3 pt-1 pb-2 text-base text-gray-500 hover:text-gray-700 transition-colors"
               title="選擇背景顏色"
             >
               <i class="bi bi-eyedropper"></i>
@@ -85,10 +85,10 @@
               @click="clearIcon"
               :disabled="!selectedIcon"
               :class="selectedIcon ? 'text-gray-500 hover:text-gray-700' : 'text-gray-400 cursor-not-allowed'"
-              class="p-0 me-3 pt-1 pb-2 text-sm transition-colors"
+              class="p-0 me-3 pt-1 pb-2 text-base transition-colors"
               title="Reset Icon"
             >
-              <i class="bi bi-arrow-counterclockwise"></i>
+              <i class="bi bi-trash-fill"></i>
             </button>
           </div>
         </div>
