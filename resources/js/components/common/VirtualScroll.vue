@@ -146,6 +146,7 @@ export default {
   overflow-y: auto;
   position: relative;
   padding: 0.25rem;
+  border-radius: 6px;
 }
 
 /* 自訂滾動條樣式 */

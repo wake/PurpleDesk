@@ -178,12 +178,12 @@
             v-if="activeTab === 'emoji'"
           >
             <!-- Emoji 網格 -->
-            <div class="h-48 overflow-y-auto border border-gray-100 rounded-md bg-gray-50 p-2">
+            <div class="h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
                 :items="filteredEmojis"
                 :items-per-row="10"
                 :row-height="36"
-                :container-height="192"
+                :container-height="176"
                 :buffer="2"
               >
                 <template #row="{ items }">
@@ -214,7 +214,7 @@
                 :items="filteredHeroicons"
                 :items-per-row="10"
                 :row-height="36"
-                :container-height="192"
+                :container-height="176"
                 :buffer="2"
               >
                 <template #row="{ items }">
