@@ -20,10 +20,10 @@
         <!-- 關閉按鈕 -->
         <button
           @click="closePicker"
-          class="absolute top-2 right-2 w-6 h-6 text-gray-400 hover:text-gray-600 transition-colors"
+          class="absolute top-2 right-2 w-6 h-6 text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center"
           title="關閉"
         >
-          ×
+          <i class="bi bi-x-lg"></i>
         </button>
         
         <!-- 預設色彩調色盤 -->
