@@ -62,9 +62,10 @@
           </button>
           <div class="ml-auto">
             <button
-              v-if="selectedIcon"
               @click="clearIcon"
-              class="px-2 me-3 pt-1 pb-2 text-sm text-red-600 hover:text-red-700 transition-colors"
+              :disabled="!selectedIcon"
+              :class="selectedIcon ? 'text-red-600 hover:text-red-700' : 'text-gray-400 cursor-not-allowed'"
+              class="px-2 me-3 pt-1 pb-2 text-sm transition-colors"
             >
               Remove
             </button>
@@ -197,23 +198,6 @@
         <div v-if="isSearchEmpty" class="text-center py-8 text-gray-500">
           <p class="text-sm">找不到符合的圖標</p>
           <p class="text-xs text-gray-400 mt-1">請嘗試其他關鍵字</p>
-        </div>
-
-        <!-- 底部按鈕 -->
-        <div class="flex justify-between mt-4 pt-3 border-t border-gray-200">
-          <button
-            @click="closePicker"
-            class="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            v-if="selectedIcon || uploadedImage"
-            @click="confirmSelection"
-            class="px-4 py-2 text-sm bg-primary-600 hover:bg-primary-700 text-white rounded transition-colors"
-          >
-            Save
-          </button>
         </div>
       </div>
     </Teleport>
@@ -387,20 +371,22 @@ export default {
       }
       selectedIcon.value = iconValue
       iconType.value = type
-    }
-    
-    const confirmSelection = () => {
-      emit('update:modelValue', selectedIcon.value)
-      emit('update:iconType', iconType.value)
+      
+      // 直接應用選擇的圖標
+      emit('update:modelValue', iconValue)
+      emit('update:iconType', type)
       closePicker()
     }
     
     const clearIcon = () => {
+      if (!selectedIcon.value) return // 如果沒有圖標，不執行任何操作
+      
       selectedIcon.value = ''
       iconType.value = ''
       uploadedImage.value = null
       emit('update:modelValue', '')
       emit('update:iconType', '')
+      closePicker()
     }
     
     const clearSearch = () => {
@@ -468,11 +454,14 @@ export default {
         uploadedImage.value = e.target.result
         selectedIcon.value = e.target.result
         iconType.value = 'upload'
+        
+        // 直接應用上傳的圖片
+        emit('update:modelValue', e.target.result)
+        emit('update:iconType', 'upload')
+        emit('file-selected', file)
+        closePicker()
       }
       reader.readAsDataURL(file)
-      
-      // 發送檔案給父組件
-      emit('file-selected', file)
       
       // 清空輸入以便下次使用
       if (fileInput.value) {
@@ -594,7 +583,6 @@ export default {
       togglePicker,
       closePicker,
       selectIcon,
-      confirmSelection,
       clearIcon,
       clearSearch,
       selectedSkinTone,
