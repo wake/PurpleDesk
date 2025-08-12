@@ -182,6 +182,9 @@ export default {
 
 .skin-tone-button {
   @apply w-8 h-8 rounded border-2 border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors bg-white flex items-center justify-center;
+  width: 38px;
+  height: 38px;
+  border-width: 1px;
 }
 
 .skin-tone-button.active {

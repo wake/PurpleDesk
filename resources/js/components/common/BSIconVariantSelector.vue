@@ -24,6 +24,27 @@
         class="absolute right-0 z-10 mt-1 w-40 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
         <div class="py-1">
+          <!-- 自動選擇選項 -->
+          <button
+            @click="selectVariant('auto')"
+            :class="[
+              modelValue === 'auto' ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-50',
+              'w-full px-3 py-2 text-left text-sm flex items-center space-x-2 transition-colors'
+            ]"
+          >
+            <i class="bi bi-square-half w-5 h-5 flex items-center justify-center" style="font-size: 1rem;"></i>
+            <span>自動</span>
+            <svg 
+              v-if="modelValue === 'auto'"
+              class="w-4 h-4 ml-auto text-primary-600" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </button>
+
           <!-- 標準版選項 -->
           <button
             @click="selectVariant('standard')"
@@ -57,27 +78,6 @@
             <span>填充 (Fill)</span>
             <svg 
               v-if="modelValue === 'fill'"
-              class="w-4 h-4 ml-auto text-primary-600" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-          </button>
-
-          <!-- 自動選擇選項 -->
-          <button
-            @click="selectVariant('auto')"
-            :class="[
-              modelValue === 'auto' ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-50',
-              'w-full px-3 py-2 text-left text-sm flex items-center space-x-2 transition-colors'
-            ]"
-          >
-            <i class="bi bi-square-half w-5 h-5 flex items-center justify-center" style="font-size: 1rem;"></i>
-            <span>自動</span>
-            <svg 
-              v-if="modelValue === 'auto'"
               class="w-4 h-4 ml-auto text-primary-600" 
               fill="none" 
               stroke="currentColor" 
@@ -189,3 +189,17 @@ export default {
   }
 }
 </script>
+
+<style>
+.relative > button {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.relative > button > i {
+  font-size: 1em !important;
+}
+</style>
