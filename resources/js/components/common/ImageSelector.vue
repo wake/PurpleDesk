@@ -82,19 +82,20 @@
           <CogIcon class="w-5 h-5 text-white" />
         </div>
         
-        <!-- 隱藏的 IconPicker (頭像點擊時顯示) -->
-        <IconPicker 
-          v-if="showIconPicker"
-          ref="avatarIconPickerRef"
-          v-model="selectedIcon"
-          v-model:icon-type="iconType"
-          :background-color="backgroundColor"
-          :hide-preview="true"
-          @file-selected="handleIconPickerFile"
-          @color-picker-click="openBgColorPicker"
-          @update:model-value="handleIconSelect"
-          @update:icon-type="handleIconTypeUpdate"
-        />
+        <!-- 嵌入的 IconPicker (頭像點擊時顯示) -->
+        <div v-if="showIconPicker" style="position: absolute; top: 100%; left: 0; margin-top: 5px; z-index: 50;">
+          <IconPicker 
+            ref="avatarIconPickerRef"
+            v-model="selectedIcon"
+            v-model:icon-type="iconType"
+            :background-color="backgroundColor"
+            :hide-preview="true"
+            @file-selected="handleIconPickerFile"
+            @color-picker-click="openBgColorPicker"
+            @update:model-value="handleIconSelect"
+            @update:icon-type="handleIconTypeUpdate"
+          />
+        </div>
       </div>
       
       <!-- 快速操作區域 -->
@@ -613,24 +614,33 @@ export default {
     
     // 開啟 IconPicker（由子組件 IconPicker 控制）
     const openIconPicker = () => {
-      // 如果尚未顯示組件，先顯示組件
+      // 簡單的切換邏輯
       if (!showIconPicker.value) {
+        // 第一次顯示組件
         showIconPicker.value = true
-      }
-      
-      // 等待 DOM 更新和組件掛載後再開啟 picker
-      nextTick(() => {
-        if (avatarIconPickerRef.value) {
-          // 確保 picker 是開啟狀態
-          if (!avatarIconPickerRef.value.isOpen) {
-            avatarIconPickerRef.value.isOpen = true
-            avatarIconPickerRef.value.calculatePosition()
-          } else {
-            // 如果已經開啟，則關閉
-            avatarIconPickerRef.value.isOpen = false
+        // 稍微延遲以確保組件渲染完成
+        setTimeout(() => {
+          if (avatarIconPickerRef.value) {
+            avatarIconPickerRef.value.togglePicker()
           }
+        }, 10)
+      } else {
+        // 如果組件已經存在，檢查是否有 ref
+        if (avatarIconPickerRef.value) {
+          avatarIconPickerRef.value.togglePicker()
+        } else {
+          // 如果沒有 ref，隱藏再顯示
+          showIconPicker.value = false
+          setTimeout(() => {
+            showIconPicker.value = true
+            setTimeout(() => {
+              if (avatarIconPickerRef.value) {
+                avatarIconPickerRef.value.togglePicker()
+              }
+            }, 10)
+          }, 10)
         }
-      })
+      }
     }
     
     // 開啟背景顏色選擇器
