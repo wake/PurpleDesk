@@ -129,6 +129,7 @@
             v-if="mode === 'icon'"
             v-model="selectedIcon"
             v-model:icon-type="iconType"
+            @file-selected="handleIconPickerFile"
           />
         </div>
         
@@ -268,6 +269,7 @@
                 <IconPicker 
                   v-model="selectedIcon"
                   v-model:icon-type="iconType"
+                  @file-selected="handleIconPickerFile"
                 />
               </div>
               
@@ -598,6 +600,19 @@ export default {
       }
     }
     
+    // 處理從 IconPicker 上傳的檔案
+    const handleIconPickerFile = (file) => {
+      // 切換到上傳模式
+      mode.value = 'upload'
+      
+      // 處理檔案
+      selectedFile.value = file
+      processFile(file)
+      
+      // 關閉設定彈窗（如果開啟）
+      showSettings.value = false
+    }
+    
     const handleDragEnter = (e) => {
       e.preventDefault()
       isDragOver.value = true
@@ -685,7 +700,8 @@ export default {
       triggerFileInput,
       formatFileSize,
       applySettings,
-      cancelSettings
+      cancelSettings,
+      handleIconPickerFile
     }
   }
 }

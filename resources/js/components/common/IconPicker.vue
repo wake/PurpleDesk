@@ -34,28 +34,46 @@
       >
         <!-- 標籤頁 -->
         <div class="mb-4">
-          <div class="flex space-x-1 bg-gray-100 rounded-md p-1">
+          <div class="flex items-center space-x-2">
+            <div class="flex-1 flex space-x-1 bg-gray-100 rounded-md p-1">
+              <button
+                @click="activeTab = 'heroicons'"
+                :class="activeTab === 'heroicons' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
+                class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
+              >
+                Heroicons
+              </button>
+              <button
+                @click="activeTab = 'bootstrap'"
+                :class="activeTab === 'bootstrap' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
+                class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
+              >
+                Bootstrap
+              </button>
+              <button
+                @click="activeTab = 'emoji'"
+                :class="activeTab === 'emoji' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
+                class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
+              >
+                表情符號
+              </button>
+            </div>
+            <!-- 上傳按鈕 -->
             <button
-              @click="activeTab = 'heroicons'"
-              :class="activeTab === 'heroicons' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
-              class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
+              @click="triggerFileUpload"
+              class="p-2 rounded-md border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
+              title="上傳圖片"
             >
-              Heroicons
+              <CloudUploadIcon class="w-5 h-5 text-gray-600" />
             </button>
-            <button
-              @click="activeTab = 'bootstrap'"
-              :class="activeTab === 'bootstrap' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
-              class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
-            >
-              Bootstrap
-            </button>
-            <button
-              @click="activeTab = 'emoji'"
-              :class="activeTab === 'emoji' ? 'bg-white shadow-sm' : 'hover:bg-gray-50'"
-              class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 rounded transition-colors"
-            >
-              表情符號
-            </button>
+            <!-- 隱藏的檔案輸入 -->
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              @change="handleFileUpload"
+              class="hidden"
+            />
           </div>
         </div>
 
@@ -214,6 +232,7 @@
 
 <script>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { CloudUploadIcon } from '@heroicons/vue/outline'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
 import { applySkinTone, supportsSkinTone, removeSkinTone, getCurrentSkinTone } from '../../utils/emojiSkinTone.js'
 import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
@@ -232,6 +251,7 @@ export default {
     SkinToneSelector,
     HeroiconStyleSelector,
     BSIconVariantSelector,
+    CloudUploadIcon,
     // 註冊所有 Heroicons (Outline 和 Solid)
     ...HeroiconsOutline,
     ...HeroiconsSolid
@@ -246,7 +266,7 @@ export default {
       default: ''
     }
   },
-  emits: ['update:modelValue', 'update:iconType'],
+  emits: ['update:modelValue', 'update:iconType', 'file-selected'],
   setup(props, { emit }) {
     const isOpen = ref(false)
     const iconPanel = ref(null)
@@ -260,6 +280,7 @@ export default {
     const selectedSkinTone = ref('') // 預設膚色
     const selectedHeroiconStyle = ref('outline') // 預設 Heroicon 樣式
     const selectedBSVariant = ref('auto') // 預設 Bootstrap Icons 變體
+    const fileInput = ref(null)
     
     // 監聽 props 變化
     watch(() => props.modelValue, (newVal) => {
@@ -421,6 +442,43 @@ export default {
       selectedBSVariant.value = variant
     }
     
+    // 觸發檔案上傳
+    const triggerFileUpload = () => {
+      if (fileInput.value) {
+        fileInput.value.click()
+      }
+    }
+    
+    // 處理檔案上傳
+    const handleFileUpload = (event) => {
+      const file = event.target.files?.[0]
+      if (!file) return
+      
+      // 驗證檔案類型
+      if (!file.type.startsWith('image/')) {
+        alert('請選擇圖片檔案')
+        return
+      }
+      
+      // 驗證檔案大小 (2MB)
+      const maxSize = 2 * 1024 * 1024
+      if (file.size > maxSize) {
+        alert('檔案大小不能超過 2MB')
+        return
+      }
+      
+      // 發送檔案給父組件
+      emit('file-selected', file)
+      
+      // 清空輸入以便下次使用
+      if (fileInput.value) {
+        fileInput.value.value = ''
+      }
+      
+      // 關閉選擇器
+      closePicker()
+    }
+    
     // 當切換到 emoji 標籤頁時，檢測當前選中 emoji 的膚色
     watch(activeTab, (newTab) => {
       if (newTab === 'emoji' && selectedIcon.value && iconType.value === 'emoji') {
@@ -551,6 +609,9 @@ export default {
       handleHeroiconStyleChange,
       selectedBSVariant,
       handleBSVariantChange,
+      fileInput,
+      triggerFileUpload,
+      handleFileUpload,
       getDisplayIcon: (icon) => {
         // 如果圖標包含樣式前綴，移除它
         if (icon && icon.includes(':')) {
