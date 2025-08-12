@@ -183,7 +183,7 @@
                 :items="filteredEmojis"
                 :items-per-row="10"
                 :row-height="36"
-                :container-height="176"
+                :container-height="178"
                 :buffer="2"
               >
                 <template #row="{ items }">
@@ -214,7 +214,7 @@
                 :items="filteredHeroicons"
                 :items-per-row="10"
                 :row-height="36"
-                :container-height="176"
+                :container-height="178"
                 :buffer="2"
               >
                 <template #row="{ items }">

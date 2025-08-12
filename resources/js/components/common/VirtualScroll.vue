@@ -145,27 +145,47 @@ export default {
 .virtual-scroll-container {
   overflow-y: auto;
   position: relative;
-  padding: 0.25rem;
+  padding: 0.25rem 0.125rem 0.25rem 0.25rem; /* 右側較少內邊距 */
   border-radius: 6px;
 }
 
-/* 自訂滾動條樣式 */
+/* Webkit 瀏覽器的滾動條樣式 (Chrome, Safari, Edge) */
 .virtual-scroll-container::-webkit-scrollbar {
   width: 6px;
 }
 
 .virtual-scroll-container::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
   border-radius: 3px;
+  margin: 2px 0; /* 上下留白 */
 }
 
 .virtual-scroll-container::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 3px;
+  border: 1px solid #f1f5f9; /* 細邊框 */
 }
 
 .virtual-scroll-container::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+.virtual-scroll-container::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox 的滾動條樣式 */
+.virtual-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* 確保在所有瀏覽器中都有一致的外觀 */
+.virtual-scroll-container {
+  /* 強制顯示滾動條，但只在需要時 */
+  overflow-y: auto;
+  /* 防止水平滾動 */
+  overflow-x: hidden;
 }
 
 .virtual-scroll-spacer {
