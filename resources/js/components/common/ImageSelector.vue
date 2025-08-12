@@ -1,5 +1,6 @@
 <template>
   <div class="image-selector">
+    
     <!-- 主要顯示區域 -->
     <div class="flex items-start space-x-6">
       <!-- 預覽區域 -->
@@ -14,12 +15,12 @@
         
         <!-- 字母縮寫 -->
         <div 
-          v-else-if="mode === 'initials'"
+          v-else-if="(mode === 'initials' || iconType === 'initials')"
           :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
           class="font-type-image h-full w-full flex items-center justify-center text-white font-semibold"
           :class="textSizeClass"
         >
-          {{ displayInitials }}
+          {{ iconType === 'initials' ? selectedIcon : displayInitials }}
         </div>
         
         <!-- 圖標顯示 -->
@@ -77,105 +78,32 @@
           v-if="!isUploading && !isRemoving" 
           class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer"
           :class="shapeClass"
-          @click="openIconPicker"
+          @click.stop="openIconPicker"
         >
           <CogIcon class="w-5 h-5 text-white" />
         </div>
         
-        <!-- 隱藏的 IconPicker (頭像點擊時顯示) -->
+        <!-- 嵌入的 IconPicker (頭像點擊時顯示) -->
         <IconPicker 
-          v-if="showIconPicker"
           ref="avatarIconPickerRef"
           v-model="selectedIcon"
           v-model:icon-type="iconType"
           :background-color="backgroundColor"
+          :hide-preview="true"
           @file-selected="handleIconPickerFile"
           @color-picker-click="openBgColorPicker"
           @update:model-value="handleIconSelect"
+          @update:icon-type="handleIconTypeUpdate"
+          @close="handleIconPickerClose"
         />
       </div>
       
       <!-- 快速操作區域 -->
       <div class="flex-1 space-y-3">
-        <!-- 模式切換按鈕 -->
-        <div class="flex space-x-2">
-          <button
-            type="button"
-            @click="setMode('initials')"
-            class="px-3 py-2 text-sm rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-            :class="mode === 'initials' 
-              ? 'bg-primary-100 border-primary-300 text-primary-700' 
-              : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'"
-          >
-            字母
-          </button>
-          <button
-            type="button"
-            @click="setMode('icon')"
-            class="px-3 py-2 text-sm rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-            :class="mode === 'icon' 
-              ? 'bg-primary-100 border-primary-300 text-primary-700' 
-              : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'"
-          >
-            圖標
-          </button>
-          <button
-            type="button"
-            @click="setMode('upload')"
-            class="px-3 py-2 text-sm rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-            :class="mode === 'upload' 
-              ? 'bg-primary-100 border-primary-300 text-primary-700' 
-              : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'"
-          >
-            上傳
-          </button>
-        </div>
-        
-        <!-- 快速設定區 -->
-        <div v-if="mode !== 'upload'" class="flex items-center space-x-2">
-          <span class="text-sm text-gray-600">背景：</span>
+        <!-- 背景顏色選擇器 -->
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-600">背景顏色：</span>
           <ColorPicker v-model="backgroundColor" />
-          
-          <span v-if="mode === 'icon'" class="text-sm text-gray-600 ml-4">圖標：</span>
-          <IconPicker 
-            v-if="mode === 'icon'"
-            ref="iconPickerRef"
-            v-model="selectedIcon"
-            v-model:icon-type="iconType"
-            @file-selected="handleIconPickerFile"
-          />
-        </div>
-        
-        <!-- 上傳區域 -->
-        <div v-if="mode === 'upload'" class="space-y-3">
-          <div
-            ref="dropZone"
-            @drop="handleDrop"
-            @dragover="handleDragOver"
-            @dragenter="handleDragEnter"
-            @dragleave="handleDragLeave"
-            :class="{
-              'border-primary-500 bg-primary-50': isDragOver,
-              'border-gray-300': !isDragOver
-            }"
-            class="border-2 border-dashed rounded-lg p-3 text-center transition-colors cursor-pointer hover:border-primary-400 hover:bg-primary-25"
-            @click="triggerFileInput"
-          >
-            <CloudUploadIcon class="mx-auto h-6 w-6 text-gray-400" />
-            <p class="mt-1 text-sm text-gray-600">
-              <span class="font-medium text-primary-500">點擊上傳</span>
-              或拖曳檔案至此
-            </p>
-            <p class="text-xs text-gray-500">{{ fileHint }}</p>
-          </div>
-          
-          <input
-            ref="fileInput"
-            type="file"
-            :accept="accept"
-            @change="handleFileChange"
-            class="hidden"
-          />
         </div>
         
         <!-- 錯誤訊息 -->
@@ -432,7 +360,6 @@ export default {
   setup(props, { emit }) {
     const mode = ref('initials') // 'initials', 'icon', 'upload'
     const showSettings = ref(false)
-    const showIconPicker = ref(false)
     const backgroundColor = ref('#6366f1')
     const customInitials = ref('')
     
@@ -684,49 +611,66 @@ export default {
     const iconPickerRef = ref(null)
     const avatarIconPickerRef = ref(null)
     
-    // 開啟 IconPicker（由子組件 IconPicker 控制）
+    // 開啟 IconPicker
     const openIconPicker = () => {
-      // 如果已經顯示，則關閉
-      if (showIconPicker.value) {
-        showIconPicker.value = false
-        return
-      }
-      
-      // 開啟頭像下方的 IconPicker
-      showIconPicker.value = true
-      // 等待 DOM 更新和組件掛載後再開啟 picker
+      // 等待下一個 tick 確保 DOM 更新
       nextTick(() => {
-        setTimeout(() => {
-          if (avatarIconPickerRef.value) {
-            // 直接設置 isOpen 而不是調用 togglePicker
-            avatarIconPickerRef.value.isOpen = true
-            avatarIconPickerRef.value.calculatePosition()
-          }
-        }, 100)
+        if (avatarIconPickerRef.value) {
+          // 直接開啟 picker
+          avatarIconPickerRef.value.togglePicker()
+        }
       })
     }
     
     // 開啟背景顏色選擇器
     const openBgColorPicker = () => {
       // 找到 ColorPicker 並觸發它
-      const colorPicker = document.querySelector('.color-picker-wrapper button')
-      if (colorPicker) {
-        colorPicker.click()
-      }
+      // 使用更精確的選擇器，找到 ImageSelector 內的 ColorPicker
+      nextTick(() => {
+        const colorPicker = document.querySelector('.image-selector .color-picker button')
+        if (colorPicker) {
+          colorPicker.click()
+        }
+      })
     }
     
     // 處理圖標選擇
     const handleIconSelect = (value) => {
-      // 選擇圖標後關閉 picker
+      // 選擇圖標後更新本地狀態
       if (value) {
-        showIconPicker.value = false
+        selectedIcon.value = value
+        // 通知父組件有設定變更
+        emit('settings-changed', {
+          mode: mode.value,
+          backgroundColor: backgroundColor.value,
+          customInitials: customInitials.value,
+          selectedIcon: selectedIcon.value,
+          iconType: iconType.value
+        })
       }
+    }
+    
+    // 處理圖標類型更新
+    const handleIconTypeUpdate = (type) => {
+      iconType.value = type
+      // 根據類型更新模式
+      if (type === 'initials') {
+        mode.value = 'initials'
+      } else if (type === 'upload') {
+        mode.value = 'upload'
+      } else {
+        mode.value = 'icon'
+      }
+    }
+    
+    // 處理 IconPicker 關閉事件
+    const handleIconPickerClose = () => {
+      // IconPicker 已經自行處理關閉邏輯，這裡不需要額外動作
     }
     
     return {
       mode,
       showSettings,
-      showIconPicker,
       backgroundColor,
       customInitials,
       selectedIcon,
@@ -762,6 +706,8 @@ export default {
       openIconPicker,
       openBgColorPicker,
       handleIconSelect,
+      handleIconTypeUpdate,
+      handleIconPickerClose,
       iconPickerRef,
       avatarIconPickerRef
     }
