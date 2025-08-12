@@ -84,6 +84,12 @@
               v-model="selectedHeroiconStyle"
               @update:modelValue="handleHeroiconStyleChange"
             />
+            <!-- Bootstrap Icons 變體選擇器（僅在 bootstrap 標籤頁顯示） -->
+            <BSIconVariantSelector
+              v-if="activeTab === 'bootstrap'"
+              v-model="selectedBSVariant"
+              @update:modelValue="handleBSVariantChange"
+            />
             <!-- 膚色選擇器（僅在 emoji 標籤頁顯示） -->
             <SkinToneSelector
               v-if="activeTab === 'emoji'"
@@ -214,6 +220,7 @@ import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
 import VirtualScroll from './VirtualScroll.vue'
 import SkinToneSelector from './SkinToneSelector.vue'
 import HeroiconStyleSelector from './HeroiconStyleSelector.vue'
+import BSIconVariantSelector from './BSIconVariantSelector.vue'
 // 動態導入所有 Heroicons
 import * as HeroiconsOutline from '@heroicons/vue/outline'
 import * as HeroiconsSolid from '@heroicons/vue/solid'
@@ -224,6 +231,7 @@ export default {
     VirtualScroll,
     SkinToneSelector,
     HeroiconStyleSelector,
+    BSIconVariantSelector,
     // 註冊所有 Heroicons (Outline 和 Solid)
     ...HeroiconsOutline,
     ...HeroiconsSolid
@@ -251,6 +259,7 @@ export default {
     const emojisLoaded = ref(false)
     const selectedSkinTone = ref('') // 預設膚色
     const selectedHeroiconStyle = ref('outline') // 預設 Heroicon 樣式
+    const selectedBSVariant = ref('auto') // 預設 Bootstrap Icons 變體
     
     // 監聽 props 變化
     watch(() => props.modelValue, (newVal) => {
@@ -407,6 +416,11 @@ export default {
       selectedHeroiconStyle.value = style
     }
     
+    // 處理 Bootstrap Icons 變體變更
+    const handleBSVariantChange = (variant) => {
+      selectedBSVariant.value = variant
+    }
+    
     // 當切換到 emoji 標籤頁時，檢測當前選中 emoji 的膚色
     watch(activeTab, (newTab) => {
       if (newTab === 'emoji' && selectedIcon.value && iconType.value === 'emoji') {
@@ -425,11 +439,25 @@ export default {
     })
     
     const filteredBootstrapIcons = computed(() => {
-      if (!searchQuery.value) return bootstrapIcons
-      const query = searchQuery.value.toLowerCase()
-      return bootstrapIcons.filter(icon => 
-        icon.name.toLowerCase().includes(query)
-      )
+      let icons = bootstrapIcons
+      
+      // 根據選擇的變體過濾圖標
+      if (selectedBSVariant.value === 'fill') {
+        icons = icons.filter(icon => icon.class.endsWith('-fill'))
+      } else if (selectedBSVariant.value === 'standard') {
+        icons = icons.filter(icon => !icon.class.endsWith('-fill'))
+      }
+      // 'auto' 模式顯示所有圖標
+      
+      // 搜尋過濾
+      if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase()
+        icons = icons.filter(icon => 
+          icon.name.toLowerCase().includes(query)
+        )
+      }
+      
+      return icons
     })
     
     const filteredEmojis = computed(() => {
@@ -521,6 +549,8 @@ export default {
       getHeroiconComponent,
       selectedHeroiconStyle,
       handleHeroiconStyleChange,
+      selectedBSVariant,
+      handleBSVariantChange,
       getDisplayIcon: (icon) => {
         // 如果圖標包含樣式前綴，移除它
         if (icon && icon.includes(':')) {
