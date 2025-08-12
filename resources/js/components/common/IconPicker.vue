@@ -60,31 +60,16 @@
           >
             Upload
           </button>
-          <div class="ml-auto flex items-center">
-            <!-- 顏色選擇器按鈕 -->
-            <button
-              @click="openColorPicker"
-              class="relative p-0 me-3 pt-1 pb-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
-              title="選擇背景顏色"
-            >
-              <i class="bi bi-eyedropper" :style="{ color: selectedColor || '#6366f1' }"></i>
-              <!-- 隱藏的顏色選擇器 -->
-              <input
-                ref="colorInput"
-                type="color"
-                v-model="selectedColor"
-                @change="handleColorChange"
-                class="absolute opacity-0 pointer-events-none"
-              />
-            </button>
+          <div class="ml-auto">
             <!-- Reset Icon 按鈕 -->
             <button
               @click="clearIcon"
               :disabled="!selectedIcon"
               :class="selectedIcon ? 'text-gray-500 hover:text-gray-700' : 'text-gray-400 cursor-not-allowed'"
               class="p-0 me-3 pt-1 pb-2 text-sm transition-colors"
+              title="Reset Icon"
             >
-              Reset Icon
+              <i class="bi bi-arrow-counterclockwise"></i>
             </button>
           </div>
         </div>
@@ -260,13 +245,9 @@ export default {
     iconType: {
       type: String,
       default: ''
-    },
-    backgroundColor: {
-      type: String,
-      default: '#6366f1'
     }
   },
-  emits: ['update:modelValue', 'update:iconType', 'file-selected', 'update:backgroundColor'],
+  emits: ['update:modelValue', 'update:iconType', 'file-selected'],
   setup(props, { emit }) {
     const isOpen = ref(false)
     const iconPanel = ref(null)
@@ -282,16 +263,8 @@ export default {
     const fileInput = ref(null)
     const uploadedImage = ref(null)
     const isDragging = ref(false)
-    const selectedColor = ref(props.backgroundColor || '#6366f1')
-    const colorInput = ref(null)
     
     // 監聽 props 變化
-    watch(() => props.backgroundColor, (newVal) => {
-      if (newVal) {
-        selectedColor.value = newVal
-      }
-    })
-    
     watch(() => props.modelValue, (newVal) => {
       selectedIcon.value = newVal
       // 如果是 emoji，檢測膚色
@@ -519,18 +492,6 @@ export default {
       }
     }
     
-    // 開啟顏色選擇器
-    const openColorPicker = () => {
-      if (colorInput.value) {
-        colorInput.value.click()
-      }
-    }
-    
-    // 處理顏色變更
-    const handleColorChange = () => {
-      emit('update:backgroundColor', selectedColor.value)
-    }
-    
     // 當切換到 emoji 標籤頁時，檢測當前選中 emoji 的膚色
     watch(activeTab, (newTab) => {
       if (newTab === 'emoji' && selectedIcon.value && iconType.value === 'emoji') {
@@ -641,10 +602,6 @@ export default {
       handleDragOver,
       handleDragLeave,
       handleDrop,
-      selectedColor,
-      colorInput,
-      openColorPicker,
-      handleColorChange,
       getDisplayIcon: (icon) => {
         // 如果圖標包含樣式前綴，移除它
         if (icon && icon.includes(':')) {

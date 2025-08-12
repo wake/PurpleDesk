@@ -127,6 +127,7 @@
           <span v-if="mode === 'icon'" class="text-sm text-gray-600 ml-4">圖標：</span>
           <IconPicker 
             v-if="mode === 'icon'"
+            ref="iconPickerRef"
             v-model="selectedIcon"
             v-model:icon-type="iconType"
             @file-selected="handleIconPickerFile"
@@ -337,7 +338,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { CloudUploadIcon, CogIcon, StarIcon } from '@heroicons/vue/outline'
 // 導入所有可能用到的 Heroicons (outline 和 solid)
 import * as HeroIconsOutline from '@heroicons/vue/outline'
@@ -667,14 +668,18 @@ export default {
       showSettings.value = false
     }
     
+    const iconPickerRef = ref(null)
+    
     // 開啟 IconPicker（由子組件 IconPicker 控制）
     const openIconPicker = () => {
-      // IconPicker 會通過 ref 直接控制
-      // 這裡只是觸發事件，讓父組件或自身的 IconPicker 開啟
-      const iconPicker = document.querySelector('.icon-picker button')
-      if (iconPicker) {
-        iconPicker.click()
-      }
+      // 先切換到 icon 模式
+      mode.value = 'icon'
+      // 等待 DOM 更新後再開啟 picker
+      nextTick(() => {
+        if (iconPickerRef.value && iconPickerRef.value.togglePicker) {
+          iconPickerRef.value.togglePicker()
+        }
+      })
     }
     
     return {
@@ -712,7 +717,8 @@ export default {
       applySettings,
       cancelSettings,
       handleIconPickerFile,
-      openIconPicker
+      openIconPicker,
+      iconPickerRef
     }
   }
 }
