@@ -9,7 +9,7 @@
       <!-- 顯示選中的圖標 -->
       <component 
         v-if="selectedIcon && iconType === 'heroicons'" 
-        :is="selectedIcon" 
+        :is="getDisplayIcon(selectedIcon)" 
         class="w-5 h-5 text-gray-600" 
       />
       <i 
@@ -112,7 +112,7 @@
                   v-for="icon in items"
                   :key="icon.name"
                   @click="selectIcon(icon.component, 'heroicons')"
-                  :class="selectedIcon === icon.component ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
+                  :class="isIconSelected(icon.component) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-50'"
                   class="p-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                   :title="icon.name"
                 >
@@ -260,6 +260,14 @@ export default {
         const detectedSkinTone = getCurrentSkinTone(newVal)
         selectedSkinTone.value = detectedSkinTone
       }
+      // 如果是 heroicons，檢測樣式
+      if (newVal && props.iconType === 'heroicons' && newVal.includes(':')) {
+        const [style, iconName] = newVal.split(':')
+        if (style === 'solid' || style === 'outline') {
+          selectedHeroiconStyle.value = style
+          selectedIcon.value = newVal
+        }
+      }
     })
     
     watch(() => props.iconType, (newVal) => {
@@ -348,9 +356,15 @@ export default {
     }
     
     const selectIcon = (icon, type) => {
-      selectedIcon.value = icon
+      // 如果是 Heroicons，儲存樣式資訊
+      let iconValue = icon
+      if (type === 'heroicons') {
+        // 在圖標名稱前加上樣式前綴
+        iconValue = `${selectedHeroiconStyle.value}:${icon}`
+      }
+      selectedIcon.value = iconValue
       iconType.value = type
-      emit('update:modelValue', icon)
+      emit('update:modelValue', iconValue)
       emit('update:iconType', type)
       closePicker()
     }
@@ -506,7 +520,21 @@ export default {
       getEmojiWithSkinTone,
       getHeroiconComponent,
       selectedHeroiconStyle,
-      handleHeroiconStyleChange
+      handleHeroiconStyleChange,
+      getDisplayIcon: (icon) => {
+        // 如果圖標包含樣式前綴，移除它
+        if (icon && icon.includes(':')) {
+          return icon.split(':')[1]
+        }
+        return icon
+      },
+      isIconSelected: (iconComponent) => {
+        // 檢查是否選中（忽略樣式前綴）
+        const currentIcon = selectedIcon.value && selectedIcon.value.includes(':') 
+          ? selectedIcon.value.split(':')[1] 
+          : selectedIcon.value
+        return currentIcon === iconComponent
+      }
     }
   }
 }

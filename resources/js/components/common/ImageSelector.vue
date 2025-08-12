@@ -31,7 +31,7 @@
           <!-- Heroicons -->
           <component 
             v-if="iconType === 'heroicons'" 
-            :is="selectedIcon" 
+            :is="getHeroiconComponent()" 
             :class="iconSizeClass"
             class="text-white"
           />
@@ -336,8 +336,9 @@
 <script>
 import { ref, computed, watch } from 'vue'
 import { CloudUploadIcon, CogIcon, StarIcon } from '@heroicons/vue/outline'
-// 導入所有可能用到的 Heroicons
-import * as HeroIcons from '@heroicons/vue/outline'
+// 導入所有可能用到的 Heroicons (outline 和 solid)
+import * as HeroIconsOutline from '@heroicons/vue/outline'
+import * as HeroIconsSolid from '@heroicons/vue/solid'
 import ColorPicker from './ColorPicker.vue'
 import IconPicker from './IconPicker.vue'
 
@@ -349,7 +350,8 @@ export default {
     StarIcon,
     ColorPicker,
     IconPicker,
-    ...HeroIcons // 註冊所有 Heroicons
+    ...HeroIconsOutline, // 註冊所有 Heroicons Outline
+    ...HeroIconsSolid // 註冊所有 Heroicons Solid
   },
   props: {
     // 基本設定
@@ -416,8 +418,30 @@ export default {
     const showSettings = ref(false)
     const backgroundColor = ref('#6366f1')
     const customInitials = ref('')
+    
+    // 解析 Heroicon 圖標名稱和樣式
+    const parseHeroicon = (icon) => {
+      if (icon && icon.includes(':')) {
+        const [style, name] = icon.split(':')
+        return { style, name }
+      }
+      return { style: 'outline', name: icon }
+    }
+    
+    // 獲取 Heroicon 組件
+    const getHeroiconComponent = () => {
+      if (!selectedIcon.value) return null
+      
+      const { style, name } = parseHeroicon(selectedIcon.value)
+      heroiconStyle.value = style
+      
+      // 根據樣式選擇正確的組件庫
+      const icons = style === 'solid' ? HeroIconsSolid : HeroIconsOutline
+      return icons[name] || HeroIconsOutline[name]
+    }
     const selectedIcon = ref('')
     const iconType = ref('heroicons')
+    const heroiconStyle = ref('outline') // 儲存 Heroicon 樣式
     const selectedFile = ref(null)
     const previewUrl = ref(null)
     const isDragOver = ref(false)
@@ -634,6 +658,8 @@ export default {
       customInitials,
       selectedIcon,
       iconType,
+      heroiconStyle,
+      getHeroiconComponent,
       selectedFile,
       previewUrl,
       isDragOver,
