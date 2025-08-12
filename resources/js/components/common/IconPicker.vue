@@ -39,33 +39,32 @@
         ref="iconPanel"
         class="fixed z-[9999] px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-xl w-96"
         :style="panelPosition"
-        @click.stop="handleIconPickerClick"
       >
         <!-- 頂部標籤切換 -->
         <div class="flex border-b border-gray-200 mb-4">
           <button
-            @click="activeTab = 'initials'"
+            @click.stop="activeTab = 'initials'"
             :class="activeTab === 'initials' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
             class="px-2 me-3 pt-1 pb-2 text-sm font-medium transition-colors"
           >
             字母
           </button>
           <button
-            @click="activeTab = 'emoji'"
+            @click.stop="activeTab = 'emoji'"
             :class="activeTab === 'emoji' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
             class="px-2 me-3 pt-1 pb-2 text-sm font-medium transition-colors"
           >
             Emoji
           </button>
           <button
-            @click="activeTab = 'icons'"
+            @click.stop="activeTab = 'icons'"
             :class="activeTab === 'icons' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
             class="px-2 me-3 pt-1 pb-2 text-sm font-medium transition-colors"
           >
             Icons
           </button>
           <button
-            @click="activeTab = 'upload'"
+            @click.stop="activeTab = 'upload'"
             :class="activeTab === 'upload' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'"
             class="px-2 me-3 pt-1 pb-2 text-sm font-medium transition-colors"
           >
@@ -74,7 +73,7 @@
           <div class="ml-auto flex items-center">
             <!-- 背景顏色選擇器按鈕 -->
             <button
-              @click="openColorPicker"
+              @click.stop="openColorPicker"
               class="p-0 me-3 pt-1 pb-2 text-base text-gray-500 hover:text-gray-700 transition-colors"
               title="選擇背景顏色"
             >
@@ -82,7 +81,7 @@
             </button>
             <!-- Reset Icon 按鈕 -->
             <button
-              @click="clearIcon"
+              @click.stop="clearIcon"
               :disabled="!selectedIcon"
               :class="selectedIcon ? 'text-gray-500 hover:text-gray-700' : 'text-gray-400 cursor-not-allowed'"
               class="p-0 me-3 pt-1 pb-2 text-base transition-colors"
@@ -164,7 +163,7 @@
             
             <!-- 應用按鈕 -->
             <button
-              @click="applyInitials"
+              @click.stop="applyInitials"
               :disabled="!customInitials"
               :class="customInitials ? 'bg-primary-600 hover:bg-primary-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
               class="w-full py-2 px-4 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
@@ -190,7 +189,7 @@
                   <template v-for="emoji in items" :key="emoji ? emoji.name : Math.random()">
                     <button
                       v-if="emoji"
-                      @click="selectIcon(getEmojiWithSkinTone(emoji), 'emoji')"
+                      @click.stop="selectIcon(getEmojiWithSkinTone(emoji), 'emoji')"
                       :class="selectedIcon === getEmojiWithSkinTone(emoji) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
                       class="emoji-button p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                       :title="emoji.name"
@@ -221,7 +220,7 @@
                   <button
                     v-for="icon in items"
                     :key="icon.name"
-                    @click="selectIcon(icon.component, 'heroicons')"
+                    @click.stop="selectIcon(icon.component, 'heroicons')"
                     :class="isIconSelected(icon.component) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
                     class="icon-button p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                     :title="icon.name"
@@ -466,11 +465,6 @@ export default {
       emit('close')
     }
     
-    // 處理 IconPicker 內部點擊
-    const handleIconPickerClick = () => {
-      // IconPicker 內部點擊不執行任何關閉動作
-      // ColorPicker 會由自己的 handleClickOutside 處理關閉
-    }
     
     const selectIcon = (icon, type) => {
       // 如果是 Heroicons，儲存樣式資訊
@@ -748,7 +742,6 @@ export default {
       isSearchEmpty,
       togglePicker,
       closePicker,
-      handleIconPickerClick,
       selectIcon,
       clearIcon,
       clearSearch,
