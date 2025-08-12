@@ -661,8 +661,19 @@ export default {
     
     // 點擊外部關閉
     const handleClickOutside = (event) => {
-      if (iconPanel.value && !iconPanel.value.contains(event.target) &&
-          iconPickerRef.value && !iconPickerRef.value.contains(event.target)) {
+      // 檢查是否點擊在 IconPicker 內部
+      const isInsideIconPicker = iconPanel.value && iconPanel.value.contains(event.target)
+      const isIconPickerButton = iconPickerRef.value && iconPickerRef.value.contains(event.target)
+      
+      // 檢查是否點擊在 ColorPicker 內部（允許 ColorPicker 與 IconPicker 同時開啟）
+      const colorPickerPanel = document.querySelector('.color-picker .fixed.z-\\[9999\\]')
+      const isInsideColorPicker = colorPickerPanel && colorPickerPanel.contains(event.target)
+      
+      // 檢查是否點擊在任何 ColorPicker 按鈕上
+      const isColorPickerButton = event.target.closest('.color-picker button')
+      
+      // 只有在點擊外部且不在 ColorPicker 內部時才關閉
+      if (!isInsideIconPicker && !isIconPickerButton && !isInsideColorPicker && !isColorPickerButton) {
         closePicker()
       }
     }

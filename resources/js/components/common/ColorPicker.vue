@@ -13,7 +13,7 @@
       <div 
         v-if="isOpen" 
         ref="colorPanel"
-        class="fixed z-[9999] mt-2 p-4 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[280px]"
+        class="fixed z-[10000] mt-2 p-4 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[280px]"
         :style="panelPosition"
         @click.stop
       >
@@ -309,8 +309,16 @@ export default {
     
     // 點擊外部關閉
     const handleClickOutside = (event) => {
-      if (colorPanel.value && !colorPanel.value.contains(event.target) &&
-          colorPickerRef.value && !colorPickerRef.value.contains(event.target)) {
+      // 檢查是否點擊在 ColorPicker 內部
+      const isInsideColorPicker = colorPanel.value && colorPanel.value.contains(event.target)
+      const isColorPickerButton = colorPickerRef.value && colorPickerRef.value.contains(event.target)
+      
+      // 檢查是否點擊在 IconPicker 內部（允許 IconPicker 與 ColorPicker 同時開啟）
+      const iconPickerPanel = document.querySelector('.icon-picker .fixed.z-\\[9999\\]')
+      const isInsideIconPicker = iconPickerPanel && iconPickerPanel.contains(event.target)
+      
+      // 只有在點擊外部且不在 IconPicker 內部時才關閉
+      if (!isInsideColorPicker && !isColorPickerButton && !isInsideIconPicker) {
         closePicker()
       }
     }

@@ -624,8 +624,7 @@ export default {
     
     // 開啟背景顏色選擇器
     const openBgColorPicker = () => {
-      // 找到 ColorPicker 並觸發它
-      // 使用更精確的選擇器，找到 ImageSelector 內的 ColorPicker
+      // 不要關閉 IconPicker，直接觸發 ColorPicker
       nextTick(() => {
         const colorPicker = document.querySelector('.image-selector .color-picker button')
         if (colorPicker) {
