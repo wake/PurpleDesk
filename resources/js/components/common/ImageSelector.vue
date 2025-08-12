@@ -83,7 +83,7 @@
         </div>
         
         <!-- 嵌入的 IconPicker (頭像點擊時顯示) -->
-        <div v-if="showIconPicker" style="position: absolute; top: 100%; left: 0; margin-top: 5px; z-index: 50;">
+        <div v-show="showIconPicker" style="position: absolute; top: 100%; left: 0; margin-top: 5px; z-index: 50;">
           <IconPicker 
             ref="avatarIconPickerRef"
             v-model="selectedIcon"
@@ -615,21 +615,16 @@ export default {
     
     // 開啟 IconPicker（由子組件 IconPicker 控制）
     const openIconPicker = () => {
-      // 如果還沒顯示，先顯示組件
-      if (!showIconPicker.value) {
-        showIconPicker.value = true
-        // 稍微延遲以確保組件渲染完成後再開啟
-        nextTick(() => {
-          if (avatarIconPickerRef.value) {
-            avatarIconPickerRef.value.togglePicker()
-          }
-        })
-      } else {
-        // 如果已經顯示，則切換開關狀態
+      // 顯示容器
+      showIconPicker.value = true
+      
+      // 等待下一個 tick 確保 DOM 更新
+      nextTick(() => {
         if (avatarIconPickerRef.value) {
+          // 直接開啟 picker（togglePicker 會處理開關狀態）
           avatarIconPickerRef.value.togglePicker()
         }
-      }
+      })
     }
     
     // 開啟背景顏色選擇器
@@ -668,7 +663,12 @@ export default {
     
     // 處理 IconPicker 關閉事件
     const handleIconPickerClose = () => {
-      showIconPicker.value = false
+      // 暫時保留容器，只是關閉 picker
+      // showIconPicker.value = false
+      // 可以選擇延遲隱藏容器
+      setTimeout(() => {
+        showIconPicker.value = false
+      }, 100)
     }
     
     return {
