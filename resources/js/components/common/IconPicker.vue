@@ -460,11 +460,13 @@ export default {
       }
     }
     
-    const closePicker = () => {
+    const closePicker = (shouldCloseColorPicker = true) => {
       isOpen.value = false
       
-      // 發射事件通知父組件關閉 ColorPicker
-      emit('close-color-picker')
+      // 只在需要時發射事件通知父組件關閉 ColorPicker
+      if (shouldCloseColorPicker) {
+        emit('close-color-picker')
+      }
       emit('close')
     }
     
@@ -695,7 +697,7 @@ export default {
       // IconPicker 只在點擊外部且非 ColorPicker 區域時關閉
       // 這樣當點擊 ColorPicker 時，IconPicker 保持開啟
       if (!isInsideIconPicker && !isIconPickerButton && !isInsideColorPicker && !isColorPickerButton) {
-        closePicker()
+        closePicker(false) // 外部點擊時不要觸發 ColorPicker 關閉，避免循環
       }
     }
     
