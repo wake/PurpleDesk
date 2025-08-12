@@ -245,22 +245,9 @@ export default {
       const isInsideColorPicker = colorPanel.value && colorPanel.value.contains(event.target)
       const isColorPickerButton = colorPickerRef.value && colorPickerRef.value.contains(event.target)
       
-      console.log('ColorPicker handleClickOutside:', {
-        target: event.target,
-        targetClass: event.target.className,
-        targetTag: event.target.tagName,
-        isInsideColorPicker,
-        isColorPickerButton,
-        colorPanel: colorPanel.value,
-        colorPickerRef: colorPickerRef.value
-      })
-      
       // 點擊 ColorPicker 以外的任何地方都關閉 ColorPicker
       if (!isInsideColorPicker && !isColorPickerButton) {
-        console.log('ColorPicker: 點擊外部，關閉 ColorPicker')
         closePicker()
-      } else {
-        console.log('ColorPicker: 點擊內部，保持開啟')
       }
     }
     

@@ -462,6 +462,13 @@ export default {
     
     const closePicker = () => {
       isOpen.value = false
+      
+      // 當 IconPicker 關閉時，一併關閉 ColorPicker
+      const colorPickerCloseButton = document.querySelector('.color-picker .fixed button[title="關閉"]')
+      if (colorPickerCloseButton) {
+        colorPickerCloseButton.click()
+      }
+      
       emit('close')
     }
     
