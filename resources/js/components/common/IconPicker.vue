@@ -1015,7 +1015,6 @@ export default {
       // 觸發 emoji 載入（如果還沒載入）
       if (Array.isArray(emojis) && emojis.length === 0) {
         // Proxy 會自動觸發載入
-        console.log('Triggering emoji loading...')
         // 存取 length 屬性會觸發載入
         const emojiCount = emojis.length
         // 一秒後強制更新

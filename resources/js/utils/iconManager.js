@@ -18,7 +18,9 @@ class IconManager {
   async initialize() {
     if (this.initialized) return
     
-    console.log('🚀 IconManager: 開始初始化圖標管理系統')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🚀 IconManager: 開始初始化圖標管理系統')
+    }
     
     try {
       // 使用 allSettled 來避免單一失敗導致全部失敗
@@ -44,7 +46,9 @@ class IconManager {
       }
       
       this.initialized = true
-      console.log('✅ IconManager: 初始化完成（可能有部分錯誤）')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ IconManager: 初始化完成（可能有部分錯誤）')
+      }
       
       // 定期更新載入統計
       this.startStatsTracking()
@@ -74,7 +78,9 @@ class IconManager {
         if (totalProgress < 100) {
           setTimeout(updateStats, 1000) // 每秒更新一次
         } else {
-          console.log('🎯 IconManager: 所有圖標載入完成')
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🎯 IconManager: 所有圖標載入完成')
+          }
           this.logFinalStats()
         }
       } catch (error) {
@@ -250,6 +256,8 @@ class IconManager {
 
   // 記錄最終統計
   logFinalStats() {
+    if (process.env.NODE_ENV !== 'development') return
+    
     const memStats = this.getMemoryStats()
     const loadStats = this.getLoadingStatus()
     

@@ -146,7 +146,9 @@ export function generateReadableReport() {
 
 // 控制台輸出報告
 export function logImplementationReport() {
-  console.log(generateReadableReport())
+  if (process.env.NODE_ENV === 'development') {
+    console.log(generateReadableReport())
+  }
   return implementationReport
 }
 
