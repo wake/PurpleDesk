@@ -2,9 +2,11 @@
  * 完整 Emoji 集合匯出
  * 從新的 Unicode 16.0 emoji 系統載入所有 emoji
  * 提供同步的 emoji 陣列供 IconPicker 使用
+ * 整合相容性過濾系統
  */
 
 import emojiManager from './emojis/index.js';
+import { filterEmojis, PROBLEMATIC_EMOJIS, FILTER_STATS } from './emojiFilter.js';
 
 // 膚色修飾符的 Unicode 範圍
 const SKIN_TONE_REGEX = /[\u{1F3FB}-\u{1F3FF}]/gu;
@@ -74,15 +76,25 @@ async function loadAllEmojis() {
             }
           });
           
-          // 將基礎 emoji 加入結果陣列
-          allEmojis.push(...baseEmojis.values());
+          // 將基礎 emoji 加入結果陣列，並應用相容性過濾
+          const categoryEmojis = Array.from(baseEmojis.values());
+          const filteredEmojis = filterEmojis(categoryEmojis);
+          allEmojis.push(...filteredEmojis);
+          
+          // 記錄過濾統計
+          const filteredCount = categoryEmojis.length - filteredEmojis.length;
+          if (filteredCount > 0) {
+            console.log(`🚫 ${category.name} 過濾了 ${filteredCount} 個不相容的 emoji`);
+          }
         } catch (error) {
           console.warn(`載入 ${category.name} 分類失敗:`, error);
         }
       }
 
       allEmojisCache = allEmojis;
-      console.log(`成功載入 ${allEmojis.length} 個 emoji`);
+      console.log(`✅ 成功載入 ${allEmojis.length} 個相容的 emoji`);
+      console.log(`🛡️ 過濾統計: ${FILTER_STATS.actualProblems} 個不相容 emoji 已被過濾`);
+      console.log(`📊 過濾準確度: ${FILTER_STATS.predictionAccuracy}% (測試樣本: ${FILTER_STATS.totalTested})`);
       return allEmojis;
     } catch (error) {
       console.error('載入 emoji 失敗:', error);
