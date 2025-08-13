@@ -113,11 +113,11 @@
             </div>
             <!-- 功能按鈕組 -->
             <div class="flex space-x-1">
-              <!-- Heroicon 樣式選擇器 -->
-              <HeroiconStyleSelector
+              <!-- 圖標樣式選擇器 -->
+              <IconStyleSelector
                 v-if="activeTab === 'icons'"
-                v-model="selectedHeroiconStyle"
-                @update:modelValue="handleHeroiconStyleChange"
+                v-model="selectedIconStyle"
+                @update:modelValue="handleIconStyleChange"
               />
               <!-- 膚色選擇器 -->
               <SkinToneSelector
@@ -222,7 +222,7 @@
             <!-- 圖標網格 -->
             <div class="grid-wrapper icon-grid-wrapper h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
-                :items="filteredHeroicons"
+                :items="filteredIcons"
                 :items-per-row="10"
                 :row-height="36"
                 :container-height="176"
@@ -238,7 +238,7 @@
                     :title="icon.name"
                   >
                     <component 
-                      :is="getHeroiconComponent(icon.component)" 
+                      :is="getIconComponent(icon.component)" 
                       class="w-5 h-5 mx-auto text-gray-600" 
                     />
                   </button>
@@ -294,7 +294,7 @@ import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
 import { EMOJI_CATEGORY_INFO } from '../../utils/emojis/index.js'
 import VirtualScroll from './VirtualScroll.vue'
 import SkinToneSelector from './SkinToneSelector.vue'
-import HeroiconStyleSelector from './HeroiconStyleSelector.vue'
+import IconStyleSelector from './IconStyleSelector.vue'
 // 動態導入所有 Heroicons
 import * as HeroiconsOutline from '@heroicons/vue/outline'
 import * as HeroiconsSolid from '@heroicons/vue/solid'
@@ -304,7 +304,7 @@ export default {
   components: {
     VirtualScroll,
     SkinToneSelector,
-    HeroiconStyleSelector,
+    IconStyleSelector,
     // 註冊所有 Heroicons (Outline 和 Solid)
     ...HeroiconsOutline,
     ...HeroiconsSolid
@@ -339,7 +339,7 @@ export default {
     const iconType = ref(props.iconType || '')
     const emojisLoaded = ref(false)
     const selectedSkinTone = ref('') // 預設膚色
-    const selectedHeroiconStyle = ref('outline') // 預設 Heroicon 樣式
+    const selectedIconStyle = ref('outline') // 預設圖標樣式
     const fileInput = ref(null)
     const uploadedImage = ref(null)
     const isDragging = ref(false)
@@ -364,7 +364,7 @@ export default {
       if (newVal && props.iconType === 'heroicons' && newVal.includes(':')) {
         const [style, iconName] = newVal.split(':')
         if (style === 'solid' || style === 'outline') {
-          selectedHeroiconStyle.value = style
+          selectedIconStyle.value = style
           selectedIcon.value = newVal
         }
       }
@@ -377,7 +377,7 @@ export default {
     })
     
     // 使用完整的 Heroicons 圖標清單 (230個圖標)
-    const heroicons = heroiconsOutline
+    const icons = heroiconsOutline
     
     // 儲存 Heroicons 組件的引用
     const HeroiconsComponents = {
@@ -528,7 +528,7 @@ export default {
       let iconValue = icon
       if (type === 'heroicons') {
         // 在圖標名稱前加上樣式前綴
-        iconValue = `${selectedHeroiconStyle.value}:${icon}`
+        iconValue = `${selectedIconStyle.value}:${icon}`
       }
       selectedIcon.value = iconValue
       iconType.value = type
@@ -567,17 +567,17 @@ export default {
       return applySkinTone(emojiData.emoji, selectedSkinTone.value)
     }
     
-    // 獲取 Heroicon 組件（根據樣式選擇）
-    const getHeroiconComponent = (componentName) => {
-      const components = selectedHeroiconStyle.value === 'solid' 
+    // 獲取圖標組件（根據樣式選擇）
+    const getIconComponent = (componentName) => {
+      const components = selectedIconStyle.value === 'solid' 
         ? HeroiconsSolid 
         : HeroiconsOutline
       return components[componentName] || HeroiconsOutline[componentName]
     }
     
-    // 處理 Heroicon 樣式變更
-    const handleHeroiconStyleChange = (style) => {
-      selectedHeroiconStyle.value = style
+    // 處理圖標樣式變更
+    const handleIconStyleChange = (style) => {
+      selectedIconStyle.value = style
     }
     
     // 觸發檔案上傳
@@ -702,10 +702,10 @@ export default {
     })
     
     // 篩選後的圖標列表
-    const filteredHeroicons = computed(() => {
-      if (!searchQuery.value) return heroicons
+    const filteredIcons = computed(() => {
+      if (!searchQuery.value) return icons
       const query = searchQuery.value.toLowerCase()
-      return heroicons.filter(icon => 
+      return icons.filter(icon => 
         icon.name.toLowerCase().includes(query)
       )
     })
@@ -785,7 +785,7 @@ export default {
       if (!searchQuery.value) return false
       
       if (activeTab.value === 'icons') {
-        return filteredHeroicons.value.length === 0
+        return filteredIcons.value.length === 0
       } else if (activeTab.value === 'emoji') {
         return filteredEmojis.value.length === 0
       }
@@ -851,10 +851,10 @@ export default {
       calculatePosition,
       selectedIcon,
       iconType,
-      heroicons,
+      icons,
       emojis: emojis,
       emojisLoaded,
-      filteredHeroicons,
+      filteredIcons,
       filteredEmojis,
       isSearchEmpty,
       togglePicker,
@@ -865,9 +865,9 @@ export default {
       selectedSkinTone,
       handleSkinToneChange,
       getEmojiWithSkinTone,
-      getHeroiconComponent,
-      selectedHeroiconStyle,
-      handleHeroiconStyleChange,
+      getIconComponent,
+      selectedIconStyle,
+      handleIconStyleChange,
       fileInput,
       triggerFileUpload,
       handleFileUpload,

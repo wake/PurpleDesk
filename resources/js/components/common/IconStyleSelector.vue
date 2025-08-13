@@ -94,7 +94,7 @@ import { AdjustmentsIcon as OutlineAdjustmentsIcon } from '@heroicons/vue/outlin
 import { AdjustmentsIcon as SolidAdjustmentsIcon } from '@heroicons/vue/solid'
 
 export default {
-  name: 'HeroiconStyleSelector',
+  name: 'IconStyleSelector',
   components: {
     OutlineAdjustmentsIcon,
     SolidAdjustmentsIcon
