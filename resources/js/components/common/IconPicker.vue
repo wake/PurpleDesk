@@ -101,7 +101,7 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Filter..."
-                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                class="icon-filter w-full text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
               <button
                 v-if="searchQuery"
@@ -112,7 +112,7 @@
               </button>
             </div>
             <!-- 功能按鈕組 -->
-            <div class="flex space-x-2">
+            <div class="flex space-x-1">
               <!-- Heroicon 樣式選擇器 -->
               <HeroiconStyleSelector
                 v-if="activeTab === 'icons'"
@@ -185,17 +185,30 @@
                 :buffer="2"
               >
                 <template #row="{ items }">
-                  <template v-for="emoji in items" :key="emoji ? emoji.name : Math.random()">
-                    <button
-                      v-if="emoji"
-                      @click.stop="selectIcon(getEmojiWithSkinTone(emoji), 'emoji')"
-                      :class="selectedIcon === getEmojiWithSkinTone(emoji) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
-                      class="emoji-button p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-                      :title="emoji.name"
+                  <template v-for="(item, index) in items" :key="item ? (item.name || item.emoji || item.categoryId || index) : index">
+                    <!-- 分類標題 -->
+                    <div 
+                      v-if="item && item.type === 'category-header'"
+                      class="category-header w-full flex items-center space-x-2 pt-3 pb-1 text-sm font-bold text-gray-400"
                     >
-                      <span class="text-xl">{{ getEmojiWithSkinTone(emoji) }}</span>
+                      <span>{{ item.name }}</span>
+                      <div class="flex-1 h-px mt-1 me-2 ml-2 bg-gray-200"></div>
+                    </div>
+                    
+                    <!-- Emoji 按鈕 -->
+                    <button
+                      v-else-if="item && item.emoji"
+                      @click.stop="selectIcon(getEmojiWithSkinTone(item), 'emoji')"
+                      :class="selectedIcon === getEmojiWithSkinTone(item) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
+                      class="emoji-button p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                      :title="item.name"
+                    >
+                      <span class="text-xl">{{ getEmojiWithSkinTone(item) }}</span>
                     </button>
-                    <div v-else class="p-1"></div>
+                    
+                    <!-- 空白佔位符（用於填充完整行） -->
+                    <div v-else-if="item && item.type === 'row-filler'" class="p-1"></div>
+                    
                   </template>
                 </template>
               </VirtualScroll>
@@ -278,6 +291,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
 import { applySkinTone, supportsSkinTone, removeSkinTone, getCurrentSkinTone } from '../../utils/emojiSkinTone.js'
 import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
+import { EMOJI_CATEGORY_INFO } from '../../utils/emojis/index.js'
 import VirtualScroll from './VirtualScroll.vue'
 import SkinToneSelector from './SkinToneSelector.vue'
 import HeroiconStyleSelector from './HeroiconStyleSelector.vue'
@@ -696,14 +710,74 @@ export default {
       )
     })
     
-    const filteredEmojis = computed(() => {
+    // 按分類組織的 emoji 資料（包含分類標題）
+    const groupedEmojis = computed(() => {
       // 確保 emojis 是陣列，處理 Proxy 情況
       const emojiArray = Array.isArray(emojis) ? emojis : []
-      if (!searchQuery.value) return emojiArray
-      const query = searchQuery.value.toLowerCase()
-      return emojiArray.filter(emoji => 
-        emoji && emoji.name && emoji.name.toLowerCase().includes(query)
-      )
+      
+      // 如果有搜尋查詢，返回篩選後的扁平陣列（不分組）
+      if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase()
+        return emojiArray.filter(emoji => 
+          emoji && emoji.name && emoji.name.toLowerCase().includes(query)
+        )
+      }
+      
+      // 按分類分組 emoji
+      const grouped = {}
+      emojiArray.forEach(emoji => {
+        if (emoji && emoji.categoryId) {
+          if (!grouped[emoji.categoryId]) {
+            grouped[emoji.categoryId] = []
+          }
+          grouped[emoji.categoryId].push(emoji)
+        }
+      })
+      
+      
+      // 轉換為包含標題的線性陣列，確保分類標題總是在行開頭
+      const result = []
+      const categoryOrder = ['smileys_emotion', 'people_body', 'animals_nature', 'food_drink', 'travel_places', 'activities', 'objects', 'symbols', 'flags']
+      
+      categoryOrder.forEach(categoryId => {
+        if (grouped[categoryId] && grouped[categoryId].length > 0) {
+          const categoryInfo = EMOJI_CATEGORY_INFO[categoryId]
+          
+          // 確保當前位置是 10 的倍數，這樣標題會在新行開頭
+          const currentLength = result.length
+          const remainderInRow = currentLength % 10
+          if (remainderInRow !== 0) {
+            // 添加空白項目填滿當前行
+            const fillersNeeded = 10 - remainderInRow
+            for (let i = 0; i < fillersNeeded; i++) {
+              result.push({ type: 'row-filler' })
+            }
+          }
+          
+          // 添加分類標題項目，讓 VirtualScroll 把它當作獨立的一行處理
+          result.push({
+            type: 'category-header',
+            categoryId: categoryId,
+            name: categoryInfo.name,
+            icon: categoryInfo.icon
+          })
+          
+          // 添加 9 個空項目來填滿這一行，這樣標題就會獨佔一行
+          for (let i = 1; i < 10; i++) {
+            result.push({ type: 'category-header-filler' })
+          }
+          
+          // 添加該分類的 emoji
+          result.push(...grouped[categoryId])
+        }
+      })
+      
+      
+      return result
+    })
+    
+    const filteredEmojis = computed(() => {
+      return groupedEmojis.value
     })
     
     // 檢查搜尋結果是否為空
@@ -840,9 +914,19 @@ export default {
   width: 30px;
   height: 30px;
 }
+
+/* 分類標題行樣式 */
+.category-header {
+  grid-column: 1 / -1;
+}
+
 .icon-button svg {
   width: 1.35rem;
   height: 1.35rem;
+}
+
+.icon-filter {
+  padding: 0.375rem 0.625rem;
 }
 </style>
 
@@ -850,5 +934,8 @@ export default {
 .icon-grid-wrapper .virtual-scroll-container {
   padding-left: 0.4rem;
   padding-top: 0.3rem;
+}
+.grid-row.first-row .category-header {
+  @apply pt-1;
 }
 </style>

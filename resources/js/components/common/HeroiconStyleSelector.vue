@@ -158,7 +158,7 @@ export default {
 
 <style scoped>
 .relative > button {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
 }
 </style>
