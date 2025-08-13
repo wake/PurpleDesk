@@ -361,7 +361,7 @@ export default {
     const iconPanel = ref(null)
     const iconPickerRef = ref(null)
     const searchQuery = ref('')
-    const activeTab = ref('initials') // 預設為字母頁簽
+    const activeTab = ref('emoji') // 預設為 emoji 頁簽
     const panelPosition = ref({ top: '0px', left: '0px' })
     const selectedIcon = ref(props.modelValue)
     const iconType = ref(props.iconType || '')
@@ -529,18 +529,18 @@ export default {
     const togglePicker = async () => {
       isOpen.value = !isOpen.value
       if (isOpen.value) {
-        // 打開時根據當前 iconType 設定正確的標籤頁
-        if (iconType.value === 'initials') {
+        // 打開時根據當前 iconType 設定正確的標籤頁，但如果沒有選中任何圖標，預設為 emoji
+        if (selectedIcon.value && iconType.value === 'initials') {
           activeTab.value = 'initials'
           // 如果有選中的字母，設定到輸入框
           if (selectedIcon.value) {
             customInitials.value = selectedIcon.value
           }
-        } else if (iconType.value === 'heroicons') {
+        } else if (selectedIcon.value && (iconType.value === 'heroicons' || iconType.value === 'bootstrap')) {
           activeTab.value = 'icons'
-        } else if (iconType.value === 'upload') {
+        } else if (selectedIcon.value && iconType.value === 'upload') {
           activeTab.value = 'upload'
-        } else if (iconType.value === 'emoji') {
+        } else if (selectedIcon.value && iconType.value === 'emoji') {
           activeTab.value = 'emoji'
           // 如果當前選中的是 emoji，檢測它的膚色
           if (selectedIcon.value) {
@@ -548,8 +548,8 @@ export default {
             selectedSkinTone.value = detectedSkinTone
           }
         } else {
-          // 預設顯示字母頁簽
-          activeTab.value = 'initials'
+          // 預設顯示 emoji 頁簽（沒有選中圖標或未知類型時）
+          activeTab.value = 'emoji'
         }
         await nextTick()
         calculatePosition()
