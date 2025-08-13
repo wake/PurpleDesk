@@ -376,15 +376,41 @@ export default {
       
       // 如果 hidePreview 為 true，嘗試找到父元素作為定位參考
       if (props.hidePreview && iconPickerRef.value) {
-        // 尋找最近的有實際尺寸的父元素（通常是 ImageSelector 的預覽區域）
+        // 尋找最近的有實際尺寸的父元素，特別是 ImageSelector 的預覽區域
         let parent = iconPickerRef.value.parentElement
-        while (parent) {
+        let searchCount = 0
+        while (parent && parent !== document.body && searchCount < 10) {
+          searchCount++
           const rect = parent.getBoundingClientRect()
-          if (rect.width > 0 && rect.height > 0) {
-            targetElement = parent
-            break
+          const classList = parent.classList.toString()
+          
+          // 尋找有明顯尺寸且可能是預覽容器的元素
+          if (rect.width >= 48 && rect.height >= 48) {
+            // 檢查是否包含預覽相關的類名
+            if (classList.includes('group') || classList.includes('relative') || 
+                classList.includes('flex') || classList.includes('h-') || 
+                classList.includes('w-')) {
+              targetElement = parent
+              break
+            }
           }
           parent = parent.parentElement
+        }
+        
+        // 如果沒有找到合適的父元素，回退到使用 iconPickerRef
+        if (targetElement === iconPickerRef.value) {
+          parent = iconPickerRef.value.parentElement
+          searchCount = 0
+          while (parent && parent !== document.body && searchCount < 10) {
+            searchCount++
+            const rect = parent.getBoundingClientRect()
+            
+            if (rect.width >= 48 && rect.height >= 48) {
+              targetElement = parent
+              break
+            }
+            parent = parent.parentElement
+          }
         }
       }
       
@@ -401,16 +427,29 @@ export default {
       let top = rect.bottom + 5
       let left = rect.left
       
-      // 優先顯示在下方，只有在下方空間真的不足時才顯示在上方
+      // 智慧定位邏輯
       const spaceBelow = viewportHeight - rect.bottom
       const spaceAbove = rect.top
       
-      if (spaceBelow < panelHeight && spaceAbove > spaceBelow) {
-        // 只有當上方空間比下方多時才顯示在上方
-        top = rect.top - panelHeight - 5
-      } else if (spaceBelow < panelHeight) {
-        // 如果下方空間不足但仍要顯示在下方，調整高度
+      // 檢查是否可以在上方顯示（需要足夠空間且不會產生負值）
+      const canFitAbove = spaceAbove >= panelHeight + 10
+      const canFitBelow = spaceBelow >= Math.min(panelHeight, 200) // 至少需要 200px 或更少
+      
+      if (spaceBelow >= panelHeight) {
+        // 下方有足夠空間，優先使用下方
         top = rect.bottom + 5
+      } else if (canFitAbove && spaceAbove > spaceBelow) {
+        // 上方有足夠空間且比下方空間大
+        top = rect.top - panelHeight - 5
+      } else {
+        // 都沒有足夠空間，選擇空間較大的一邊並調整位置
+        if (spaceAbove > spaceBelow) {
+          // 使用上方，但確保不會產生負值
+          top = Math.max(10, rect.top - panelHeight - 5)
+        } else {
+          // 使用下方
+          top = rect.bottom + 5
+        }
       }
       
       // 檢查是否超出視窗右邊
