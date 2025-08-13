@@ -18,18 +18,44 @@ class Team extends Model
         'organization_id',
     ];
 
-    protected $appends = ['avatar_url'];
+    protected $appends = ['avatar_data', 'avatar_url'];
+    
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'avatar' => 'json',
+        ];
+    }
 
     /**
-     * 取得團隊頭像完整 URL
+     * 取得頭像數據（自動生成預設頭像）
+     */
+    public function getAvatarDataAttribute()
+    {
+        if (!$this->avatar) {
+            return \App\Helpers\AvatarHelper::generateTeamAvatarDefault();
+        }
+        
+        return $this->avatar;
+    }
+    
+    /**
+     * 取得團隊頭像完整 URL（僅適用於圖片類型）
      */
     public function getAvatarUrlAttribute()
     {
-        if (!$this->avatar) {
-            return null;
+        $avatarData = $this->avatar_data;
+        
+        if ($avatarData && $avatarData['type'] === 'image' && isset($avatarData['path'])) {
+            return asset('storage/' . $avatarData['path']);
         }
         
-        return asset('storage/' . $this->avatar);
+        return null;
     }
 
     /**

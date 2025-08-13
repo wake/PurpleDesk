@@ -48,7 +48,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $appends = ['avatar_url'];
+    protected $appends = ['avatar_data', 'avatar_url'];
 
     /**
      * Get the attributes that should be cast.
@@ -65,19 +65,34 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'birth_date' => 'date',
             'last_login_at' => 'datetime',
+            'avatar' => 'json',
         ];
     }
 
     /**
-     * 取得頭像完整 URL
+     * 取得頭像數據（自動生成預設頭像）
+     */
+    public function getAvatarDataAttribute()
+    {
+        if (!$this->avatar) {
+            return \App\Helpers\AvatarHelper::generateUserAvatarDefault($this->full_name ?: $this->display_name ?: $this->account);
+        }
+        
+        return $this->avatar;
+    }
+    
+    /**
+     * 取得頭像完整 URL（僅適用於圖片類型）
      */
     public function getAvatarUrlAttribute()
     {
-        if (!$this->avatar) {
-            return null;
+        $avatarData = $this->avatar_data;
+        
+        if ($avatarData && $avatarData['type'] === 'image' && isset($avatarData['path'])) {
+            return asset('storage/' . $avatarData['path']);
         }
         
-        return asset('storage/' . $this->avatar);
+        return null;
     }
 
     /**
