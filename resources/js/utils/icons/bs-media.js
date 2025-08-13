@@ -59,7 +59,7 @@ export const mediaIcons = [
   { name: 'Volume Up Fill', class: 'bi-volume-up-fill' },
   
   // 收音機與廣播
-  { name: 'Radio', class: 'bi-radio' },
+  { name: 'Circle', class: 'bi-circle' },
   { name: 'Broadcast', class: 'bi-broadcast' },
   { name: 'Broadcast Pin', class: 'bi-broadcast-pin' },
   
@@ -90,7 +90,7 @@ export const mediaIcons = [
   // 媒體裝置
   { name: 'Boombox', class: 'bi-boombox' },
   { name: 'Boombox Fill', class: 'bi-boombox-fill' },
-  { name: 'Speakers', class: 'bi-speakers' },
+  { name: 'Speaker', class: 'bi-speaker' },
   
   // 攝影與錄影
   { name: 'Camera Reels', class: 'bi-camera-reels' },
@@ -99,8 +99,6 @@ export const mediaIcons = [
   
   // 耳機
   { name: 'Headphones', class: 'bi-headphones' },
-  { name: 'Headphones Bluetooth', class: 'bi-headphones-bluetooth' },
-  { name: 'Headphones Fill', class: 'bi-headphones-fill' },
   
   // 音符
   { name: 'Music Note', class: 'bi-music-note' },
@@ -155,7 +153,7 @@ export const mediaIcons = [
   
   // 直播與串流（新增）
   { name: 'Cast', class: 'bi-cast' },
-  { name: 'Airplay', class: 'bi-airplay' },
+  { name: 'Cast', class: 'bi-cast' },
   
   // 音訊波形（新增）
   { name: 'Soundwave', class: 'bi-soundwave' }

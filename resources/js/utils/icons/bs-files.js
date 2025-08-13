@@ -236,7 +236,7 @@ export const filesIcons = [
   { name: 'Book', class: 'bi-book' },
   { name: 'Book Fill', class: 'bi-book-fill' },
   { name: 'Book Half', class: 'bi-book-half' },
-  { name: 'Books', class: 'bi-books' },
+  { name: 'Book', class: 'bi-book' },
   { name: 'Journal', class: 'bi-journal' },
   { name: 'Journal Album', class: 'bi-journal-album' },
   { name: 'Journal Arrow Down', class: 'bi-journal-arrow-down' },

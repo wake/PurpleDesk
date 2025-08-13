@@ -136,7 +136,7 @@ export const communicationsIcons = [
   // 廣播與發布
   { name: 'Megaphone', class: 'bi-megaphone' },
   { name: 'Megaphone Fill', class: 'bi-megaphone-fill' },
-  { name: 'Bullhorn', class: 'bi-bullhorn' },
+  { name: 'Megaphone', class: 'bi-megaphone' },
   { name: 'Soundwave', class: 'bi-soundwave' },
   
   // 社交平台與分享
@@ -161,7 +161,7 @@ export const communicationsIcons = [
   // 網路與連結
   { name: 'Link', class: 'bi-link' },
   { name: 'Link 45deg', class: 'bi-link-45deg' },
-  { name: 'Unlink', class: 'bi-unlink' },
+  { name: 'Link 45deg', class: 'bi-link-45deg' },
   { name: 'Globe', class: 'bi-globe' },
   { name: 'Globe2', class: 'bi-globe2' },
   { name: 'Globe Americas', class: 'bi-globe-americas' },
@@ -213,8 +213,8 @@ export const communicationsIcons = [
   { name: 'Cast', class: 'bi-cast' },
   
   // 聯絡人與通訊錄
-  { name: 'Telephone Book', class: 'bi-telephone-book' },
-  { name: 'Telephone Book Fill', class: 'bi-telephone-book-fill' },
+  { name: 'Journal Text', class: 'bi-journal-text' },
+  { name: 'Journal Bookmark Fill', class: 'bi-journal-bookmark-fill' },
   { name: 'Journal Text', class: 'bi-journal-text' },
   { name: 'Journal Bookmark', class: 'bi-journal-bookmark' },
   { name: 'Journal Bookmark Fill', class: 'bi-journal-bookmark-fill' },
@@ -304,8 +304,8 @@ export const communicationsIcons = [
   { name: 'Opencollective', class: 'bi-opencollective' },
   { name: 'Unity', class: 'bi-unity' },
   { name: 'Yelp', class: 'bi-yelp' },
-  { name: 'Sign', class: 'bi-sign' },
-  { name: 'Signal', class: 'bi-signal' },
+  { name: 'Signpost', class: 'bi-signpost' },
+  { name: 'Signpost', class: 'bi-signpost' },
   
   // 額外通訊圖標
   { name: 'Broadcast', class: 'bi-broadcast' },
