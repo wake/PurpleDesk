@@ -58,6 +58,10 @@ export default {
     buffer: {
       type: Number,
       default: 2
+    },
+    preserveScrollPosition: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props) {
@@ -120,9 +124,9 @@ export default {
       scrollTop.value = e.target.scrollTop
     }
     
-    // 監聽項目變化，重置滾動位置
+    // 監聽項目變化，根據 preserveScrollPosition 決定是否重置滾動位置
     watch(() => props.items, () => {
-      if (scrollContainer.value) {
+      if (!props.preserveScrollPosition && scrollContainer.value) {
         scrollContainer.value.scrollTop = 0
         scrollTop.value = 0
       }

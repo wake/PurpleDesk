@@ -227,6 +227,7 @@
                 :row-height="36"
                 :container-height="176"
                 :buffer="2"
+                :preserve-scroll-position="true"
               >
                 <template #row="{ items }">
                   <template v-for="(item, index) in items" :key="item ? (item.name || item.component || item.class || item.categoryId || index) : index">
