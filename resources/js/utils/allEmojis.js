@@ -14,6 +14,13 @@ let allEmojisCache = [];
 let isLoading = false;
 let loadPromise = null;
 
+// 清除快取函數（用於重新載入）
+export function clearEmojiCache() {
+  allEmojisCache = [];
+  isLoading = false;
+  loadPromise = null;
+}
+
 /**
  * 載入所有 emoji 分類並整合成單一陣列
  */
@@ -36,20 +43,39 @@ async function loadAllEmojis() {
       for (const category of categories) {
         try {
           const emojis = await emojiManager.getEmojisByCategory(category.id);
-          // 將每個 emoji 加入陣列，保留分類資訊
-          // 過濾掉包含膚色修飾符的變體，只保留基礎 emoji
+          // 過濾 emoji：只保留基礎版本（無膚色修飾符）
+          const baseEmojis = new Map(); // 使用 Map 來避免重複的基礎 emoji
+          
           emojis.forEach(emoji => {
-            // 檢查是否包含膚色修飾符
-            if (!SKIN_TONE_REGEX.test(emoji.emoji)) {
-              allEmojis.push({
-                emoji: emoji.emoji,
-                name: emoji.name,
-                category: category.name,
-                categoryId: category.id,
-                subgroup: emoji.subgroup
-              });
+            // 移除膚色修飾符，取得基礎 emoji
+            const baseEmoji = emoji.emoji.replace(SKIN_TONE_REGEX, '');
+            
+            // 只保留第一個遇到的基礎版本（通常是無膚色修飾符的）
+            if (!baseEmojis.has(baseEmoji)) {
+              // 優先使用原本沒有膚色修飾符的版本
+              if (!SKIN_TONE_REGEX.test(emoji.emoji)) {
+                baseEmojis.set(baseEmoji, {
+                  emoji: emoji.emoji,
+                  name: emoji.name,
+                  category: category.name,
+                  categoryId: category.id,
+                  subgroup: emoji.subgroup
+                });
+              } else {
+                // 如果原始就有膚色修飾符，創建基礎版本
+                baseEmojis.set(baseEmoji, {
+                  emoji: baseEmoji,
+                  name: emoji.name.replace(/: (light|medium-light|medium|medium-dark|dark) skin tone/, ''),
+                  category: category.name,
+                  categoryId: category.id,
+                  subgroup: emoji.subgroup
+                });
+              }
             }
           });
+          
+          // 將基礎 emoji 加入結果陣列
+          allEmojis.push(...baseEmojis.values());
         } catch (error) {
           console.warn(`載入 ${category.name} 分類失敗:`, error);
         }
