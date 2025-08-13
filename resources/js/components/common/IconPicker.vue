@@ -192,7 +192,7 @@
                       class="category-header w-full flex items-center space-x-2 pt-3 pb-1 text-sm font-bold text-gray-400"
                     >
                       <span>{{ item.name }}</span>
-                      <div class="flex-1 h-px mt-1 me-2 ml-2 bg-gray-200"></div>
+                      <div class="flex-1 h-px me-2 ml-2 bg-gray-200"></div>
                     </div>
                     
                     <!-- Emoji 按鈕 -->
@@ -229,19 +229,45 @@
                 :buffer="2"
               >
                 <template #row="{ items }">
-                  <button
-                    v-for="icon in items"
-                    :key="icon.name"
-                    @click.stop="selectIcon(icon.component, 'heroicons')"
-                    :class="isIconSelected(icon.component) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
-                    class="icon-button p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-                    :title="icon.name"
-                  >
-                    <component 
-                      :is="getIconComponent(icon.component)" 
-                      class="w-5 h-5 mx-auto text-gray-600" 
-                    />
-                  </button>
+                  <template v-for="(item, index) in items" :key="item ? (item.name || item.component || item.class || item.categoryId || index) : index">
+                    <!-- 分類標題 -->
+                    <div 
+                      v-if="item && item.type === 'category-header'"
+                      class="category-header w-full flex items-center space-x-2 pt-3 pb-1 text-sm font-bold text-gray-400"
+                    >
+                      <span>{{ item.name }}</span>
+                      <div class="flex-1 h-px me-2 ml-2 bg-gray-200"></div>
+                    </div>
+                    
+                    <!-- Hero Icons 按鈕 -->
+                    <button
+                      v-else-if="item && item.component"
+                      @click.stop="selectIcon(item.component, 'heroicons')"
+                      :class="isIconSelected(item.component) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
+                      class="icon-button p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                      :title="item.name"
+                    >
+                      <component 
+                        :is="getIconComponent(item.component)" 
+                        class="w-5 h-5 mx-auto text-gray-600" 
+                      />
+                    </button>
+                    
+                    <!-- Bootstrap Icons 按鈕 -->
+                    <button
+                      v-else-if="item && item.class"
+                      @click.stop="selectIcon(item.class, 'bootstrap')"
+                      :class="isIconSelected(item.class) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
+                      class="icon-button p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                      :title="item.name"
+                    >
+                      <i :class="item.class + ' text-gray-600'" style="font-size: 1.25rem;"></i>
+                    </button>
+
+                    <!-- 空白佔位符（用於填充完整行） -->
+                    <div v-else-if="item && item.type === 'row-filler'" class="p-1"></div>
+                    
+                  </template>
                 </template>
               </VirtualScroll>
             </div>
@@ -292,6 +318,7 @@ import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
 import { applySkinTone, supportsSkinTone, removeSkinTone, getCurrentSkinTone } from '../../utils/emojiSkinTone.js'
 import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
 import { EMOJI_CATEGORY_INFO } from '../../utils/emojis/index.js'
+import bootstrapIconsIndex, { categoryMap as BOOTSTRAP_CATEGORY_INFO } from '../../utils/icons/index.js'
 import VirtualScroll from './VirtualScroll.vue'
 import SkinToneSelector from './SkinToneSelector.vue'
 import IconStyleSelector from './IconStyleSelector.vue'
@@ -376,8 +403,24 @@ export default {
       }
     })
     
-    // 使用完整的 Heroicons 圖標清單 (230個圖標)
-    const icons = heroiconsOutline
+    // 合併 Heroicons 和 Bootstrap Icons
+    const heroIcons = heroiconsOutline
+    const bsIcons = ref([])
+    
+    // 非同步載入 Bootstrap Icons
+    const loadBootstrapIcons = async () => {
+      try {
+        await bootstrapIconsIndex.loadAllIcons()
+        bsIcons.value = bootstrapIconsIndex.getAllLoadedIcons()
+      } catch (error) {
+        console.error('Failed to load Bootstrap Icons:', error)
+      }
+    }
+    
+    // 在組件掛載時載入
+    onMounted(() => {
+      loadBootstrapIcons()
+    })
     
     // 儲存 Heroicons 組件的引用
     const HeroiconsComponents = {
@@ -524,12 +567,16 @@ export default {
     
     
     const selectIcon = (icon, type) => {
-      // 如果是 Heroicons，儲存樣式資訊
       let iconValue = icon
+      
       if (type === 'heroicons') {
         // 在圖標名稱前加上樣式前綴
         iconValue = `${selectedIconStyle.value}:${icon}`
+      } else if (type === 'bootstrap') {
+        // Bootstrap Icons 直接使用 class 名稱
+        iconValue = icon
       }
+      
       selectedIcon.value = iconValue
       iconType.value = type
       
@@ -701,14 +748,156 @@ export default {
       }
     })
     
-    // 篩選後的圖標列表
-    const filteredIcons = computed(() => {
-      if (!searchQuery.value) return icons
-      const query = searchQuery.value.toLowerCase()
-      return icons.filter(icon => 
-        icon.name.toLowerCase().includes(query)
-      )
+    // 按分類組織的圖標資料（包含分類標題）
+    const groupedIcons = computed(() => {
+      // 如果有搜尋查詢，返回篩選後的扁平陣列（不分組）
+      if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase()
+        const filteredHeroIcons = heroIcons.filter(icon => 
+          icon.name.toLowerCase().includes(query) || icon.component.toLowerCase().includes(query)
+        )
+        const filteredBsIcons = bsIcons.value.filter(icon => 
+          icon.name.toLowerCase().includes(query) || icon.class.toLowerCase().includes(query)
+        )
+        return [...filteredHeroIcons, ...filteredBsIcons]
+      }
+      
+      const result = []
+      
+      // 1. 添加 Heroicons 分類標題和圖標
+      if (heroIcons.length > 0) {
+        // 確保當前位置是 10 的倍數
+        let currentLength = result.length
+        let remainderInRow = currentLength % 10
+        if (remainderInRow !== 0) {
+          const fillersNeeded = 10 - remainderInRow
+          for (let i = 0; i < fillersNeeded; i++) {
+            result.push({ type: 'row-filler' })
+          }
+        }
+        
+        // 添加 Heroicons 標題
+        result.push({
+          type: 'category-header',
+          categoryId: 'heroicons',
+          name: 'Hero Icons',
+          icon: '✨'
+        })
+        
+        // 添加 9 個空項目來填滿標題行
+        for (let i = 1; i < 10; i++) {
+          result.push({ type: 'category-header-filler' })
+        }
+        
+        // 添加 Heroicons
+        result.push(...heroIcons)
+      }
+      
+      // 2. 按分類添加 Bootstrap Icons
+      const categoryOrder = ['general', 'ui', 'communications', 'files', 'media', 'people', 'alphanumeric', 'others']
+      
+      categoryOrder.forEach(categoryId => {
+        const categoryIcons = bsIcons.value.filter(icon => icon.category === categoryId)
+        
+        if (categoryIcons.length > 0) {
+          const categoryInfo = BOOTSTRAP_CATEGORY_INFO[categoryId]
+          
+          // 確保當前位置是 10 的倍數
+          const currentLength = result.length
+          const remainderInRow = currentLength % 10
+          if (remainderInRow !== 0) {
+            const fillersNeeded = 10 - remainderInRow
+            for (let i = 0; i < fillersNeeded; i++) {
+              result.push({ type: 'row-filler' })
+            }
+          }
+          
+          // 添加分類標題
+          result.push({
+            type: 'category-header',
+            categoryId: categoryId,
+            name: categoryInfo.name,
+            icon: getCategoryIcon(categoryId)
+          })
+          
+          // 添加 9 個空項目來填滿標題行
+          for (let i = 1; i < 10; i++) {
+            result.push({ type: 'category-header-filler' })
+          }
+          
+          // 根據選擇的樣式過濾 Bootstrap Icons
+          const filteredCategoryIcons = filterBootstrapIconsByStyle(categoryIcons, selectedIconStyle.value)
+          result.push(...filteredCategoryIcons)
+        }
+      })
+      
+      return result
     })
+    
+    const filteredIcons = computed(() => {
+      return groupedIcons.value
+    })
+    
+    // Bootstrap Icons 分類圖標映射
+    const getCategoryIcon = (categoryId) => {
+      const iconMap = {
+        'general': '🏠',
+        'ui': '🎛️',  
+        'communications': '💬',
+        'files': '📁',
+        'media': '🎵',
+        'people': '👤',
+        'alphanumeric': '🔤', 
+        'others': '⚙️'
+      }
+      return iconMap[categoryId] || '📦'
+    }
+    
+    // 根據樣式過濾 Bootstrap Icons
+    const filterBootstrapIconsByStyle = (icons, style) => {
+      if (!icons || icons.length === 0) return []
+      
+      // 建立圖標映射來分析變體關係
+      const iconMap = new Map()
+      icons.forEach(icon => {
+        const className = icon.class || ''
+        iconMap.set(className, icon)
+      })
+      
+      return icons.filter(icon => {
+        const className = icon.class || ''
+        const isFillIcon = className.includes('-fill')
+        
+        if (style === 'outline') {
+          if (isFillIcon) {
+            // 如果是 fill 圖標，不顯示
+            return false
+          } else {
+            // 基礎圖標或特殊變體，都顯示
+            return true
+          }
+        } else if (style === 'solid') {
+          if (isFillIcon) {
+            // 顯示所有 -fill 圖標
+            return true
+          } else {
+            // 基礎圖標：檢查是否有對應的 fill 版本
+            const fillVersion = className + '-fill'
+            const hasFillVersion = iconMap.has(fillVersion)
+            
+            if (hasFillVersion) {
+              // 如果有 fill 版本，不顯示基礎版本（優先顯示 fill）
+              return false
+            } else {
+              // 沒有 fill 版本的特殊變體，顯示
+              return true
+            }
+          }
+        }
+        
+        return true // 預設顯示所有
+      })
+    }
     
     // 按分類組織的 emoji 資料（包含分類標題）
     const groupedEmojis = computed(() => {
@@ -851,7 +1040,8 @@ export default {
       calculatePosition,
       selectedIcon,
       iconType,
-      icons,
+      heroIcons,
+      bsIcons,
       emojis: emojis,
       emojisLoaded,
       filteredIcons,
@@ -889,12 +1079,18 @@ export default {
         }
         return icon
       },
-      isIconSelected: (iconComponent) => {
-        // 檢查是否選中（忽略樣式前綴）
-        const currentIcon = selectedIcon.value && selectedIcon.value.includes(':') 
-          ? selectedIcon.value.split(':')[1] 
-          : selectedIcon.value
-        return currentIcon === iconComponent
+      isIconSelected: (iconIdentifier) => {
+        // 檢查是否選中
+        if (!selectedIcon.value) return false
+        
+        // 對於 Heroicons，忽略樣式前綴進行比較
+        if (selectedIcon.value.includes(':') && iconType.value === 'heroicons') {
+          const currentIcon = selectedIcon.value.split(':')[1]
+          return currentIcon === iconIdentifier
+        }
+        
+        // 對於 Bootstrap Icons 或其他類型，直接比較
+        return selectedIcon.value === iconIdentifier
       }
     }
   }
