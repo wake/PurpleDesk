@@ -83,20 +83,20 @@ async function loadAllEmojis() {
           
           // 記錄過濾統計（僅開發模式）
           const filteredCount = categoryEmojis.length - filteredEmojis.length;
-          if (filteredCount > 0 && process.env.NODE_ENV === 'development') {
-            console.log(`🚫 ${category.name} 過濾了 ${filteredCount} 個不相容的 emoji`);
-          }
+          // if (filteredCount > 0 && process.env.NODE_ENV === 'development') {
+          //   console.log(`🚫 ${category.name} 過濾了 ${filteredCount} 個不相容的 emoji`);
+          // }
         } catch (error) {
           console.warn(`載入 ${category.name} 分類失敗:`, error);
         }
       }
 
       allEmojisCache = allEmojis;
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`✅ 成功載入 ${allEmojis.length} 個相容的 emoji`);
-        console.log(`🛡️ 過濾統計: ${FILTER_STATS.actualProblems} 個不相容 emoji 已被過濾`);
-        console.log(`📊 過濾準確度: ${FILTER_STATS.predictionAccuracy}% (測試樣本: ${FILTER_STATS.totalTested})`);
-      }
+      // if (process.env.NODE_ENV === 'development') {
+      //   console.log(`✅ 成功載入 ${allEmojis.length} 個相容的 emoji`);
+      //   console.log(`🛡️ 過濾統計: ${FILTER_STATS.actualProblems} 個不相容 emoji 已被過濾`);
+      //   console.log(`📊 過濾準確度: ${FILTER_STATS.predictionAccuracy}% (測試樣本: ${FILTER_STATS.totalTested})`);
+      // }
       return allEmojis;
     } catch (error) {
       console.error('載入 emoji 失敗:', error);
