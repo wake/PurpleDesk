@@ -94,7 +94,7 @@ import { AdjustmentsIcon as OutlineAdjustmentsIcon } from '@heroicons/vue/outlin
 import { AdjustmentsIcon as SolidAdjustmentsIcon } from '@heroicons/vue/solid'
 
 export default {
-  name: 'HeroiconStyleSelector',
+  name: 'IconStyleSelector',
   components: {
     OutlineAdjustmentsIcon,
     SolidAdjustmentsIcon
@@ -158,7 +158,7 @@ export default {
 
 <style scoped>
 .relative > button {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
 }
 </style>

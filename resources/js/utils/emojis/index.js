@@ -134,12 +134,16 @@ class EmojiManager {
   // Preload popular emoji categories
   async preloadPopularEmojiCategories() {
     const popularCategories = ['smileys_emotion', 'people_body'];
-    console.log('📱 EmojiManager: 預載入熱門分類', popularCategories);
+    // if (process.env.NODE_ENV === 'development') {
+    //   console.log('📱 EmojiManager: 預載入熱門分類', popularCategories);
+    // }
     
     const promises = popularCategories.map(id => this.loadCategory(id));
     await Promise.all(promises);
     
-    console.log('✅ EmojiManager: 熱門分類載入完成');
+    // if (process.env.NODE_ENV === 'development') {
+    //   console.log('✅ EmojiManager: 熱門分類載入完成');
+    // }
   }
 
   // Load emojis by priority
@@ -157,7 +161,9 @@ class EmojiManager {
     }
 
     // Load by priority
-    console.log('🔄 EmojiManager: 開始漸進式載入');
+    // if (process.env.NODE_ENV === 'development') {
+    //   console.log('🔄 EmojiManager: 開始漸進式載入');
+    // }
     
     for (const priority of ['immediate', 'high', 'medium', 'low']) {
       if (priorityGroups[priority].length > 0) {

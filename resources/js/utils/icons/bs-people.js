@@ -89,7 +89,7 @@ export const peopleIcons = [
   { name: 'Person Add', class: 'bi-person-add' },
   { name: 'Person Lock', class: 'bi-person-lock' },
   { name: 'Person Slash', class: 'bi-person-slash' },
-  { name: 'Person Slash Fill', class: 'bi-person-slash-fill' },
+  { name: 'Person Slash', class: 'bi-person-slash' },
   { name: 'Person Up', class: 'bi-person-up' },
   { name: 'Person Down', class: 'bi-person-down' },
   { name: 'Person Standing', class: 'bi-person-standing' },
@@ -120,7 +120,7 @@ export const peopleIcons = [
   { name: 'Hand Thumbs Up Fill', class: 'bi-hand-thumbs-up-fill' },
   { name: 'Hand Thumbs Down', class: 'bi-hand-thumbs-down' },
   { name: 'Hand Thumbs Down Fill', class: 'bi-hand-thumbs-down-fill' },
-  { name: 'Fist Raised', class: 'bi-fist-raised' },
+  { name: 'Hand Index Thumb', class: 'bi-hand-index-thumb' },
   { name: 'Universal Access', class: 'bi-universal-access' },
   { name: 'Universal Access Circle', class: 'bi-universal-access-circle' },
   

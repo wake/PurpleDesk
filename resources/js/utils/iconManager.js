@@ -18,7 +18,9 @@ class IconManager {
   async initialize() {
     if (this.initialized) return
     
-    console.log('🚀 IconManager: 開始初始化圖標管理系統')
+    // if (process.env.NODE_ENV === 'development') {
+    //   console.log('🚀 IconManager: 開始初始化圖標管理系統')
+    // }
     
     try {
       // 使用 allSettled 來避免單一失敗導致全部失敗
@@ -44,7 +46,9 @@ class IconManager {
       }
       
       this.initialized = true
-      console.log('✅ IconManager: 初始化完成（可能有部分錯誤）')
+      // if (process.env.NODE_ENV === 'development') {
+      //   console.log('✅ IconManager: 初始化完成（可能有部分錯誤）')
+      // }
       
       // 定期更新載入統計
       this.startStatsTracking()
@@ -74,7 +78,9 @@ class IconManager {
         if (totalProgress < 100) {
           setTimeout(updateStats, 1000) // 每秒更新一次
         } else {
-          console.log('🎯 IconManager: 所有圖標載入完成')
+          // if (process.env.NODE_ENV === 'development') {
+          //   console.log('🎯 IconManager: 所有圖標載入完成')
+          // }
           this.logFinalStats()
         }
       } catch (error) {
@@ -227,12 +233,16 @@ class IconManager {
     bsIconsManager.clearCache()
     emojiManager.clearEmojiCache()
     this.initialized = false
-    console.log('🧹 IconManager: 已清除所有快取')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🧹 IconManager: 已清除所有快取')
+    }
   }
 
   // 強制載入所有圖標
   async loadAllIcons() {
-    console.log('📦 IconManager: 開始載入所有圖標...')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📦 IconManager: 開始載入所有圖標...')
+    }
     
     try {
       await Promise.all([
@@ -240,7 +250,9 @@ class IconManager {
         emojiManager.loadAllEmojis()
       ])
       
-      console.log('✅ IconManager: 所有圖標載入完成')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ IconManager: 所有圖標載入完成')
+      }
       this.logFinalStats()
     } catch (error) {
       console.error('❌ IconManager: 載入所有圖標失敗', error)
@@ -250,16 +262,18 @@ class IconManager {
 
   // 記錄最終統計
   logFinalStats() {
-    const memStats = this.getMemoryStats()
-    const loadStats = this.getLoadingStatus()
-    
-    console.log('📊 IconManager 最終統計:')
-    console.log(`   • 總圖標數: ${memStats.total.totalIcons.toLocaleString()} 個`)
-    console.log(`   • BS Icons: ${memStats.icons.totalIcons.toLocaleString()} 個 (${memStats.icons.loadedCategories} 分類)`)
-    console.log(`   • Emojis: ${memStats.emojis.totalEmojis.toLocaleString()} 個 (${memStats.emojis.loadedCategories} 分類)`)
-    console.log(`   • 搜尋索引大小: ${memStats.total.searchIndexSize.toLocaleString()} 項`)
-    console.log(`   • 預估記憶體使用: ${memStats.total.estimatedMemoryKB.toLocaleString()} KB`)
-    console.log(`   • 載入進度: ${loadStats.overall.progress}%`)
+    // if (process.env.NODE_ENV !== 'development') return
+    // 
+    // const memStats = this.getMemoryStats()
+    // const loadStats = this.getLoadingStatus()
+    // 
+    // console.log('📊 IconManager 最終統計:')
+    // console.log(`   • 總圖標數: ${memStats.total.totalIcons.toLocaleString()} 個`)
+    // console.log(`   • BS Icons: ${memStats.icons.totalIcons.toLocaleString()} 個 (${memStats.icons.loadedCategories} 分類)`)
+    // console.log(`   • Emojis: ${memStats.emojis.totalEmojis.toLocaleString()} 個 (${memStats.emojis.loadedCategories} 分類)`)
+    // console.log(`   • 搜尋索引大小: ${memStats.total.searchIndexSize.toLocaleString()} 項`)
+    // console.log(`   • 預估記憶體使用: ${memStats.total.estimatedMemoryKB.toLocaleString()} KB`)
+    // console.log(`   • 載入進度: ${loadStats.overall.progress}%`)
   }
 
   // 檢查是否已初始化

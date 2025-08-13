@@ -182,14 +182,14 @@ export default {
 
 .skin-tone-button {
   @apply w-8 h-8 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors bg-white flex items-center justify-center;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
 }
 
 .skin-tone-button.active {
   @apply ring-2 ring-primary-500 ring-offset-2;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
 }
 
 .skin-tone-dropdown {

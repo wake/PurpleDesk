@@ -36,9 +36,9 @@ export const uiIcons = [
   { name: 'Window X', class: 'bi-window-x' },
   
   // 分頁與索引標籤
-  { name: 'Tab', class: 'bi-tab' },
-  { name: 'Tabs', class: 'bi-tabs' },
-  { name: 'Tabs Fill', class: 'bi-tabs-fill' },
+  
+  
+  
   
   // 滑桿與進度條
   { name: 'Sliders', class: 'bi-sliders' },
@@ -253,15 +253,15 @@ export const uiIcons = [
   { name: 'Caret Up Square Fill', class: 'bi-caret-up-square-fill' },
   
   // 工具提示與彈出
-  { name: 'Tooltip', class: 'bi-tooltip' },
-  { name: 'Tooltip Fill', class: 'bi-tooltip-fill' },
+  
+  
   { name: 'Balloon', class: 'bi-balloon' },
   { name: 'Balloon Fill', class: 'bi-balloon-fill' },
   { name: 'Balloon Heart', class: 'bi-balloon-heart' },
   { name: 'Balloon Heart Fill', class: 'bi-balloon-heart-fill' },
   
   // 滾動條與捲動
-  { name: 'Scrollbar', class: 'bi-scrollbar' },
+  
   { name: 'Mouse', class: 'bi-mouse' },
   { name: 'Mouse Fill', class: 'bi-mouse-fill' },
   { name: 'Mouse2', class: 'bi-mouse2' },
@@ -275,29 +275,29 @@ export const uiIcons = [
   { name: 'Cursor Text', class: 'bi-cursor-text' },
   
   // 導航列與麵包屑
-  { name: 'Breadcrumb', class: 'bi-breadcrumb' },
-  { name: 'Breadcrumb Fill', class: 'bi-breadcrumb-fill' },
-  { name: 'Nav', class: 'bi-nav' },
-  { name: 'Nav Fill', class: 'bi-nav-fill' },
+  
+  
+  
+  
   
   // 進度條
-  { name: 'Progress', class: 'bi-progress' },
-  { name: 'Progress Bar', class: 'bi-progress-bar' },
-  { name: 'Progress Bar Fill', class: 'bi-progress-bar-fill' },
-  { name: 'Progress Circle', class: 'bi-progress-circle' },
-  { name: 'Progress Circle Fill', class: 'bi-progress-circle-fill' },
+  
+  
+  
+  
+  
   
   // 折疊與手風琴
-  { name: 'Accordion', class: 'bi-accordion' },
-  { name: 'Accordion Fill', class: 'bi-accordion-fill' },
+  
+  
   
   // 下拉選單
-  { name: 'Dropdown', class: 'bi-dropdown' },
-  { name: 'Dropdown Fill', class: 'bi-dropdown-fill' },
+  
+  
   
   // 徽章與標籤
-  { name: 'Label', class: 'bi-label' },
-  { name: 'Label Fill', class: 'bi-label-fill' },
+  { name: 'Tag', class: 'bi-tag' },
+  { name: 'Label Fill', class: 'bi-tag-fill' },
   
   // 貼紙與便條
   { name: 'Postcard', class: 'bi-postcard' },
@@ -352,17 +352,17 @@ export const uiIcons = [
   { name: 'Chat Text Fill', class: 'bi-chat-text-fill' },
   
   // 滑動開關
-  { name: 'Switch', class: 'bi-switch' },
-  { name: 'Switch Fill', class: 'bi-switch-fill' },
+  { name: 'Toggle Off', class: 'bi-toggle-off' },
+  { name: 'Toggle On', class: 'bi-toggle-on' },
   
   // 面板與儀表板
-  { name: 'Dashboard', class: 'bi-dashboard' },
-  { name: 'Dashboard Fill', class: 'bi-dashboard-fill' },
+  { name: 'Speedometer2', class: 'bi-speedometer2' },
+  { name: 'Speedometer', class: 'bi-speedometer' },
   { name: 'Speedometer', class: 'bi-speedometer' },
   { name: 'Speedometer2', class: 'bi-speedometer2' },
   
   // 工具欄與功能表
-  { name: 'Toolbar', class: 'bi-toolbar' },
+  
   { name: 'Tools', class: 'bi-tools' },
   { name: 'Wrench', class: 'bi-wrench' },
   { name: 'Wrench Adjustable', class: 'bi-wrench-adjustable' },
@@ -370,17 +370,7 @@ export const uiIcons = [
   { name: 'Wrench Adjustable Circle Fill', class: 'bi-wrench-adjustable-circle-fill' },
   
   // 提示與警告
-  { name: 'Alert', class: 'bi-alert' },
-  { name: 'Alert Circle', class: 'bi-alert-circle' },
-  { name: 'Alert Circle Fill', class: 'bi-alert-circle-fill' },
-  { name: 'Alert Diamond', class: 'bi-alert-diamond' },
-  { name: 'Alert Diamond Fill', class: 'bi-alert-diamond-fill' },
-  { name: 'Alert Octagon', class: 'bi-alert-octagon' },
-  { name: 'Alert Octagon Fill', class: 'bi-alert-octagon-fill' },
-  { name: 'Alert Square', class: 'bi-alert-square' },
-  { name: 'Alert Square Fill', class: 'bi-alert-square-fill' },
-  { name: 'Alert Triangle', class: 'bi-alert-triangle' },
-  { name: 'Alert Triangle Fill', class: 'bi-alert-triangle-fill' },
+  { name: 'Exclamation Triangle', class: 'bi-exclamation-triangle' },
   
   // 導覽器與窗口
   { name: 'Browser Chrome', class: 'bi-browser-chrome' },
@@ -402,16 +392,16 @@ export const uiIcons = [
   { name: 'Pie Chart Fill', class: 'bi-pie-chart-fill' },
   
   // 複選框與單選按鈕
-  { name: 'Check Box', class: 'bi-check-box' },
-  { name: 'Check Box Fill', class: 'bi-check-box-fill' },
-  { name: 'Radio', class: 'bi-radio' },
-  { name: 'Radio Fill', class: 'bi-radio-fill' },
-  { name: 'Radio Button', class: 'bi-radio-button' },
-  { name: 'Radio Button Fill', class: 'bi-radio-button-fill' },
+  { name: 'Check Square', class: 'bi-check-square' },
+  { name: 'Check Box Fill', class: 'bi-check-square-fill' },
+  { name: 'Circle', class: 'bi-circle' },
+  { name: 'Radio Fill', class: 'bi-circle-fill' },
+  { name: 'Circle', class: 'bi-circle' },
+  { name: 'Radio Button Fill', class: 'bi-circle-fill' },
   
   // 時間線與流程
-  { name: 'Timeline', class: 'bi-timeline' },
-  { name: 'Timeline Fill', class: 'bi-timeline-fill' },
+  { name: 'Diagram 3', class: 'bi-diagram-3' },
+  { name: 'Timeline Fill', class: 'bi-diagram-3-fill' },
   { name: 'Activity', class: 'bi-activity' },
   
   // 顯示模式

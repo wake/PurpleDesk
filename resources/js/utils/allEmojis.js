@@ -2,9 +2,11 @@
  * 完整 Emoji 集合匯出
  * 從新的 Unicode 16.0 emoji 系統載入所有 emoji
  * 提供同步的 emoji 陣列供 IconPicker 使用
+ * 整合相容性過濾系統
  */
 
 import emojiManager from './emojis/index.js';
+import { filterEmojis, PROBLEMATIC_EMOJIS, FILTER_STATS } from './emojiFilter.js';
 
 // 膚色修飾符的 Unicode 範圍
 const SKIN_TONE_REGEX = /[\u{1F3FB}-\u{1F3FF}]/gu;
@@ -13,6 +15,13 @@ const SKIN_TONE_REGEX = /[\u{1F3FB}-\u{1F3FF}]/gu;
 let allEmojisCache = [];
 let isLoading = false;
 let loadPromise = null;
+
+// 清除快取函數（用於重新載入）
+export function clearEmojiCache() {
+  allEmojisCache = [];
+  isLoading = false;
+  loadPromise = null;
+}
 
 /**
  * 載入所有 emoji 分類並整合成單一陣列
@@ -36,27 +45,58 @@ async function loadAllEmojis() {
       for (const category of categories) {
         try {
           const emojis = await emojiManager.getEmojisByCategory(category.id);
-          // 將每個 emoji 加入陣列，保留分類資訊
-          // 過濾掉包含膚色修飾符的變體，只保留基礎 emoji
+          // 過濾 emoji：只保留基礎版本（無膚色修飾符）
+          const baseEmojis = new Map(); // 使用 Map 來避免重複的基礎 emoji
+          
           emojis.forEach(emoji => {
-            // 檢查是否包含膚色修飾符
-            if (!SKIN_TONE_REGEX.test(emoji.emoji)) {
-              allEmojis.push({
-                emoji: emoji.emoji,
-                name: emoji.name,
-                category: category.name,
-                categoryId: category.id,
-                subgroup: emoji.subgroup
-              });
+            // 移除膚色修飾符，取得基礎 emoji
+            const baseEmoji = emoji.emoji.replace(SKIN_TONE_REGEX, '');
+            
+            // 只保留第一個遇到的基礎版本（通常是無膚色修飾符的）
+            if (!baseEmojis.has(baseEmoji)) {
+              // 優先使用原本沒有膚色修飾符的版本
+              if (!SKIN_TONE_REGEX.test(emoji.emoji)) {
+                baseEmojis.set(baseEmoji, {
+                  emoji: emoji.emoji,
+                  name: emoji.name,
+                  category: category.name,
+                  categoryId: category.id,
+                  subgroup: emoji.subgroup
+                });
+              } else {
+                // 如果原始就有膚色修飾符，創建基礎版本
+                baseEmojis.set(baseEmoji, {
+                  emoji: baseEmoji,
+                  name: emoji.name.replace(/: (light|medium-light|medium|medium-dark|dark) skin tone/, ''),
+                  category: category.name,
+                  categoryId: category.id,
+                  subgroup: emoji.subgroup
+                });
+              }
             }
           });
+          
+          // 將基礎 emoji 加入結果陣列，並應用相容性過濾
+          const categoryEmojis = Array.from(baseEmojis.values());
+          const filteredEmojis = filterEmojis(categoryEmojis);
+          allEmojis.push(...filteredEmojis);
+          
+          // 記錄過濾統計（僅開發模式）
+          const filteredCount = categoryEmojis.length - filteredEmojis.length;
+          // if (filteredCount > 0 && process.env.NODE_ENV === 'development') {
+          //   console.log(`🚫 ${category.name} 過濾了 ${filteredCount} 個不相容的 emoji`);
+          // }
         } catch (error) {
           console.warn(`載入 ${category.name} 分類失敗:`, error);
         }
       }
 
       allEmojisCache = allEmojis;
-      console.log(`成功載入 ${allEmojis.length} 個 emoji`);
+      // if (process.env.NODE_ENV === 'development') {
+      //   console.log(`✅ 成功載入 ${allEmojis.length} 個相容的 emoji`);
+      //   console.log(`🛡️ 過濾統計: ${FILTER_STATS.actualProblems} 個不相容 emoji 已被過濾`);
+      //   console.log(`📊 過濾準確度: ${FILTER_STATS.predictionAccuracy}% (測試樣本: ${FILTER_STATS.totalTested})`);
+      // }
       return allEmojis;
     } catch (error) {
       console.error('載入 emoji 失敗:', error);

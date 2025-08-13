@@ -101,7 +101,7 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Filter..."
-                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                class="icon-filter w-full text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
               <button
                 v-if="searchQuery"
@@ -112,12 +112,12 @@
               </button>
             </div>
             <!-- 功能按鈕組 -->
-            <div class="flex space-x-2">
-              <!-- Heroicon 樣式選擇器 -->
-              <HeroiconStyleSelector
+            <div class="flex space-x-1">
+              <!-- 圖標樣式選擇器 -->
+              <IconStyleSelector
                 v-if="activeTab === 'icons'"
-                v-model="selectedHeroiconStyle"
-                @update:modelValue="handleHeroiconStyleChange"
+                v-model="selectedIconStyle"
+                @update:modelValue="handleIconStyleChange"
               />
               <!-- 膚色選擇器 -->
               <SkinToneSelector
@@ -185,17 +185,30 @@
                 :buffer="2"
               >
                 <template #row="{ items }">
-                  <template v-for="emoji in items" :key="emoji ? emoji.name : Math.random()">
-                    <button
-                      v-if="emoji"
-                      @click.stop="selectIcon(getEmojiWithSkinTone(emoji), 'emoji')"
-                      :class="selectedIcon === getEmojiWithSkinTone(emoji) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
-                      class="emoji-button p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-                      :title="emoji.name"
+                  <template v-for="(item, index) in items" :key="item ? (item.name || item.emoji || item.categoryId || index) : index">
+                    <!-- 分類標題 -->
+                    <div 
+                      v-if="item && item.type === 'category-header'"
+                      class="category-header w-full flex items-center space-x-2 pt-3 pb-1 text-sm font-bold text-gray-400"
                     >
-                      <span class="text-xl">{{ getEmojiWithSkinTone(emoji) }}</span>
+                      <span>{{ item.name }}</span>
+                      <div class="flex-1 h-px me-2 ml-2 bg-gray-200"></div>
+                    </div>
+                    
+                    <!-- Emoji 按鈕 -->
+                    <button
+                      v-else-if="item && item.emoji"
+                      @click.stop="selectIcon(getEmojiWithSkinTone(item), 'emoji')"
+                      :class="selectedIcon === getEmojiWithSkinTone(item) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
+                      class="emoji-button p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                      :title="item.name"
+                    >
+                      <span class="text-xl">{{ getEmojiWithSkinTone(item) }}</span>
                     </button>
-                    <div v-else class="p-1"></div>
+                    
+                    <!-- 空白佔位符（用於填充完整行） -->
+                    <div v-else-if="item && item.type === 'row-filler'" class="p-1"></div>
+                    
                   </template>
                 </template>
               </VirtualScroll>
@@ -209,26 +222,53 @@
             <!-- 圖標網格 -->
             <div class="grid-wrapper icon-grid-wrapper h-48 border border-gray-100 rounded-md bg-gray-50 p-2">
               <VirtualScroll
-                :items="filteredHeroicons"
+                :items="filteredIcons"
                 :items-per-row="10"
                 :row-height="36"
                 :container-height="176"
                 :buffer="2"
+                :preserve-scroll-position="true"
               >
                 <template #row="{ items }">
-                  <button
-                    v-for="icon in items"
-                    :key="icon.name"
-                    @click.stop="selectIcon(icon.component, 'heroicons')"
-                    :class="isIconSelected(icon.component) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
-                    class="icon-button p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-                    :title="icon.name"
-                  >
-                    <component 
-                      :is="getHeroiconComponent(icon.component)" 
-                      class="w-5 h-5 mx-auto text-gray-600" 
-                    />
-                  </button>
+                  <template v-for="(item, index) in items" :key="item ? (item.name || item.component || item.class || item.categoryId || index) : index">
+                    <!-- 分類標題 -->
+                    <div 
+                      v-if="item && item.type === 'category-header'"
+                      class="category-header w-full flex items-center space-x-2 pt-3 pb-1 text-sm font-bold text-gray-400"
+                    >
+                      <span>{{ item.name }}</span>
+                      <div class="flex-1 h-px me-2 ml-2 bg-gray-200"></div>
+                    </div>
+                    
+                    <!-- Hero Icons 按鈕 -->
+                    <button
+                      v-else-if="item && item.component"
+                      @click.stop="selectIcon(item.component, 'heroicons')"
+                      :class="isIconSelected(item.component) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
+                      class="icon-button p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                      :title="item.name"
+                    >
+                      <component 
+                        :is="getIconComponent(item.component)" 
+                        class="w-5 h-5 mx-auto text-gray-600" 
+                      />
+                    </button>
+                    
+                    <!-- Bootstrap Icons 按鈕 -->
+                    <button
+                      v-else-if="item && item.class"
+                      @click.stop="selectIcon(item.class, 'bootstrap')"
+                      :class="isIconSelected(item.class) ? 'ring-2 ring-primary-500 bg-primary-50' : 'hover:bg-gray-100'"
+                      class="icon-button p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                      :title="item.name"
+                    >
+                      <i :class="item.class + ' text-gray-600'" style="font-size: 1.25rem;"></i>
+                    </button>
+
+                    <!-- 空白佔位符（用於填充完整行） -->
+                    <div v-else-if="item && item.type === 'row-filler'" class="p-1"></div>
+                    
+                  </template>
                 </template>
               </VirtualScroll>
             </div>
@@ -278,9 +318,11 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
 import { applySkinTone, supportsSkinTone, removeSkinTone, getCurrentSkinTone } from '../../utils/emojiSkinTone.js'
 import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
+import { EMOJI_CATEGORY_INFO } from '../../utils/emojis/index.js'
+import bootstrapIconsIndex, { categoryMap as BOOTSTRAP_CATEGORY_INFO } from '../../utils/icons/index.js'
 import VirtualScroll from './VirtualScroll.vue'
 import SkinToneSelector from './SkinToneSelector.vue'
-import HeroiconStyleSelector from './HeroiconStyleSelector.vue'
+import IconStyleSelector from './IconStyleSelector.vue'
 // 動態導入所有 Heroicons
 import * as HeroiconsOutline from '@heroicons/vue/outline'
 import * as HeroiconsSolid from '@heroicons/vue/solid'
@@ -290,7 +332,7 @@ export default {
   components: {
     VirtualScroll,
     SkinToneSelector,
-    HeroiconStyleSelector,
+    IconStyleSelector,
     // 註冊所有 Heroicons (Outline 和 Solid)
     ...HeroiconsOutline,
     ...HeroiconsSolid
@@ -319,13 +361,13 @@ export default {
     const iconPanel = ref(null)
     const iconPickerRef = ref(null)
     const searchQuery = ref('')
-    const activeTab = ref('initials') // 預設為字母頁簽
+    const activeTab = ref('emoji') // 預設為 emoji 頁簽
     const panelPosition = ref({ top: '0px', left: '0px' })
     const selectedIcon = ref(props.modelValue)
     const iconType = ref(props.iconType || '')
     const emojisLoaded = ref(false)
     const selectedSkinTone = ref('') // 預設膚色
-    const selectedHeroiconStyle = ref('outline') // 預設 Heroicon 樣式
+    const selectedIconStyle = ref('outline') // 預設圖標樣式
     const fileInput = ref(null)
     const uploadedImage = ref(null)
     const isDragging = ref(false)
@@ -350,7 +392,7 @@ export default {
       if (newVal && props.iconType === 'heroicons' && newVal.includes(':')) {
         const [style, iconName] = newVal.split(':')
         if (style === 'solid' || style === 'outline') {
-          selectedHeroiconStyle.value = style
+          selectedIconStyle.value = style
           selectedIcon.value = newVal
         }
       }
@@ -362,8 +404,24 @@ export default {
       }
     })
     
-    // 使用完整的 Heroicons 圖標清單 (230個圖標)
-    const heroicons = heroiconsOutline
+    // 合併 Heroicons 和 Bootstrap Icons
+    const heroIcons = heroiconsOutline
+    const bsIcons = ref([])
+    
+    // 非同步載入 Bootstrap Icons
+    const loadBootstrapIcons = async () => {
+      try {
+        await bootstrapIconsIndex.loadAllIcons()
+        bsIcons.value = bootstrapIconsIndex.getAllLoadedIcons()
+      } catch (error) {
+        console.error('Failed to load Bootstrap Icons:', error)
+      }
+    }
+    
+    // 在組件掛載時載入
+    onMounted(() => {
+      loadBootstrapIcons()
+    })
     
     // 儲存 Heroicons 組件的引用
     const HeroiconsComponents = {
@@ -376,15 +434,41 @@ export default {
       
       // 如果 hidePreview 為 true，嘗試找到父元素作為定位參考
       if (props.hidePreview && iconPickerRef.value) {
-        // 尋找最近的有實際尺寸的父元素（通常是 ImageSelector 的預覽區域）
+        // 尋找最近的有實際尺寸的父元素，特別是 ImageSelector 的預覽區域
         let parent = iconPickerRef.value.parentElement
-        while (parent) {
+        let searchCount = 0
+        while (parent && parent !== document.body && searchCount < 10) {
+          searchCount++
           const rect = parent.getBoundingClientRect()
-          if (rect.width > 0 && rect.height > 0) {
-            targetElement = parent
-            break
+          const classList = parent.classList.toString()
+          
+          // 尋找有明顯尺寸且可能是預覽容器的元素
+          if (rect.width >= 48 && rect.height >= 48) {
+            // 檢查是否包含預覽相關的類名
+            if (classList.includes('group') || classList.includes('relative') || 
+                classList.includes('flex') || classList.includes('h-') || 
+                classList.includes('w-')) {
+              targetElement = parent
+              break
+            }
           }
           parent = parent.parentElement
+        }
+        
+        // 如果沒有找到合適的父元素，回退到使用 iconPickerRef
+        if (targetElement === iconPickerRef.value) {
+          parent = iconPickerRef.value.parentElement
+          searchCount = 0
+          while (parent && parent !== document.body && searchCount < 10) {
+            searchCount++
+            const rect = parent.getBoundingClientRect()
+            
+            if (rect.width >= 48 && rect.height >= 48) {
+              targetElement = parent
+              break
+            }
+            parent = parent.parentElement
+          }
         }
       }
       
@@ -401,16 +485,29 @@ export default {
       let top = rect.bottom + 5
       let left = rect.left
       
-      // 優先顯示在下方，只有在下方空間真的不足時才顯示在上方
+      // 智慧定位邏輯
       const spaceBelow = viewportHeight - rect.bottom
       const spaceAbove = rect.top
       
-      if (spaceBelow < panelHeight && spaceAbove > spaceBelow) {
-        // 只有當上方空間比下方多時才顯示在上方
-        top = rect.top - panelHeight - 5
-      } else if (spaceBelow < panelHeight) {
-        // 如果下方空間不足但仍要顯示在下方，調整高度
+      // 檢查是否可以在上方顯示（需要足夠空間且不會產生負值）
+      const canFitAbove = spaceAbove >= panelHeight + 10
+      const canFitBelow = spaceBelow >= Math.min(panelHeight, 200) // 至少需要 200px 或更少
+      
+      if (spaceBelow >= panelHeight) {
+        // 下方有足夠空間，優先使用下方
         top = rect.bottom + 5
+      } else if (canFitAbove && spaceAbove > spaceBelow) {
+        // 上方有足夠空間且比下方空間大
+        top = rect.top - panelHeight - 5
+      } else {
+        // 都沒有足夠空間，選擇空間較大的一邊並調整位置
+        if (spaceAbove > spaceBelow) {
+          // 使用上方，但確保不會產生負值
+          top = Math.max(10, rect.top - panelHeight - 5)
+        } else {
+          // 使用下方
+          top = rect.bottom + 5
+        }
       }
       
       // 檢查是否超出視窗右邊
@@ -432,18 +529,18 @@ export default {
     const togglePicker = async () => {
       isOpen.value = !isOpen.value
       if (isOpen.value) {
-        // 打開時根據當前 iconType 設定正確的標籤頁
-        if (iconType.value === 'initials') {
+        // 打開時根據當前 iconType 設定正確的標籤頁，但如果沒有選中任何圖標，預設為 emoji
+        if (selectedIcon.value && iconType.value === 'initials') {
           activeTab.value = 'initials'
           // 如果有選中的字母，設定到輸入框
           if (selectedIcon.value) {
             customInitials.value = selectedIcon.value
           }
-        } else if (iconType.value === 'heroicons') {
+        } else if (selectedIcon.value && (iconType.value === 'heroicons' || iconType.value === 'bootstrap')) {
           activeTab.value = 'icons'
-        } else if (iconType.value === 'upload') {
+        } else if (selectedIcon.value && iconType.value === 'upload') {
           activeTab.value = 'upload'
-        } else if (iconType.value === 'emoji') {
+        } else if (selectedIcon.value && iconType.value === 'emoji') {
           activeTab.value = 'emoji'
           // 如果當前選中的是 emoji，檢測它的膚色
           if (selectedIcon.value) {
@@ -451,8 +548,8 @@ export default {
             selectedSkinTone.value = detectedSkinTone
           }
         } else {
-          // 預設顯示字母頁簽
-          activeTab.value = 'initials'
+          // 預設顯示 emoji 頁簽（沒有選中圖標或未知類型時）
+          activeTab.value = 'emoji'
         }
         await nextTick()
         calculatePosition()
@@ -471,12 +568,16 @@ export default {
     
     
     const selectIcon = (icon, type) => {
-      // 如果是 Heroicons，儲存樣式資訊
       let iconValue = icon
+      
       if (type === 'heroicons') {
         // 在圖標名稱前加上樣式前綴
-        iconValue = `${selectedHeroiconStyle.value}:${icon}`
+        iconValue = `${selectedIconStyle.value}:${icon}`
+      } else if (type === 'bootstrap') {
+        // Bootstrap Icons 直接使用 class 名稱
+        iconValue = icon
       }
+      
       selectedIcon.value = iconValue
       iconType.value = type
       
@@ -514,17 +615,17 @@ export default {
       return applySkinTone(emojiData.emoji, selectedSkinTone.value)
     }
     
-    // 獲取 Heroicon 組件（根據樣式選擇）
-    const getHeroiconComponent = (componentName) => {
-      const components = selectedHeroiconStyle.value === 'solid' 
+    // 獲取圖標組件（根據樣式選擇）
+    const getIconComponent = (componentName) => {
+      const components = selectedIconStyle.value === 'solid' 
         ? HeroiconsSolid 
         : HeroiconsOutline
       return components[componentName] || HeroiconsOutline[componentName]
     }
     
-    // 處理 Heroicon 樣式變更
-    const handleHeroiconStyleChange = (style) => {
-      selectedHeroiconStyle.value = style
+    // 處理圖標樣式變更
+    const handleIconStyleChange = (style) => {
+      selectedIconStyle.value = style
     }
     
     // 觸發檔案上傳
@@ -648,23 +749,225 @@ export default {
       }
     })
     
-    // 篩選後的圖標列表
-    const filteredHeroicons = computed(() => {
-      if (!searchQuery.value) return heroicons
-      const query = searchQuery.value.toLowerCase()
-      return heroicons.filter(icon => 
-        icon.name.toLowerCase().includes(query)
-      )
+    // 按分類組織的圖標資料（包含分類標題）
+    const groupedIcons = computed(() => {
+      // 如果有搜尋查詢，返回篩選後的扁平陣列（不分組）
+      if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase()
+        const filteredHeroIcons = heroIcons.filter(icon => 
+          icon.name.toLowerCase().includes(query) || icon.component.toLowerCase().includes(query)
+        )
+        const filteredBsIcons = bsIcons.value.filter(icon => 
+          icon.name.toLowerCase().includes(query) || icon.class.toLowerCase().includes(query)
+        )
+        return [...filteredHeroIcons, ...filteredBsIcons]
+      }
+      
+      const result = []
+      
+      // 1. 添加 Heroicons 分類標題和圖標
+      if (heroIcons.length > 0) {
+        // 確保當前位置是 10 的倍數
+        let currentLength = result.length
+        let remainderInRow = currentLength % 10
+        if (remainderInRow !== 0) {
+          const fillersNeeded = 10 - remainderInRow
+          for (let i = 0; i < fillersNeeded; i++) {
+            result.push({ type: 'row-filler' })
+          }
+        }
+        
+        // 添加 Heroicons 標題
+        result.push({
+          type: 'category-header',
+          categoryId: 'heroicons',
+          name: 'Hero Icons',
+          icon: '✨'
+        })
+        
+        // 添加 9 個空項目來填滿標題行
+        for (let i = 1; i < 10; i++) {
+          result.push({ type: 'category-header-filler' })
+        }
+        
+        // 添加 Heroicons
+        result.push(...heroIcons)
+      }
+      
+      // 2. 按分類添加 Bootstrap Icons
+      const categoryOrder = ['general', 'ui', 'communications', 'files', 'media', 'people', 'alphanumeric', 'others']
+      
+      categoryOrder.forEach(categoryId => {
+        const categoryIcons = bsIcons.value.filter(icon => icon.category === categoryId)
+        
+        if (categoryIcons.length > 0) {
+          const categoryInfo = BOOTSTRAP_CATEGORY_INFO[categoryId]
+          
+          // 確保當前位置是 10 的倍數
+          const currentLength = result.length
+          const remainderInRow = currentLength % 10
+          if (remainderInRow !== 0) {
+            const fillersNeeded = 10 - remainderInRow
+            for (let i = 0; i < fillersNeeded; i++) {
+              result.push({ type: 'row-filler' })
+            }
+          }
+          
+          // 添加分類標題
+          result.push({
+            type: 'category-header',
+            categoryId: categoryId,
+            name: categoryInfo.name,
+            icon: getCategoryIcon(categoryId)
+          })
+          
+          // 添加 9 個空項目來填滿標題行
+          for (let i = 1; i < 10; i++) {
+            result.push({ type: 'category-header-filler' })
+          }
+          
+          // 根據選擇的樣式過濾 Bootstrap Icons
+          const filteredCategoryIcons = filterBootstrapIconsByStyle(categoryIcons, selectedIconStyle.value)
+          result.push(...filteredCategoryIcons)
+        }
+      })
+      
+      return result
+    })
+    
+    const filteredIcons = computed(() => {
+      return groupedIcons.value
+    })
+    
+    // Bootstrap Icons 分類圖標映射
+    const getCategoryIcon = (categoryId) => {
+      const iconMap = {
+        'general': '🏠',
+        'ui': '🎛️',  
+        'communications': '💬',
+        'files': '📁',
+        'media': '🎵',
+        'people': '👤',
+        'alphanumeric': '🔤', 
+        'others': '⚙️'
+      }
+      return iconMap[categoryId] || '📦'
+    }
+    
+    // 根據樣式過濾 Bootstrap Icons
+    const filterBootstrapIconsByStyle = (icons, style) => {
+      if (!icons || icons.length === 0) return []
+      
+      // 建立圖標映射來分析變體關係
+      const iconMap = new Map()
+      icons.forEach(icon => {
+        const className = icon.class || ''
+        iconMap.set(className, icon)
+      })
+      
+      return icons.filter(icon => {
+        const className = icon.class || ''
+        const isFillIcon = className.includes('-fill')
+        
+        if (style === 'outline') {
+          if (isFillIcon) {
+            // 如果是 fill 圖標，不顯示
+            return false
+          } else {
+            // 基礎圖標或特殊變體，都顯示
+            return true
+          }
+        } else if (style === 'solid') {
+          if (isFillIcon) {
+            // 顯示所有 -fill 圖標
+            return true
+          } else {
+            // 基礎圖標：檢查是否有對應的 fill 版本
+            const fillVersion = className + '-fill'
+            const hasFillVersion = iconMap.has(fillVersion)
+            
+            if (hasFillVersion) {
+              // 如果有 fill 版本，不顯示基礎版本（優先顯示 fill）
+              return false
+            } else {
+              // 沒有 fill 版本的特殊變體，顯示
+              return true
+            }
+          }
+        }
+        
+        return true // 預設顯示所有
+      })
+    }
+    
+    // 按分類組織的 emoji 資料（包含分類標題）
+    const groupedEmojis = computed(() => {
+      // 確保 emojis 是陣列，處理 Proxy 情況
+      const emojiArray = Array.isArray(emojis) ? emojis : []
+      
+      // 如果有搜尋查詢，返回篩選後的扁平陣列（不分組）
+      if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase()
+        return emojiArray.filter(emoji => 
+          emoji && emoji.name && emoji.name.toLowerCase().includes(query)
+        )
+      }
+      
+      // 按分類分組 emoji
+      const grouped = {}
+      emojiArray.forEach(emoji => {
+        if (emoji && emoji.categoryId) {
+          if (!grouped[emoji.categoryId]) {
+            grouped[emoji.categoryId] = []
+          }
+          grouped[emoji.categoryId].push(emoji)
+        }
+      })
+      
+      
+      // 轉換為包含標題的線性陣列，確保分類標題總是在行開頭
+      const result = []
+      const categoryOrder = ['smileys_emotion', 'people_body', 'animals_nature', 'food_drink', 'travel_places', 'activities', 'objects', 'symbols', 'flags']
+      
+      categoryOrder.forEach(categoryId => {
+        if (grouped[categoryId] && grouped[categoryId].length > 0) {
+          const categoryInfo = EMOJI_CATEGORY_INFO[categoryId]
+          
+          // 確保當前位置是 10 的倍數，這樣標題會在新行開頭
+          const currentLength = result.length
+          const remainderInRow = currentLength % 10
+          if (remainderInRow !== 0) {
+            // 添加空白項目填滿當前行
+            const fillersNeeded = 10 - remainderInRow
+            for (let i = 0; i < fillersNeeded; i++) {
+              result.push({ type: 'row-filler' })
+            }
+          }
+          
+          // 添加分類標題項目，讓 VirtualScroll 把它當作獨立的一行處理
+          result.push({
+            type: 'category-header',
+            categoryId: categoryId,
+            name: categoryInfo.name,
+            icon: categoryInfo.icon
+          })
+          
+          // 添加 9 個空項目來填滿這一行，這樣標題就會獨佔一行
+          for (let i = 1; i < 10; i++) {
+            result.push({ type: 'category-header-filler' })
+          }
+          
+          // 添加該分類的 emoji
+          result.push(...grouped[categoryId])
+        }
+      })
+      
+      
+      return result
     })
     
     const filteredEmojis = computed(() => {
-      // 確保 emojis 是陣列，處理 Proxy 情況
-      const emojiArray = Array.isArray(emojis) ? emojis : []
-      if (!searchQuery.value) return emojiArray
-      const query = searchQuery.value.toLowerCase()
-      return emojiArray.filter(emoji => 
-        emoji && emoji.name && emoji.name.toLowerCase().includes(query)
-      )
+      return groupedEmojis.value
     })
     
     // 檢查搜尋結果是否為空
@@ -672,7 +975,7 @@ export default {
       if (!searchQuery.value) return false
       
       if (activeTab.value === 'icons') {
-        return filteredHeroicons.value.length === 0
+        return filteredIcons.value.length === 0
       } else if (activeTab.value === 'emoji') {
         return filteredEmojis.value.length === 0
       }
@@ -712,7 +1015,6 @@ export default {
       // 觸發 emoji 載入（如果還沒載入）
       if (Array.isArray(emojis) && emojis.length === 0) {
         // Proxy 會自動觸發載入
-        console.log('Triggering emoji loading...')
         // 存取 length 屬性會觸發載入
         const emojiCount = emojis.length
         // 一秒後強制更新
@@ -738,10 +1040,11 @@ export default {
       calculatePosition,
       selectedIcon,
       iconType,
-      heroicons,
+      heroIcons,
+      bsIcons,
       emojis: emojis,
       emojisLoaded,
-      filteredHeroicons,
+      filteredIcons,
       filteredEmojis,
       isSearchEmpty,
       togglePicker,
@@ -752,9 +1055,9 @@ export default {
       selectedSkinTone,
       handleSkinToneChange,
       getEmojiWithSkinTone,
-      getHeroiconComponent,
-      selectedHeroiconStyle,
-      handleHeroiconStyleChange,
+      getIconComponent,
+      selectedIconStyle,
+      handleIconStyleChange,
       fileInput,
       triggerFileUpload,
       handleFileUpload,
@@ -776,12 +1079,18 @@ export default {
         }
         return icon
       },
-      isIconSelected: (iconComponent) => {
-        // 檢查是否選中（忽略樣式前綴）
-        const currentIcon = selectedIcon.value && selectedIcon.value.includes(':') 
-          ? selectedIcon.value.split(':')[1] 
-          : selectedIcon.value
-        return currentIcon === iconComponent
+      isIconSelected: (iconIdentifier) => {
+        // 檢查是否選中
+        if (!selectedIcon.value) return false
+        
+        // 對於 Heroicons，忽略樣式前綴進行比較
+        if (selectedIcon.value.includes(':') && iconType.value === 'heroicons') {
+          const currentIcon = selectedIcon.value.split(':')[1]
+          return currentIcon === iconIdentifier
+        }
+        
+        // 對於 Bootstrap Icons 或其他類型，直接比較
+        return selectedIcon.value === iconIdentifier
       }
     }
   }
@@ -801,9 +1110,19 @@ export default {
   width: 30px;
   height: 30px;
 }
+
+/* 分類標題行樣式 */
+.category-header {
+  grid-column: 1 / -1;
+}
+
 .icon-button svg {
   width: 1.35rem;
   height: 1.35rem;
+}
+
+.icon-filter {
+  padding: 0.375rem 0.625rem;
 }
 </style>
 
@@ -811,5 +1130,8 @@ export default {
 .icon-grid-wrapper .virtual-scroll-container {
   padding-left: 0.4rem;
   padding-top: 0.3rem;
+}
+.grid-row.first-row .category-header {
+  @apply pt-1;
 }
 </style>
