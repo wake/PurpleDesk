@@ -182,7 +182,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Avatar from '@/components/common/Avatar.vue'
-import api from '@/utils/api'
+import axios from 'axios'
 
 export default {
   name: 'AvatarTest',
@@ -255,13 +255,13 @@ export default {
         loading.value = true
         
         // 載入測試用戶
-        const usersResponse = await api.get('/admin/users', {
+        const usersResponse = await axios.get('/api/admin/users', {
           params: { search: 'test', per_page: 20 }
         })
         users.value = usersResponse.data.data
         
         // 載入測試組織
-        const orgsResponse = await api.get('/admin/organizations', {
+        const orgsResponse = await axios.get('/api/admin/organizations', {
           params: { search: '測試組織', per_page: 20 }
         })
         organizations.value = orgsResponse.data.data
@@ -269,7 +269,7 @@ export default {
         // 載入測試團隊 (透過組織)
         if (organizations.value.length > 0) {
           for (const org of organizations.value) {
-            const teamsResponse = await api.get(`/organizations/${org.id}/teams`)
+            const teamsResponse = await axios.get(`/api/organizations/${org.id}/teams`)
             teams.value.push(...teamsResponse.data.data)
           }
         }
