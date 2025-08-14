@@ -66,17 +66,12 @@
 
 <script>
 import { computed, ref, onMounted } from 'vue'
-import { getIconDisplayConfig, getTextType } from '@/config/iconDisplayConfig.js'
 
 export default {
-  name: 'IconDisplay',
+  name: 'TestIconDisplay',
   props: {
     /**
-     * 圖標數據物件
-     * {
-     *   type: 'image' | 'text' | 'emoji' | 'hero_icon' | 'bootstrap_icon',
-     *   // 依據類型有不同的屬性
-     * }
+     * 圖標數據物件（測試用）
      */
     iconData: {
       type: Object,
@@ -108,6 +103,13 @@ export default {
       default: null
     },
     
+    /**
+     * 測試用的動態配置（只在開發工具中使用）
+     */
+    testConfig: {
+      type: Object,
+      default: null
+    }
   },
   
   setup(props) {
@@ -190,7 +192,7 @@ export default {
       return styles
     })
     
-    // 文字樣式
+    // 文字樣式（測試用動態配置）
     const textStyles = computed(() => {
       const styles = {}
 
@@ -198,61 +200,44 @@ export default {
         styles.color = props.iconData.textColor
       }
       
-      // 根據文字內容自動選擇配置
-      if (props.iconData?.type === 'text' && props.iconData?.text) {
-        const textType = getTextType(props.iconData.text)
-        const config = getIconDisplayConfig(props.size, textType)
-        
-        if (config.fontSize) {
-          styles.fontSize = config.fontSize
-        }
-        if (config.marginTop) {
-          styles.marginTop = config.marginTop
-        }
+      // 使用測試配置
+      if (props.testConfig?.text?.fontSize) {
+        styles.fontSize = props.testConfig.text.fontSize
+        styles.marginTop = '0.05em'
       }
       
       return styles
     })
     
-    // 圖標樣式
+    // 圖標樣式（測試用動態配置）
     const iconStyles = computed(() => {
       const styles = {}
       if (props.iconData?.iconColor) {
         styles.color = props.iconData.iconColor
       }
       
-      // 應用固定配置的圖標大小
-      if (props.iconData?.type === 'hero_icon' || props.iconData?.type === 'bootstrap_icon') {
-        const config = getIconDisplayConfig(props.size, 'icon')
-        
-        if (config.size) {
-          // Hero Icons 使用 width/height，其他使用 fontSize
-          if (props.iconData?.type === 'hero_icon') {
-            styles.width = config.size
-            styles.height = config.size
-          } else {
-            styles.fontSize = config.size
-          }
+      // 使用測試配置
+      if (props.testConfig?.icon?.size) {
+        // Hero Icons 使用 width/height，其他使用 fontSize
+        if (props.iconData?.type === 'hero_icon') {
+          styles.width = props.testConfig.icon.size
+          styles.height = props.testConfig.icon.size
+        } else {
+          styles.fontSize = props.testConfig.icon.size
         }
       }
       
       return styles
     })
     
-    // Emoji 樣式
+    // Emoji 樣式（測試用動態配置）
     const emojiStyles = computed(() => {
       const styles = {}
       
-      // 應用固定配置的 Emoji 大小
-      if (props.iconData?.type === 'emoji') {
-        const config = getIconDisplayConfig(props.size, 'emoji')
-        
-        if (config.fontSize) {
-          styles.fontSize = config.fontSize
-        }
-        if (config.marginTop) {
-          styles.marginTop = config.marginTop
-        }
+      // 使用測試配置
+      if (props.testConfig?.emoji?.fontSize) {
+        styles.fontSize = props.testConfig.emoji.fontSize
+        styles.marginTop = '0.1em'
       }
       
       return styles

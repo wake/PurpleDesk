@@ -137,10 +137,10 @@
                       <h4 class="text-sm font-medium text-gray-700">{{ textExample.name }}</h4>
                       <div class="flex flex-wrap gap-3 items-end">
                         <div v-for="size in allSizes" :key="size" class="text-center">
-                          <IconDisplay 
+                          <TestIconDisplay 
                             :icon-data="textExample.data" 
                             :size="size" 
-                            :custom-config="getComputedConfig(size, 'textCJK')"
+                            :test-config="getComputedConfig(size, 'textCJK')"
                           />
                           <p class="text-xs text-gray-500 mt-1">{{ size }}</p>
                           <p class="text-xs text-green-600">{{ getTextCJKConfig(size).fontSize }}rem</p>
@@ -213,10 +213,10 @@
                       <h4 class="text-sm font-medium text-gray-700">{{ textExample.name }}</h4>
                       <div class="flex flex-wrap gap-3 items-end">
                         <div v-for="size in allSizes" :key="size" class="text-center">
-                          <IconDisplay 
+                          <TestIconDisplay 
                             :icon-data="textExample.data" 
                             :size="size" 
-                            :custom-config="getComputedConfig(size, 'textLatin')"
+                            :test-config="getComputedConfig(size, 'textLatin')"
                           />
                           <p class="text-xs text-gray-500 mt-1">{{ size }}</p>
                           <p class="text-xs text-teal-600">{{ getTextLatinConfig(size).fontSize }}rem</p>
@@ -289,10 +289,10 @@
                       <h4 class="text-sm font-medium text-gray-700">{{ emojiExample.name }}</h4>
                       <div class="flex flex-wrap gap-3 items-end">
                         <div v-for="size in allSizes" :key="size" class="text-center">
-                          <IconDisplay 
+                          <TestIconDisplay 
                             :icon-data="emojiExample.data" 
                             :size="size" 
-                            :custom-config="getComputedConfig(size, 'emoji')"
+                            :test-config="getComputedConfig(size, 'emoji')"
                           />
                           <p class="text-xs text-gray-500 mt-1">{{ size }}</p>
                           <p class="text-xs text-yellow-600">{{ getEmojiConfig(size).fontSize }}rem</p>
@@ -365,10 +365,10 @@
                       <h4 class="text-sm font-medium text-gray-700">{{ heroExample.name }}</h4>
                       <div class="flex flex-wrap gap-3 items-end">
                         <div v-for="size in allSizes" :key="size" class="text-center">
-                          <IconDisplay 
+                          <TestIconDisplay 
                             :icon-data="heroExample.data" 
                             :size="size" 
-                            :custom-config="getComputedConfig(size, 'hero_icon')"
+                            :test-config="getComputedConfig(size, 'hero_icon')"
                           />
                           <p class="text-xs text-gray-500 mt-1">{{ size }}</p>
                           <p class="text-xs text-indigo-600">{{ getHeroIconConfig(size).size }}rem</p>
@@ -441,10 +441,10 @@
                       <h4 class="text-sm font-medium text-gray-700">{{ bsExample.name }}</h4>
                       <div class="flex flex-wrap gap-3 items-end">
                         <div v-for="size in allSizes" :key="size" class="text-center">
-                          <IconDisplay 
+                          <TestIconDisplay 
                             :icon-data="bsExample.data" 
                             :size="size" 
-                            :custom-config="getComputedConfig(size, 'bootstrap_icon')"
+                            :test-config="getComputedConfig(size, 'bootstrap_icon')"
                           />
                           <p class="text-xs text-gray-500 mt-1">{{ size }}</p>
                           <p class="text-xs text-purple-600">{{ getIconConfig(size).size }}rem</p>
@@ -465,7 +465,7 @@
                     <h4 class="text-sm font-medium text-gray-700">示例圖片 (自動縮放)</h4>
                     <div class="flex flex-wrap gap-3 items-end">
                       <div v-for="size in allSizes" :key="size" class="text-center">
-                        <IconDisplay 
+                        <TestIconDisplay 
                           :icon-data="imageExample.data" 
                           :size="size"
                         />
@@ -513,12 +513,14 @@
 import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import IconDisplay from '@/components/common/IconDisplay.vue'
+import TestIconDisplay from '@/components/dev-tool/TestIconDisplay.vue'
 import axios from 'axios'
 
 export default {
   name: 'IconSizeTestSimple',
   components: {
-    IconDisplay
+    IconDisplay,
+    TestIconDisplay
   },
   setup() {
     const loading = ref(true)
@@ -807,7 +809,7 @@ export default {
       getIconConfig(size).size = Number(value)
     }
     
-    // 取得計算後的配置 (用於 IconDisplay)
+    // 取得計算後的配置 (用於 TestIconDisplay)
     const getComputedConfig = (size, type) => {
       const result = {
         text: { fontSize: `${config.global.textCJK.fontSize}rem` },
