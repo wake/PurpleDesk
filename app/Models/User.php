@@ -75,7 +75,7 @@ class User extends Authenticatable
     public function getAvatarDataAttribute()
     {
         if (!$this->avatar) {
-            return \App\Helpers\AvatarHelper::generateUserAvatarDefault($this->full_name ?: $this->display_name ?: $this->account);
+            return \App\Helpers\IconDataHelper::generateUserIconDefault($this->full_name ?: $this->display_name ?: $this->account);
         }
         
         return $this->avatar;

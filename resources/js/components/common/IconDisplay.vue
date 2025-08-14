@@ -8,53 +8,53 @@
     :style="containerStyles"
     :title="title"
   >
-    <!-- 圖片頭像 -->
+    <!-- 圖片顯示 -->
     <img
-      v-if="avatarData?.type === 'image' && imageUrl"
+      v-if="iconData?.type === 'image' && imageUrl"
       :src="imageUrl"
       :alt="title"
       class="w-full h-full object-cover"
       @error="onImageError"
     />
     
-    <!-- 文字頭像 -->
+    <!-- 文字顯示 -->
     <span
-      v-else-if="avatarData?.type === 'text'"
+      v-else-if="iconData?.type === 'text'"
       :class="textSizeClasses"
       :style="textStyles"
       class="font-semibold leading-none"
     >
-      {{ avatarData.text }}
+      {{ iconData.text }}
     </span>
     
-    <!-- Emoji 頭像 -->
+    <!-- Emoji 顯示 -->
     <span
-      v-else-if="avatarData?.type === 'emoji'"
+      v-else-if="iconData?.type === 'emoji'"
       :class="textSizeClasses"
       class="leading-none"
     >
-      {{ avatarData.emoji }}
+      {{ iconData.emoji }}
     </span>
     
-    <!-- Hero Icon 頭像 -->
+    <!-- Hero Icon 顯示 -->
     <component
-      v-else-if="avatarData?.type === 'hero_icon' && heroIconComponent"
+      v-else-if="iconData?.type === 'hero_icon' && heroIconComponent"
       :is="heroIconComponent"
       :class="iconSizeClasses"
       :style="iconStyles"
     />
     
-    <!-- Bootstrap Icon 頭像 -->
+    <!-- Bootstrap Icon 顯示 -->
     <i
-      v-else-if="avatarData?.type === 'bootstrap_icon'"
+      v-else-if="iconData?.type === 'bootstrap_icon'"
       :class="[
-        `bi-${avatarData.icon}${avatarData.style === 'fill' ? '-fill' : ''}`,
+        `bi-${iconData.icon}${iconData.style === 'fill' ? '-fill' : ''}`,
         iconSizeClasses
       ]"
       :style="iconStyles"
     ></i>
     
-    <!-- 預設頭像（當沒有有效頭像時） -->
+    <!-- 預設圖標（當沒有有效數據時） -->
     <i
       v-else
       :class="['bi-person-fill', iconSizeClasses]"
@@ -67,27 +67,27 @@
 import { computed, ref, onMounted } from 'vue'
 
 export default {
-  name: 'Avatar',
+  name: 'IconDisplay',
   props: {
     /**
-     * 頭像數據物件
+     * 圖標數據物件
      * {
      *   type: 'image' | 'text' | 'emoji' | 'hero_icon' | 'bootstrap_icon',
      *   // 依據類型有不同的屬性
      * }
      */
-    avatarData: {
+    iconData: {
       type: Object,
       default: null
     },
     
     /**
-     * 頭像大小
+     * 圖標大小
      */
     size: {
       type: String,
       default: 'md',
-      validator: value => ['xs', 'sm', 'md', 'lg', 'xl', '2xl'].includes(value)
+      validator: value => ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4', '5', '6', '8', '10', '12'].includes(value)
     },
     
     /**
@@ -119,7 +119,14 @@ export default {
         'md': 'w-10 h-10',
         'lg': 'w-12 h-12',
         'xl': 'w-16 h-16',
-        '2xl': 'w-20 h-20'
+        '2xl': 'w-20 h-20',
+        '3xl': 'w-24 h-24',
+        '4': 'w-4 h-4',
+        '5': 'w-5 h-5',
+        '6': 'w-6 h-6',
+        '8': 'w-8 h-8',
+        '10': 'w-10 h-10',
+        '12': 'w-12 h-12'
       }
       return sizeMap[props.size] || sizeMap.md
     })
@@ -132,7 +139,14 @@ export default {
         'md': 'text-base',
         'lg': 'text-lg',
         'xl': 'text-xl',
-        '2xl': 'text-2xl'
+        '2xl': 'text-2xl',
+        '3xl': 'text-3xl',
+        '4': 'text-xs',
+        '5': 'text-xs',
+        '6': 'text-xs',
+        '8': 'text-sm',
+        '10': 'text-base',
+        '12': 'text-lg'
       }
       return textSizeMap[props.size] || textSizeMap.md
     })
@@ -145,7 +159,14 @@ export default {
         'md': 'text-base', 
         'lg': 'text-lg',
         'xl': 'text-xl',
-        '2xl': 'text-2xl'
+        '2xl': 'text-2xl',
+        '3xl': 'text-3xl',
+        '4': 'text-xs',
+        '5': 'text-xs',
+        '6': 'text-xs',
+        '8': 'text-sm',
+        '10': 'text-base',
+        '12': 'text-lg'
       }
       return iconSizeMap[props.size] || iconSizeMap.md
     })
@@ -154,8 +175,8 @@ export default {
     const containerStyles = computed(() => {
       const styles = {}
       
-      // 背景顏色（優先級：props > avatarData）
-      const bgColor = props.backgroundColor || props.avatarData?.backgroundColor
+      // 背景顏色（優先級：props > iconData）
+      const bgColor = props.backgroundColor || props.iconData?.backgroundColor
       if (bgColor) {
         styles.backgroundColor = bgColor
       } else {
@@ -169,8 +190,8 @@ export default {
     // 文字樣式
     const textStyles = computed(() => {
       const styles = {}
-      if (props.avatarData?.textColor) {
-        styles.color = props.avatarData.textColor
+      if (props.iconData?.textColor) {
+        styles.color = props.iconData.textColor
       }
       return styles
     })
@@ -178,8 +199,8 @@ export default {
     // 圖標樣式
     const iconStyles = computed(() => {
       const styles = {}
-      if (props.avatarData?.iconColor) {
-        styles.color = props.avatarData.iconColor
+      if (props.iconData?.iconColor) {
+        styles.color = props.iconData.iconColor
       }
       return styles
     })
@@ -188,14 +209,14 @@ export default {
     const imageUrl = computed(() => {
       if (imageError.value) return null
       
-      if (props.avatarData?.type === 'image') {
-        if (props.avatarData.path) {
+      if (props.iconData?.type === 'image') {
+        if (props.iconData.path) {
           // 本地圖片路徑
-          return `/storage/${props.avatarData.path}`
+          return `/storage/${props.iconData.path}`
         }
-        if (props.avatarData.url) {
+        if (props.iconData.url) {
           // 外部圖片 URL
-          return props.avatarData.url
+          return props.iconData.url
         }
       }
       
@@ -209,13 +230,13 @@ export default {
     
     // 動態載入 Hero Icon 組件
     const loadHeroIcon = async () => {
-      if (props.avatarData?.type !== 'hero_icon' || !props.avatarData?.icon) {
+      if (props.iconData?.type !== 'hero_icon' || !props.iconData?.icon) {
         return
       }
       
       try {
-        const iconName = props.avatarData.icon
-        const style = props.avatarData.style === 'solid' ? 'solid' : 'outline'
+        const iconName = props.iconData.icon
+        const style = props.iconData.style === 'solid' ? 'solid' : 'outline'
         
         // 動態載入 Hero Icon
         const iconModule = await import(`@heroicons/vue/${style}`)
@@ -228,7 +249,7 @@ export default {
         
         heroIconComponent.value = iconModule[componentName]
       } catch (error) {
-        console.warn('Failed to load hero icon:', props.avatarData.icon, error)
+        console.warn('Failed to load hero icon:', props.iconData.icon, error)
       }
     }
     

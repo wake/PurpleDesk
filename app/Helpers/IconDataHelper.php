@@ -2,10 +2,10 @@
 
 namespace App\Helpers;
 
-class AvatarHelper
+class IconDataHelper
 {
     /**
-     * 頭像預設色彩調色盤
+     * 圖標顯示預設色彩調色盤
      */
     private static $defaultColors = [
         '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', 
@@ -23,12 +23,12 @@ class AvatarHelper
     ];
     
     /**
-     * 生成個人頭像預設配置
+     * 生成個人圖標預設配置（適用於頭像顯示）
      *
      * @param string $fullName
      * @return array
      */
-    public static function generateUserAvatarDefault($fullName)
+    public static function generateUserIconDefault($fullName)
     {
         if (empty($fullName)) {
             $fullName = '使用者';
@@ -50,11 +50,11 @@ class AvatarHelper
     }
     
     /**
-     * 生成組織頭像預設配置（淡紫背景+紫色建築 icon）
+     * 生成組織圖標預設配置（淡紫背景+紫色建築 icon）
      *
      * @return array
      */
-    public static function generateOrganizationAvatarDefault()
+    public static function generateOrganizationIconDefault()
     {
         return [
             'type' => 'bootstrap_icon',
@@ -66,11 +66,11 @@ class AvatarHelper
     }
     
     /**
-     * 生成團隊頭像預設配置（淡藍背景+藍色團隊管理 icon）
+     * 生成團隊圖標預設配置（淡藍背景+藍色團隊管理 icon）
      *
      * @return array
      */
-    public static function generateTeamAvatarDefault()
+    public static function generateTeamIconDefault()
     {
         return [
             'type' => 'bootstrap_icon',
@@ -94,12 +94,12 @@ class AvatarHelper
     }
     
     /**
-     * 解析頭像數據
+     * 解析圖標數據（相容舊版頭像格式）
      *
-     * @param string|null $avatarData JSON 字串或 null
+     * @param string|null $iconData JSON 字串或 null
      * @return array|null
      */
-    public static function parseAvatarData($avatarData)
+    public static function parseIconData($iconData)
     {
         if (empty($avatarData)) {
             return null;
@@ -129,32 +129,32 @@ class AvatarHelper
     }
     
     /**
-     * 將頭像數據編碼為 JSON 字串
+     * 將圖標數據編碼為 JSON 字串
      *
-     * @param array $avatarData
+     * @param array $iconData
      * @return string
      */
-    public static function encodeAvatarData($avatarData)
+    public static function encodeIconData($iconData)
     {
         return json_encode($avatarData, JSON_UNESCAPED_UNICODE);
     }
     
     /**
-     * 生成所有類型的測試頭像數據
+     * 生成所有類型的測試圖標數據
      *
      * @return array
      */
-    public static function generateTestAvatarData()
+    public static function generateTestIconData()
     {
         return [
-            // 預設個人頭像
-            'user_default' => self::generateUserAvatarDefault('張小明'),
+            // 預設個人圖標
+            'user_default' => self::generateUserIconDefault('張小明'),
             
-            // 預設組織頭像
-            'organization_default' => self::generateOrganizationAvatarDefault(),
+            // 預設組織圖標
+            'organization_default' => self::generateOrganizationIconDefault(),
             
-            // 預設團隊頭像
-            'team_default' => self::generateTeamAvatarDefault(),
+            // 預設團隊圖標
+            'team_default' => self::generateTeamIconDefault(),
             
             // 文字+顏色
             'text_custom' => [

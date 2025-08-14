@@ -27,23 +27,23 @@
                   class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg"
                 >
                   <div class="flex space-x-2">
-                    <Avatar 
-                      :avatar-data="user.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="user.avatar_data" 
                       size="xs" 
                       :title="user.full_name"
                     />
-                    <Avatar 
-                      :avatar-data="user.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="user.avatar_data" 
                       size="sm" 
                       :title="user.full_name"
                     />
-                    <Avatar 
-                      :avatar-data="user.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="user.avatar_data" 
                       size="md" 
                       :title="user.full_name"
                     />
-                    <Avatar 
-                      :avatar-data="user.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="user.avatar_data" 
                       size="lg" 
                       :title="user.full_name"
                     />
@@ -70,23 +70,23 @@
                   class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg"
                 >
                   <div class="flex space-x-2">
-                    <Avatar 
-                      :avatar-data="org.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="org.avatar_data" 
                       size="sm" 
                       :title="org.name"
                     />
-                    <Avatar 
-                      :avatar-data="org.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="org.avatar_data" 
                       size="md" 
                       :title="org.name"
                     />
-                    <Avatar 
-                      :avatar-data="org.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="org.avatar_data" 
                       size="lg" 
                       :title="org.name"
                     />
-                    <Avatar 
-                      :avatar-data="org.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="org.avatar_data" 
                       size="xl" 
                       :title="org.name"
                     />
@@ -113,23 +113,23 @@
                   class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg"
                 >
                   <div class="flex space-x-2">
-                    <Avatar 
-                      :avatar-data="team.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="team.avatar_data" 
                       size="sm" 
                       :title="team.name"
                     />
-                    <Avatar 
-                      :avatar-data="team.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="team.avatar_data" 
                       size="md" 
                       :title="team.name"
                     />
-                    <Avatar 
-                      :avatar-data="team.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="team.avatar_data" 
                       size="lg" 
                       :title="team.name"
                     />
-                    <Avatar 
-                      :avatar-data="team.avatar_data" 
+                    <IconDisplay 
+                      :icon-data="team.avatar_data" 
                       size="xl" 
                       :title="team.name"
                     />
@@ -155,8 +155,8 @@
                   :key="key"
                   class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg"
                 >
-                  <Avatar 
-                    :avatar-data="example.data" 
+                  <IconDisplay 
+                    :icon-data="example.data" 
                     size="lg" 
                     :title="example.name"
                   />
@@ -181,13 +181,13 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import Avatar from '@/components/common/Avatar.vue'
+import IconDisplay from '@/components/common/IconDisplay.vue'
 import axios from 'axios'
 
 export default {
   name: 'AvatarTest',
   components: {
-    Avatar
+    IconDisplay
   },
   setup() {
     const loading = ref(true)

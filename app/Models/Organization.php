@@ -42,7 +42,7 @@ class Organization extends Model
     public function getAvatarDataAttribute()
     {
         if (!$this->avatar) {
-            return \App\Helpers\AvatarHelper::generateOrganizationAvatarDefault();
+            return \App\Helpers\IconDataHelper::generateOrganizationIconDefault();
         }
         
         return $this->avatar;

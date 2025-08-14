@@ -38,7 +38,7 @@ class Team extends Model
     public function getAvatarDataAttribute()
     {
         if (!$this->avatar) {
-            return \App\Helpers\AvatarHelper::generateTeamAvatarDefault();
+            return \App\Helpers\IconDataHelper::generateTeamIconDefault();
         }
         
         return $this->avatar;
