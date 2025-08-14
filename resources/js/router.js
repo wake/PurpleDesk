@@ -56,6 +56,18 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/test-icon-size',
+    name: 'test-icon-size',
+    component: () => import('./pages/IconSizeTest.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/test-icon-simple',
+    name: 'test-icon-simple',
+    component: () => import('./pages/IconSizeTestSimple.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/admin',
     component: AdminLayout,
     meta: { requiresAuth: true, requiresAdmin: true },

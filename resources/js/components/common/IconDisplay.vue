@@ -3,7 +3,7 @@
     :class="[
       'inline-flex items-center justify-center rounded-full select-none',
       sizeClasses,
-      'overflow-hidden flex-shrink-0'
+      'overflow-hidden flex-shrink-0 border border-gray-300'
     ]"
     :style="containerStyles"
     :title="title"
@@ -31,6 +31,7 @@
     <span
       v-else-if="iconData?.type === 'emoji'"
       :class="textSizeClasses"
+      :style="emojiStyles"
       class="leading-none"
     >
       {{ iconData.emoji }}
@@ -103,6 +104,14 @@ export default {
      */
     backgroundColor: {
       type: String,
+      default: null
+    },
+    
+    /**
+     * 自訂尺寸配置（用於測試調整）
+     */
+    customConfig: {
+      type: Object,
       default: null
     }
   },
@@ -189,10 +198,20 @@ export default {
     
     // 文字樣式
     const textStyles = computed(() => {
-      const styles = {}
+
+      const styles = {
+        marginTop: '0.05em',
+      }
+
       if (props.iconData?.textColor) {
         styles.color = props.iconData.textColor
       }
+      
+      // 自訂文字大小（測試用）
+      if (props.customConfig?.text?.fontSize) {
+        styles.fontSize = props.customConfig.text.fontSize
+      }
+      
       return styles
     })
     
@@ -202,6 +221,32 @@ export default {
       if (props.iconData?.iconColor) {
         styles.color = props.iconData.iconColor
       }
+      
+      // 自訂圖標大小（測試用）
+      if (props.customConfig?.icon?.size) {
+        // Hero Icons 使用 width/height，其他使用 fontSize
+        if (props.iconData?.type === 'hero_icon') {
+          styles.width = props.customConfig.icon.size
+          styles.height = props.customConfig.icon.size
+        } else {
+          styles.fontSize = props.customConfig.icon.size
+        }
+      }
+      
+      return styles
+    })
+    
+    // Emoji 樣式
+    const emojiStyles = computed(() => {
+      const styles = {
+        marginTop: '0.1em',
+      }
+      
+      // 自訂 Emoji 大小（測試用）
+      if (props.customConfig?.emoji?.fontSize) {
+        styles.fontSize = props.customConfig.emoji.fontSize
+      }
+      
       return styles
     })
     
@@ -228,7 +273,7 @@ export default {
       imageError.value = true
     }
     
-    // 動態載入 Hero Icon 組件
+    // 載入 Hero Icon (使用靜態導入)
     const loadHeroIcon = async () => {
       if (props.iconData?.type !== 'hero_icon' || !props.iconData?.icon) {
         return
@@ -238,18 +283,29 @@ export default {
         const iconName = props.iconData.icon
         const style = props.iconData.style === 'solid' ? 'solid' : 'outline'
         
-        // 動態載入 Hero Icon
-        const iconModule = await import(`@heroicons/vue/${style}`)
+        // 使用靜態導入，只支援常用的圖標
+        const iconMap = {
+          'user-outline': () => import('@heroicons/vue/outline/UserIcon'),
+          'user-solid': () => import('@heroicons/vue/solid/UserIcon'),
+          'heart-outline': () => import('@heroicons/vue/outline/HeartIcon'),
+          'heart-solid': () => import('@heroicons/vue/solid/HeartIcon'),
+          'star-outline': () => import('@heroicons/vue/outline/StarIcon'),
+          'star-solid': () => import('@heroicons/vue/solid/StarIcon'),
+          'home-outline': () => import('@heroicons/vue/outline/HomeIcon'),
+          'home-solid': () => import('@heroicons/vue/solid/HomeIcon'),
+        }
         
-        // 轉換圖標名稱格式 (user -> UserIcon)
-        const componentName = iconName
-          .split('-')
-          .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-          .join('') + 'Icon'
-        
-        heroIconComponent.value = iconModule[componentName]
+        const iconKey = `${iconName}-${style}`
+        if (iconMap[iconKey]) {
+          const iconModule = await iconMap[iconKey]()
+          heroIconComponent.value = iconModule.default
+        } else {
+          console.warn('Hero icon not found:', iconKey, 'Available:', Object.keys(iconMap))
+          heroIconComponent.value = null
+        }
       } catch (error) {
-        console.warn('Failed to load hero icon:', props.iconData.icon, error)
+        console.error('Failed to load hero icon:', props.iconData.icon, error)
+        heroIconComponent.value = null
       }
     }
     
@@ -267,6 +323,7 @@ export default {
       containerStyles,
       textStyles,
       iconStyles,
+      emojiStyles,
       imageUrl,
       onImageError
     }

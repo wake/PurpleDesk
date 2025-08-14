@@ -34,16 +34,17 @@ class IconDataHelper
             $fullName = '使用者';
         }
         
-        // 取得第一個字母（支援中文）
-        $firstChar = mb_substr($fullName, 0, 1, 'UTF-8');
+        // 取得前兩個字符（支援中文，最多2字）
+        $displayText = mb_substr($fullName, 0, 2, 'UTF-8');
         
-        // 根據字母選擇顏色（保持一致性）
+        // 根據第一個字符選擇顏色（保持一致性）
+        $firstChar = mb_substr($displayText, 0, 1, 'UTF-8');
         $colorIndex = ord(mb_convert_encoding($firstChar, 'UTF-8')) % count(self::$lightColors);
         $backgroundColor = self::$lightColors[$colorIndex];
         
         return [
             'type' => 'text',
-            'text' => $firstChar,
+            'text' => $displayText,
             'backgroundColor' => $backgroundColor,
             'textColor' => '#374151', // 深灰色文字
         ];
