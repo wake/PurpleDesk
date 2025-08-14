@@ -66,7 +66,7 @@
 
 <script>
 import { computed, ref, onMounted } from 'vue'
-import { getIconDisplayConfig, getTextType } from '@/config/iconDisplayConfig.js'
+import { getIconDisplayConfig } from '@/config/iconDisplayConfig.js'
 
 export default {
   name: 'IconDisplay',
@@ -198,10 +198,9 @@ export default {
         styles.color = props.iconData.textColor
       }
       
-      // 根據文字內容自動選擇配置
+      // 應用文字配置
       if (props.iconData?.type === 'text' && props.iconData?.text) {
-        const textType = getTextType(props.iconData.text)
-        const config = getIconDisplayConfig(props.size, textType)
+        const config = getIconDisplayConfig(props.size, 'text', props.iconData.text)
         
         if (config.fontSize) {
           styles.fontSize = config.fontSize
@@ -221,18 +220,17 @@ export default {
         styles.color = props.iconData.iconColor
       }
       
-      // 應用固定配置的圖標大小
-      if (props.iconData?.type === 'hero_icon' || props.iconData?.type === 'bootstrap_icon') {
-        const config = getIconDisplayConfig(props.size, 'icon')
-        
+      // 應用圖標配置
+      if (props.iconData?.type === 'hero_icon') {
+        const config = getIconDisplayConfig(props.size, 'hero_icon')
         if (config.size) {
-          // Hero Icons 使用 width/height，其他使用 fontSize
-          if (props.iconData?.type === 'hero_icon') {
-            styles.width = config.size
-            styles.height = config.size
-          } else {
-            styles.fontSize = config.size
-          }
+          styles.width = config.size
+          styles.height = config.size
+        }
+      } else if (props.iconData?.type === 'bootstrap_icon') {
+        const config = getIconDisplayConfig(props.size, 'bootstrap_icon')
+        if (config.size) {
+          styles.fontSize = config.size
         }
       }
       
@@ -243,7 +241,7 @@ export default {
     const emojiStyles = computed(() => {
       const styles = {}
       
-      // 應用固定配置的 Emoji 大小
+      // 應用 Emoji 配置
       if (props.iconData?.type === 'emoji') {
         const config = getIconDisplayConfig(props.size, 'emoji')
         

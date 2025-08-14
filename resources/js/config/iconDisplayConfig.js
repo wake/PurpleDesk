@@ -6,78 +6,144 @@
  */
 
 export const ICON_DISPLAY_CONFIG = {
+  // 全域基礎配置
   global: {
-    // CJK 文字配置（中文、日文、韓文）
-    textCJK: {
-      fontSize: '1.1rem',      // 適合中文字體顯示
-      marginTop: '0.05em'      // 微調垂直對齊
-    },
-    
-    // 拉丁文字配置（英文、歐洲語系）
-    textLatin: {
-      fontSize: '1.4rem',      // 拉丁字母需要較大尺寸
-      marginTop: '0.05em'      // 微調垂直對齊
-    },
-    
-    // Emoji 配置
-    emoji: {
-      fontSize: '1.7rem',      // Emoji 需要較大尺寸以保持清晰
-      marginTop: '0.1em'       // Emoji 需要更多垂直調整
-    },
-    
-    // 圖標配置（Hero Icons、Bootstrap Icons）
-    icon: {
-      size: '1.8rem'           // 圖標尺寸，Hero Icons 使用 width/height
-    }
+    textCJK: { fontSize: '1.1rem', marginTop: '0.05em' },
+    textLatin: { fontSize: '1.4rem', marginTop: '0.05em' },
+    emoji: { fontSize: '1.7rem', marginTop: '0.1em' },
+    icon: { size: '1.8rem' }
   },
-  
-  // 尺寸特殊配置（如果某個尺寸需要特殊調整）
-  sizeSpecific: {
-    'xs': {
-      textCJK: { fontSize: '0.55rem' },
-      textLatin: { fontSize: '0.7rem' },
-      emoji: { fontSize: '0.85rem' },
-      icon: { size: '0.9rem' }
-    },
-    'sm': {
-      textCJK: { fontSize: '0.7rem' },
-      textLatin: { fontSize: '0.9rem' },
-      emoji: { fontSize: '1.1rem' },
-      icon: { size: '1.15rem' }
-    },
-    'lg': {
-      textCJK: { fontSize: '1.3rem' },
-      textLatin: { fontSize: '1.65rem' },
-      emoji: { fontSize: '2.0rem' },
-      icon: { size: '2.1rem' }
-    },
-    'xl': {
-      textCJK: { fontSize: '1.65rem' },
-      textLatin: { fontSize: '2.1rem' },
-      emoji: { fontSize: '2.55rem' },
-      icon: { size: '2.7rem' }
-    }
+
+  // 按尺寸分類的詳細配置
+  textCJKBySize: {
+    '4': { fontSize: '0.3rem' },
+    '5': { fontSize: '0.4rem' },
+    '6': { fontSize: '0.5rem' },
+    '8': { fontSize: '0.7rem' },
+    '10': { fontSize: '0.9rem' },
+    '12': { fontSize: '1.1rem' },
+    'xs': { fontSize: '0.5rem' },
+    'sm': { fontSize: '0.7rem' },
+    'md': { fontSize: '0.9rem' },
+    'lg': { fontSize: '1.1rem' },
+    'xl': { fontSize: '1.5rem' },
+    '2xl': { fontSize: '1.9rem' },
+    '3xl': { fontSize: '2.2rem' }
+  },
+
+  textLatinBySize: {
+    '4': { fontSize: '0.4rem' },
+    '5': { fontSize: '0.5rem' },
+    '6': { fontSize: '0.6rem' },
+    '8': { fontSize: '0.9rem' },
+    '10': { fontSize: '1.1rem' },
+    '12': { fontSize: '1.4rem' },
+    'xs': { fontSize: '0.6rem' },
+    'sm': { fontSize: '0.9rem' },
+    'md': { fontSize: '1.1rem' },
+    'lg': { fontSize: '1.4rem' },
+    'xl': { fontSize: '2rem' },
+    '2xl': { fontSize: '2.4rem' },
+    '3xl': { fontSize: '3rem' }
+  },
+
+  emojiBySize: {
+    '4': { fontSize: '0.4rem' },
+    '5': { fontSize: '0.5rem' },
+    '6': { fontSize: '0.8rem' },
+    '8': { fontSize: '1.1rem' },
+    '10': { fontSize: '1.3rem' },
+    '12': { fontSize: '1.7rem' },
+    'xs': { fontSize: '0.8rem' },
+    'sm': { fontSize: '1.1rem' },
+    'md': { fontSize: '1.3rem' },
+    'lg': { fontSize: '1.7rem' },
+    'xl': { fontSize: '2.4rem' },
+    '2xl': { fontSize: '2.9rem' },
+    '3xl': { fontSize: '3.6rem' }
+  },
+
+  iconBySize: {
+    '4': { size: '0.5rem' },
+    '5': { size: '0.6rem' },
+    '6': { size: '0.8rem' },
+    '8': { size: '1rem' },
+    '10': { size: '1.3rem' },
+    '12': { size: '1.8rem' },
+    'xs': { size: '0.8rem' },
+    'sm': { size: '1rem' },
+    'md': { size: '1.3rem' },
+    'lg': { size: '1.8rem' },
+    'xl': { size: '2.2rem' },
+    '2xl': { size: '2.6rem' },
+    '3xl': { size: '3.4rem' }
+  },
+
+  heroIconBySize: {
+    '4': { size: '0.5rem' },
+    '5': { size: '0.6rem' },
+    '6': { size: '0.8rem' },
+    '8': { size: '1.1rem' },
+    '10': { size: '1.4rem' },
+    '12': { size: '1.8rem' },
+    'xs': { size: '0.8rem' },
+    'sm': { size: '1.1rem' },
+    'md': { size: '1.4rem' },
+    'lg': { size: '1.8rem' },
+    'xl': { size: '2.3rem' },
+    '2xl': { size: '2.8rem' },
+    '3xl': { size: '3.6rem' }
   }
 }
 
 /**
- * 獲取指定尺寸的配置
- * @param {string} size - 尺寸名稱 (xs, sm, md, lg, xl 等)
- * @param {string} type - 內容類型 (textCJK, textLatin, emoji, icon)
+ * 獲取指定尺寸和類型的配置
+ * @param {string} size - 尺寸名稱 (4, 5, 6, 8, 10, 12, xs, sm, md, lg, xl, 2xl, 3xl)
+ * @param {string} contentType - 內容類型 (text, emoji, bootstrap_icon, hero_icon)
+ * @param {string} text - 文字內容（用於 CJK/Latin 判斷）
  * @returns {object} 配置物件
  */
-export function getIconDisplayConfig(size, type) {
-  // 先檢查是否有尺寸特殊配置
-  const sizeSpecific = ICON_DISPLAY_CONFIG.sizeSpecific[size]
-  if (sizeSpecific && sizeSpecific[type]) {
-    return {
-      ...ICON_DISPLAY_CONFIG.global[type],
-      ...sizeSpecific[type]
-    }
+export function getIconDisplayConfig(size, contentType, text = '') {
+  const baseConfig = {
+    marginTop: '0.05em'
   }
-  
-  // 使用全域配置
-  return ICON_DISPLAY_CONFIG.global[type] || {}
+
+  switch (contentType) {
+    case 'text':
+      const textType = isCJKText(text) ? 'textCJKBySize' : 'textLatinBySize'
+      const textConfig = ICON_DISPLAY_CONFIG[textType][size]
+      return {
+        ...baseConfig,
+        ...textConfig,
+        marginTop: '0.05em'
+      }
+
+    case 'emoji':
+      const emojiConfig = ICON_DISPLAY_CONFIG.emojiBySize[size]
+      return {
+        ...baseConfig,
+        ...emojiConfig,
+        marginTop: '0.1em'
+      }
+
+    case 'hero_icon':
+      const heroConfig = ICON_DISPLAY_CONFIG.heroIconBySize[size]
+      return {
+        ...baseConfig,
+        ...heroConfig
+      }
+
+    case 'bootstrap_icon':
+      const iconConfig = ICON_DISPLAY_CONFIG.iconBySize[size]
+      return {
+        ...baseConfig,
+        ...iconConfig
+      }
+
+    default:
+      // 回退到全域配置
+      return ICON_DISPLAY_CONFIG.global[contentType] || baseConfig
+  }
 }
 
 /**
