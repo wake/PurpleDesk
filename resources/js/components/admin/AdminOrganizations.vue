@@ -53,15 +53,11 @@
           <tr v-for="org in filteredOrganizations" :key="org.id">
             <td class="w-2/5 px-6 py-4">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded bg-primary-100 flex items-center justify-center overflow-hidden flex-shrink-0">
-                  <img
-                    v-if="org.logo_url"
-                    :src="org.logo_url"
-                    :alt="org.name"
-                    class="h-full w-full object-cover"
-                  />
-                  <OfficeBuildingIcon v-else class="h-6 w-6 text-primary-600" />
-                </div>
+                <IconDisplay 
+                  :icon-data="org.avatar_data" 
+                  size="md" 
+                  :title="org.name"
+                />
                 <div class="ml-4 min-w-0 flex-1" style="max-width: calc(100% - 3rem);">
                   <div class="text-sm font-medium text-gray-900 truncate">
                     {{ org.name }}
@@ -101,7 +97,9 @@
 
     <!-- 空狀態 -->
     <div v-if="!isLoading && filteredOrganizations.length === 0" class="text-center py-12">
-      <OfficeBuildingIcon class="mx-auto h-12 w-12 text-gray-400" />
+      <div class="mx-auto h-12 w-12 text-gray-400 flex items-center justify-center">
+        <i class="bi bi-building text-4xl opacity-50"></i>
+      </div>
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到組織</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或新增組織</p>
     </div>
@@ -210,22 +208,22 @@
 <script>
 import { ref, computed, onMounted, reactive } from 'vue'
 import axios from 'axios'
-import { OfficeBuildingIcon } from '@heroicons/vue/outline'
 import ConfirmDialog from '../common/ConfirmDialog.vue'
 import LoadingSpinner from '../common/LoadingSpinner.vue'
 import PaginationControl from '../common/PaginationControl.vue'
 import UserAvatarGroup from '../common/UserAvatarGroup.vue'
 import ImageField from '../common/ImageField.vue'
+import IconDisplay from '../common/IconDisplay.vue'
 
 export default {
   name: 'AdminOrganizations',
   components: {
-    OfficeBuildingIcon,
     ConfirmDialog,
     LoadingSpinner,
     PaginationControl,
     UserAvatarGroup,
-    ImageField
+    ImageField,
+    IconDisplay
   },
   setup() {
     const organizations = ref([])

@@ -6,25 +6,15 @@
         v-for="(user, index) in visibleUsers"
         :key="user.id || index"
         :class="[
-          'inline-block h-6 w-6 rounded-full ring-2',
+          'inline-block ring-2',
           ringColorClass
         ]"
-        :title="getUserDisplayName(user)"
       >
-        <img
-          v-if="user.avatar_url"
-          :src="user.avatar_url"
-          :alt="getUserDisplayName(user)"
-          class="h-6 w-6 rounded-full object-cover"
+        <IconDisplay 
+          :icon-data="user.avatar_data" 
+          size="6" 
+          :title="getUserDisplayName(user)"
         />
-        <div v-else :class="[
-          'h-6 w-6 rounded-full flex items-center justify-center',
-          avatarBgColorClass
-        ]">
-          <span class="text-xs font-medium text-white">
-            {{ getUserInitials(user) }}
-          </span>
-        </div>
       </div>
     </div>
     
@@ -42,9 +32,13 @@
 
 <script>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
+import IconDisplay from './IconDisplay.vue'
 
 export default {
   name: 'UserAvatarGroup',
+  components: {
+    IconDisplay
+  },
   props: {
     users: {
       type: Array,
@@ -114,25 +108,8 @@ export default {
       }
     })
     
-    const avatarBgColorClass = computed(() => {
-      switch (props.theme) {
-        case 'primary':
-          return 'bg-primary-500'
-        case 'admin':
-          return 'bg-purple-500'
-        default:
-          return 'bg-gray-500'
-      }
-    })
-    
     const getUserDisplayName = (user) => {
       return user.display_name || user.full_name || user.name || '未知用戶'
-    }
-    
-    const getUserInitials = (user) => {
-      if (!user) return ''
-      const name = getUserDisplayName(user)
-      return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     }
     
     // 視窗大小變化監聽
@@ -152,9 +129,7 @@ export default {
       visibleUsers,
       remainingCount,
       ringColorClass,
-      avatarBgColorClass,
-      getUserDisplayName,
-      getUserInitials
+      getUserDisplayName
     }
   }
 }

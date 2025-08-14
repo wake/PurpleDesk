@@ -47,17 +47,11 @@
           <tr v-for="team in filteredTeams" :key="team.id">
             <td class="w-1/3 px-6 py-4">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded bg-blue-100 flex items-center justify-center overflow-hidden flex-shrink-0">
-                  <img
-                    v-if="team.avatar_url"
-                    :src="team.avatar_url"
-                    :alt="team.name"
-                    class="h-full w-full object-cover"
-                  />
-                  <svg v-else class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
+                <IconDisplay 
+                  :icon-data="team.avatar_data" 
+                  size="md" 
+                  :title="team.name"
+                />
                 <div class="ml-4 min-w-0 flex-1" style="max-width: calc(100% - 3rem);">
                   <div class="text-sm font-medium text-gray-900 truncate">
                     {{ team.name }}
@@ -143,16 +137,19 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">團隊頭像</label>
                 <div class="flex items-start space-x-4">
-                  <div class="h-16 w-16 bg-blue-100 rounded flex items-center justify-center overflow-hidden">
+                  <div class="h-16 w-16">
                     <img
-                      v-if="avatarPreview || (editingTeam && editingTeam.avatar_url)"
-                      :src="avatarPreview || editingTeam.avatar_url"
+                      v-if="avatarPreview"
+                      :src="avatarPreview"
                       :alt="teamForm.name"
-                      class="h-full w-full object-cover"
+                      class="h-full w-full object-cover rounded-full border border-gray-300"
                     />
-                    <svg v-else class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
+                    <IconDisplay 
+                      v-else
+                      :icon-data="editingTeam?.avatar_data" 
+                      size="xl" 
+                      :title="teamForm.name || '新團隊'"
+                    />
                   </div>
                   
                   <div class="flex-1">
@@ -225,13 +222,15 @@ import axios from 'axios'
 import LoadingSpinner from '../../common/LoadingSpinner.vue'
 import PaginationControl from '../../common/PaginationControl.vue'
 import UserAvatarGroup from '../../common/UserAvatarGroup.vue'
+import IconDisplay from '../../common/IconDisplay.vue'
 
 export default {
   name: 'OrganizationTeams',
   components: {
     LoadingSpinner,
     PaginationControl,
-    UserAvatarGroup
+    UserAvatarGroup,
+    IconDisplay
   },
   props: {
     organization: {
