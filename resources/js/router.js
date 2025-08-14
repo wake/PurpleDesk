@@ -44,28 +44,10 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/test-icon-picker',
-    name: 'test-icon-picker',
-    component: () => import('./pages/TestIconPicker.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/test-avatar',
-    name: 'test-avatar',
-    component: () => import('./pages/AvatarTest.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/test-icon-size',
-    name: 'test-icon-size',
-    component: () => import('./pages/IconSizeTest.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/test-icon-simple',
-    name: 'test-icon-simple',
-    component: () => import('./pages/IconSizeTestSimple.vue'),
-    meta: { requiresAuth: true }
+    path: '/dev-tool/icon-size',
+    name: 'dev-icon-size-tool',
+    component: () => import('./pages/dev-tool/IconSizeTool.vue'),
+    meta: { requiresAuth: true, devOnly: true }
   },
   {
     path: '/admin',
@@ -122,6 +104,12 @@ router.beforeEach(async (to, from, next) => {
       next('/dashboard')
       return
     }
+  }
+  
+  // 開發工具頁面只在開發模式下可訪問
+  if (to.meta.devOnly && import.meta.env.PROD) {
+    next('/dashboard')
+    return
   }
   
   // 已登入用戶不能訪問登入/註冊頁面
