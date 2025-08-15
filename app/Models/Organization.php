@@ -13,7 +13,7 @@ class Organization extends Model
 
     protected $fillable = [
         'name',
-        'avatar',
+        'logo_data',
         'description',
     ];
 
@@ -32,7 +32,7 @@ class Organization extends Model
     protected function casts(): array
     {
         return [
-            'avatar' => 'json',
+            'logo_data' => 'json',
         ];
     }
 
@@ -41,11 +41,12 @@ class Organization extends Model
      */
     public function getAvatarDataAttribute()
     {
-        if (!$this->avatar) {
+        $logoData = $this->getAttributeFromArray('logo_data');
+        if (!$logoData) {
             return \App\Helpers\IconDataHelper::generateOrganizationIconDefault();
         }
         
-        return $this->avatar;
+        return $logoData;
     }
     
     /**
@@ -55,7 +56,9 @@ class Organization extends Model
     {
         $avatarData = $this->avatar_data;
         
-        if ($avatarData && $avatarData['type'] === 'image' && isset($avatarData['path'])) {
+        if ($avatarData && is_array($avatarData) && 
+            isset($avatarData['type']) && $avatarData['type'] === 'image' && 
+            isset($avatarData['path'])) {
             return asset('storage/' . $avatarData['path']);
         }
         

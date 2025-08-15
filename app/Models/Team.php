@@ -18,7 +18,7 @@ class Team extends Model
         'organization_id',
     ];
 
-    protected $appends = ['avatar_data', 'avatar_url'];
+    protected $appends = ['avatar_url'];
     
     /**
      * Get the attributes that should be cast.

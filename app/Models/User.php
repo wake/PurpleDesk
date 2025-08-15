@@ -49,7 +49,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $appends = ['avatar_data', 'avatar_url'];
+    protected $appends = ['avatar_url'];
 
     /**
      * Get the attributes that should be cast.
@@ -133,7 +133,7 @@ class User extends Authenticatable
      */
     public function belongsToOrganization($organizationId): bool
     {
-        return $this->organizations()->where('organization_id', $organizationId)->exists();
+        return $this->organizations()->where('organizations.id', $organizationId)->exists();
     }
 
     /**
@@ -141,7 +141,7 @@ class User extends Authenticatable
      */
     public function belongsToTeam($teamId): bool
     {
-        return $this->teams()->where('team_id', $teamId)->exists();
+        return $this->teams()->where('teams.id', $teamId)->exists();
     }
 
     /**
