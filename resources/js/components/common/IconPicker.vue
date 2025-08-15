@@ -41,7 +41,7 @@
         :style="panelPosition"
       >
         <!-- IconPicker 面板 -->
-        <div class="absolute top-0 left-0 bg-white border border-gray-200 rounded-lg shadow-xl px-4 py-2 w-96 h-96">
+        <div class="absolute top-0 left-0 bg-white border border-gray-200 rounded-lg shadow-xl px-4 py-2 w-96">
         <!-- 頂部標籤切換 -->
         <div class="flex border-b border-gray-200 mb-4">
           <button
@@ -314,7 +314,7 @@
         <!-- ColorPicker 面板 -->
         <div 
           v-if="showColorPicker" 
-          class="absolute top-0 bg-white border border-gray-200 rounded-lg shadow-xl w-72 h-96 p-4 pt-5 overflow-y-auto"
+          class="absolute top-0 bg-white border border-gray-200 rounded-lg shadow-xl w-72 p-4 pt-5"
           :style="colorPickerPosition"
         >
           <!-- 關閉按鈕 -->
@@ -536,7 +536,7 @@ export default {
       showColorPicker.value = !showColorPicker.value
       // 當 ColorPicker 開關時，重新計算位置以適應新的寬度
       await nextTick()
-      calculatePosition()
+      await calculatePosition()
     }
     
     // 關閉顏色選擇器
@@ -544,7 +544,7 @@ export default {
       showColorPicker.value = false
       // 當 ColorPicker 關閉時，重新計算位置以適應新的寬度
       await nextTick()
-      calculatePosition()
+      await calculatePosition()
     }
     
     // 選擇顏色
@@ -624,7 +624,7 @@ export default {
       solid: HeroiconsSolid
     }
     
-    const calculatePosition = () => {
+    const calculatePosition = async () => {
       let targetElement = iconPickerRef.value
       
       // 如果 hidePreview 為 true，嘗試找到父元素作為定位參考
@@ -676,7 +676,16 @@ export default {
       // 面板尺寸
       const iconPickerWidth = 384 // w-96
       const colorPickerWidth = 288 // w-72
-      const panelHeight = 384 // h-96
+      
+      // 動態獲取 IconPicker 面板的實際高度
+      let panelHeight = 400 // 預設高度
+      if (iconPanel.value) {
+        await nextTick() // 確保 DOM 已更新
+        const iconPickerElement = iconPanel.value.querySelector('.absolute.top-0.left-0')
+        if (iconPickerElement) {
+          panelHeight = iconPickerElement.offsetHeight
+        }
+      }
       
       let top = rect.bottom + 5
       let left = rect.left
@@ -779,7 +788,7 @@ export default {
           activeTab.value = 'emoji'
         }
         await nextTick()
-        calculatePosition()
+        await calculatePosition()
       }
     }
     
@@ -1232,11 +1241,11 @@ export default {
     
     onMounted(() => {
       document.addEventListener('click', handleClickOutside)
-      window.addEventListener('resize', () => {
-        if (isOpen.value) calculatePosition()
+      window.addEventListener('resize', async () => {
+        if (isOpen.value) await calculatePosition()
       })
-      window.addEventListener('scroll', () => {
-        if (isOpen.value) calculatePosition()
+      window.addEventListener('scroll', async () => {
+        if (isOpen.value) await calculatePosition()
       })
       
       // 觸發 emoji 載入（如果還沒載入）
