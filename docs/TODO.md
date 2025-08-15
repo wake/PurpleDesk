@@ -98,6 +98,25 @@
   - [x] Emoji 相容性 100% 驗證
   - [x] 功能整合測試完成
 
+### 階段六：資料庫架構統一與 JSON 編碼修正（2025-08-16）
+- [x] 修正 JSON 資料儲存問題
+  - [x] 解決 users.avatar_data 和 teams.avatar_data 雙重編碼問題
+  - [x] 移除 seeder 中的 json_encode 調用，使用 Eloquent JSON cast
+  - [x] 修正前端 IconDisplay 組件接收字串而非物件的問題
+- [x] 統一資料表結構
+  - [x] 將 teams.logo_data 重命名為 icon_data
+  - [x] 移除 teams 表中未使用的 avatar 欄位
+  - [x] 移除 organizations 表中未使用的 avatar 欄位
+  - [x] 統一使用 icon_data/logo_data 命名規範
+- [x] Model 配置優化
+  - [x] 更新 Team model fillable 欄位和 casts 配置
+  - [x] 修正 getAvatarDataAttribute 和 getLogoUrlAttribute 存取器
+  - [x] 確保所有 JSON 欄位正確使用 Eloquent casting
+- [x] 測試資料重建
+  - [x] 執行 migrate:fresh --seed 重建完整資料庫
+  - [x] 驗證所有 JSON 資料正確儲存為物件格式
+  - [x] 確認 teams 表最終結構：id, name, description, icon_data, organization_id, timestamps
+
 ## 📝 待辦項目
 
 ### 階段五：核心業務功能開發

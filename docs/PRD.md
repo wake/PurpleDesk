@@ -1,8 +1,8 @@
 # PurpleDesk 專案管理系統 - 產品需求文件 (PRD)
 
 建立日期：2025-08-08
-最後更新：2025-08-13
-文件版本：1.5  
+最後更新：2025-08-16
+文件版本：1.6  
 
 ### 1.1 技術架構
 
@@ -138,6 +138,28 @@
   - 6 項完整測試計畫執行並通過
   - Emoji 相容性 100% 驗證
   - 功能整合測試完成
+
+#### 資料庫架構統一與 JSON 編碼修正 (v1.6)
+- ✅ **JSON 資料儲存問題修正**
+  - 解決 users.avatar_data 和 teams 圖標資料的雙重編碼問題
+  - 移除 seeder 中的 json_encode 調用，統一使用 Eloquent JSON cast
+  - 修正前端 IconDisplay 組件接收資料型別不一致問題
+  - 確保所有 JSON 資料正確儲存為物件格式，提升資料一致性
+- ✅ **資料表結構統一優化**
+  - 將 teams.logo_data 重命名為 icon_data，統一命名規範
+  - 移除 teams 和 organizations 表中未使用的 avatar 欄位
+  - 清理資料庫冗餘欄位，優化表結構
+  - 最終 teams 表結構：id, name, description, icon_data, organization_id, timestamps
+- ✅ **Model 配置完善**
+  - 更新 Team model fillable 欄位和 casts 配置
+  - 修正 getAvatarDataAttribute 和 getLogoUrlAttribute 存取器
+  - 確保所有 JSON 欄位正確使用 Eloquent casting 機制
+  - 提升資料存取效能和程式碼可維護性
+- ✅ **系統穩定性提升**
+  - 執行完整資料庫重建，驗證所有變更
+  - 解決管理面板 Vue 組件 prop 型別警告
+  - 消除前端 JSON 解析錯誤，提升用戶體驗
+  - 確保系統在生產環境的穩定運行
 
 ### 2.2 技術指標
 - **測試覆蓋率**: 100% (6/6 測試通過，21 個斷言)
