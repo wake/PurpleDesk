@@ -138,24 +138,24 @@ export default {
       { value: '#ec4899', name: '桃紅色 Pink' }
     ]
     
-    // 淡色系調色盤
+    // 淡色系調色盤（增加彩度提升識別度）
     const lightColors = [
-      { value: '#fef2f2', name: '淡紅色 Light Red' },
-      { value: '#fff7ed', name: '淡橙色 Light Orange' },
-      { value: '#fffbeb', name: '淡黃色 Light Amber' },
-      { value: '#fefce8', name: '淡黃綠色 Light Yellow' },
-      { value: '#f7fee7', name: '淡萊色 Light Lime' },
-      { value: '#f0fdf4', name: '淡綠色 Light Green' },
-      { value: '#ecfdf5', name: '淡翠綠色 Light Emerald' },
-      { value: '#f0fdfa', name: '淡青綠色 Light Teal' },
-      { value: '#ecfeff', name: '淡青色 Light Cyan' },
-      { value: '#f0f9ff', name: '淡天空藍 Light Sky' },
-      { value: '#eff6ff', name: '淡藍色 Light Blue' },
-      { value: '#eef2ff', name: '淡靛藍色 Light Indigo' },
-      { value: '#f5f3ff', name: '淡紫羅蘭 Light Violet' },
-      { value: '#faf5ff', name: '淡紫色 Light Purple' },
-      { value: '#fdf4ff', name: '淡紫紅色 Light Fuchsia' },
-      { value: '#fdf2f8', name: '淡桃紅色 Light Pink' }
+      { value: '#fecaca', name: '淡紅色 Light Red' },
+      { value: '#fed7aa', name: '淡橙色 Light Orange' },
+      { value: '#fde68a', name: '淡黃色 Light Amber' },
+      { value: '#fef08a', name: '淡黃綠色 Light Yellow' },
+      { value: '#d9f99d', name: '淡萊色 Light Lime' },
+      { value: '#bbf7d0', name: '淡綠色 Light Green' },
+      { value: '#a7f3d0', name: '淡翠綠色 Light Emerald' },
+      { value: '#99f6e4', name: '淡青綠色 Light Teal' },
+      { value: '#a5f3fc', name: '淡青色 Light Cyan' },
+      { value: '#bae6fd', name: '淡天空藍 Light Sky' },
+      { value: '#dbeafe', name: '淡藍色 Light Blue' },
+      { value: '#c7d2fe', name: '淡靛藍色 Light Indigo' },
+      { value: '#ddd6fe', name: '淡紫羅蘭 Light Violet' },
+      { value: '#e9d5ff', name: '淡紫色 Light Purple' },
+      { value: '#f5d0fe', name: '淡紫紅色 Light Fuchsia' },
+      { value: '#fbcfe8', name: '淡桃紅色 Light Pink' }
     ]
     
     const calculatePosition = () => {

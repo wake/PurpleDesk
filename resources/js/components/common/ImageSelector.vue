@@ -16,9 +16,9 @@
         <!-- 字母縮寫 -->
         <div 
           v-else-if="(mode === 'initials' || iconType === 'initials')"
-          :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
           class="font-type-image h-full w-full flex items-center justify-center font-semibold"
-          :class="[textSizeClass, dynamicTextColor]"
+          :class="[textSizeClass, dynamicTextColor.class]"
+          :style="{ backgroundColor: backgroundColor || defaultBackgroundColor, ...(dynamicTextColor.style ? { color: dynamicTextColor.style.split(': ')[1] } : {}) }"
         >
           {{ iconType === 'initials' ? selectedIcon : displayInitials }}
         </div>
@@ -33,13 +33,15 @@
           <component 
             v-if="iconType === 'heroicons'" 
             :is="getHeroiconComponent()" 
-            :class="[iconSizeClass, dynamicTextColor]"
+            :class="[iconSizeClass, dynamicTextColor.class]"
+            :style="dynamicTextColor.style ? { color: dynamicTextColor.style.split(': ')[1] } : {}"
             class="hero-type-image"
           />
           <!-- Bootstrap Icons -->
           <i 
             v-else-if="iconType === 'bootstrap'" 
-            :class="['bi', selectedIcon, bsIconSizeClass, dynamicTextColor]"
+            :class="['bi', selectedIcon, bsIconSizeClass, dynamicTextColor.class]"
+            :style="dynamicTextColor.style ? { color: dynamicTextColor.style.split(': ')[1] } : {}"
             class="bs-type-image"
           />
           <!-- Emoji -->
@@ -56,9 +58,9 @@
         <!-- 預設佔位符 -->
         <div 
           v-else
-          :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
           class="h-full w-full flex items-center justify-center"
-          :class="dynamicTextColor"
+          :class="dynamicTextColor.class"
+          :style="{ backgroundColor: backgroundColor || defaultBackgroundColor, ...(dynamicTextColor.style ? { color: dynamicTextColor.style.split(': ')[1] } : {}) }"
         >
           <slot name="default-placeholder">
             <span :class="textSizeClass">{{ defaultInitials }}</span>
@@ -450,8 +452,34 @@ export default {
     })
     
     // 計算顏色亮度並決定文字顏色
+    // 淡色系與深色系配對表（極深對比色 800-900 系列）
+    const lightToDarkColorMap = {
+      '#fecaca': '#991b1b', // 淡紅色 -> 極深紅色 (red-800)
+      '#fed7aa': '#9a3412', // 淡橙色 -> 極深橙色 (orange-800)
+      '#fde68a': '#92400e', // 淡黃色 -> 極深黃色 (amber-800)
+      '#fef08a': '#854d0e', // 淡黃綠色 -> 極深黃綠色 (yellow-800)
+      '#d9f99d': '#365314', // 淡萊色 -> 極深萊色 (lime-800)
+      '#bbf7d0': '#166534', // 淡綠色 -> 極深綠色 (green-800)
+      '#a7f3d0': '#065f46', // 淡翠綠色 -> 極深翠綠色 (emerald-800)
+      '#99f6e4': '#115e59', // 淡青綠色 -> 極深青綠色 (teal-800)
+      '#a5f3fc': '#155e75', // 淡青色 -> 極深青色 (cyan-800)
+      '#bae6fd': '#075985', // 淡天空藍 -> 極深天空藍 (sky-800)
+      '#dbeafe': '#1e40af', // 淡藍色 -> 極深藍色 (blue-800)
+      '#c7d2fe': '#3730a3', // 淡靛藍色 -> 極深靛藍色 (indigo-800)
+      '#ddd6fe': '#5b21b6', // 淡紫羅蘭 -> 極深紫羅蘭 (violet-800)
+      '#e9d5ff': '#6b21a8', // 淡紫色 -> 極深紫色 (purple-800)
+      '#f5d0fe': '#86198f', // 淡紫紅色 -> 極深紫紅色 (fuchsia-800)
+      '#fbcfe8': '#9d174d'  // 淡桃紅色 -> 極深桃紅色 (pink-800)
+    }
+    
     const getTextColor = (bgColor) => {
-      if (!bgColor) return 'text-white'
+      if (!bgColor) return { class: 'text-white', style: null }
+      
+      // 檢查是否為淡色系預設顏色，如果是則使用配對的深色
+      const darkColor = lightToDarkColorMap[bgColor.toLowerCase()]
+      if (darkColor) {
+        return { class: '', style: `color: ${darkColor}` }
+      }
       
       // 移除 # 符號並轉換為 RGB
       const hex = bgColor.replace('#', '')
@@ -463,7 +491,10 @@ export default {
       const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
       
       // 如果亮度大於 0.5，使用深色文字；否則使用白色文字
-      return luminance > 0.7 ? 'text-gray-800' : 'text-white'
+      return { 
+        class: luminance > 0.7 ? 'text-gray-800' : 'text-white', 
+        style: null 
+      }
     }
     
     // 動態文字顏色
