@@ -13,7 +13,10 @@
       <div 
         v-if="isOpen" 
         ref="colorPanel"
-        class="fixed z-[10000] mt-2 p-4 pt-5 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[280px]"
+        :class="[
+          'fixed z-[10000] bg-white border border-gray-200 rounded-lg shadow-xl min-w-[280px]',
+          positionMode === 'beside-panel' ? 'p-4 pt-5 overflow-y-auto' : 'mt-2 p-4 pt-5'
+        ]"
         :style="panelPosition"
         @click.stop
       >
@@ -182,10 +185,13 @@ export default {
       let top, left
       
       if (props.positionMode === 'beside-panel') {
-        // 面板並排模式：顯示在 IconPicker 面板右側
-        // 調整高度對齊：IconPicker 有 py-2 (8px) + 內容頂部間距
-        top = rect.top + 20 // 與面板內容區對齊
+        // 面板並排模式：與 IconPicker 面板完全齊高對齊
+        top = rect.top // 完全對齊 IconPicker 面板頂部
         left = rect.right + 10 // 面板右側，留 10px 間距
+        
+        // 動態計算高度以匹配 IconPicker 面板
+        const iconPickerHeight = rect.height
+        panelHeight = iconPickerHeight // 使用相同高度
         
         // 檢查是否超出視窗右邊界
         if (left + panelWidth > viewportWidth) {
@@ -200,6 +206,7 @@ export default {
         
         // 確保不會超出視窗下邊界
         if (top + panelHeight > viewportHeight) {
+          // 調整頂部位置而非高度，保持面板完整
           top = Math.max(10, viewportHeight - panelHeight - 10)
         }
         
@@ -243,7 +250,8 @@ export default {
       
       panelPosition.value = {
         top: `${top}px`,
-        left: `${left}px`
+        left: `${left}px`,
+        ...(props.positionMode === 'beside-panel' ? { height: `${panelHeight}px` } : {})
       }
     }
     
