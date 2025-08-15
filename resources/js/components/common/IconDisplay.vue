@@ -3,7 +3,8 @@
     :class="[
       'inline-flex items-center justify-center rounded-full select-none',
       sizeClasses,
-      'overflow-hidden flex-shrink-0 border border-gray-300'
+      'overflow-hidden flex-shrink-0',
+      'border-[0.8px] border-gray-300/80'
     ]"
     :style="containerStyles"
     :title="title"

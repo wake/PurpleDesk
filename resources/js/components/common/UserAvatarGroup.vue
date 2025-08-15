@@ -8,8 +8,9 @@
          v-for="(user, index) in visibleUsers"
         :key="user.id || index"
         :class="[
-          'inline-flex',
+          'inline-flex rounded-full',
         ]"
+        :style="{ zIndex: index }"
       >
         <IconDisplay 
           :icon-data="user.avatar_data" 
@@ -97,15 +98,15 @@ export default {
       return Math.max(0, props.users.length - maxVisibleMembers.value)
     })
     
-    // 主題顏色計算屬性
-    const ringColorClass = computed(() => {
+    // 主題陰影樣式計算屬性
+    const shadowClass = computed(() => {
       switch (props.theme) {
         case 'primary':
-          return 'ring-primary-100'
+          return 'shadow-[0_0_0_1px_rgba(59,130,246,0.3)]'
         case 'admin':
-          return 'ring-purple-100'
+          return 'shadow-[0_0_0_1px_rgba(147,51,234,0.3)]'
         default:
-          return 'ring-white'
+          return 'shadow-[0_0_0_1px_rgba(0,0,0,0.1)]'
       }
     })
     
@@ -129,7 +130,7 @@ export default {
     return {
       visibleUsers,
       remainingCount,
-      ringColorClass,
+      shadowClass,
       getUserDisplayName
     }
   }
