@@ -315,28 +315,29 @@ export default {
               avatar_data: avatarData,
               logo_data: logoData,
               users: org.users?.map(user => {
-              let avatarData = user.avatar_data
-              
-              // 處理雙重編碼的 JSON 字串
-              if (typeof avatarData === 'string') {
-                try {
-                  avatarData = JSON.parse(avatarData)
-                  // 如果解析後仍是字串，再解析一次
-                  if (typeof avatarData === 'string') {
+                let avatarData = user.avatar_data
+                
+                // 處理雙重編碼的 JSON 字串
+                if (typeof avatarData === 'string') {
+                  try {
                     avatarData = JSON.parse(avatarData)
+                    // 如果解析後仍是字串，再解析一次
+                    if (typeof avatarData === 'string') {
+                      avatarData = JSON.parse(avatarData)
+                    }
+                  } catch (e) {
+                    console.warn('Failed to parse user avatar_data:', avatarData, e)
+                    avatarData = null
                   }
-                } catch (e) {
-                  console.warn('Failed to parse user avatar_data:', avatarData, e)
-                  avatarData = null
                 }
-              }
-              
-              return {
-                ...user,
-                avatar_data: avatarData
-              }
-            }) || []
-          }))
+                
+                return {
+                  ...user,
+                  avatar_data: avatarData
+                }
+              }) || []
+            }
+          });
           pagination.value = {
             current_page: response.data.current_page,
             last_page: response.data.last_page,
