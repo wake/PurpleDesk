@@ -74,6 +74,7 @@
             <!-- 背景顏色選擇器按鈕 -->
             <div class="me-3 pt-1 pb-2 relative">
               <button
+                ref="eyedropperButton"
                 @click.stop="openColorPicker"
                 class="p-0 text-base text-gray-500 hover:text-gray-700 transition-colors relative"
                 title="選擇背景顏色"
@@ -314,6 +315,7 @@
       <ColorPicker 
         :model-value="localBackgroundColor" 
         @update:model-value="handleBackgroundColorChange"
+        :trigger-element="eyedropperButton"
         ref="colorPickerRef"
       />
     </div>
@@ -393,6 +395,7 @@ export default {
     const localBackgroundColor = ref(props.backgroundColor || '#6366f1')
     const showColorPicker = ref(false)
     const colorPickerRef = ref(null)
+    const eyedropperButton = ref(null)
     const customInitials = ref('') // 字母模式的輸入值
     
     // 監聽 props 變化
@@ -1115,6 +1118,7 @@ export default {
       localBackgroundColor,
       showColorPicker,
       colorPickerRef,
+      eyedropperButton,
       openColorPicker,
       handleBackgroundColorChange,
       customInitials,

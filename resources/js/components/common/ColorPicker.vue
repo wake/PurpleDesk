@@ -109,6 +109,10 @@ export default {
     modelValue: {
       type: String,
       default: ''
+    },
+    triggerElement: {
+      type: [Object, Element],
+      default: null
     }
   },
   emits: ['update:modelValue'],
@@ -159,9 +163,11 @@ export default {
     ]
     
     const calculatePosition = () => {
-      if (!colorPickerRef.value) return
+      // 優先使用傳入的觸發元素，其次使用 colorPickerRef
+      const triggerEl = props.triggerElement || colorPickerRef.value
+      if (!triggerEl) return
       
-      const rect = colorPickerRef.value.getBoundingClientRect()
+      const rect = triggerEl.getBoundingClientRect()
       const viewportHeight = window.innerHeight
       const viewportWidth = window.innerWidth
       
@@ -170,7 +176,7 @@ export default {
       const panelHeight = 400
       
       let top = rect.bottom + 5
-      let left = rect.left
+      let left = rect.right + 5  // 預設顯示在按鈕右側
       
       // 優先顯示在下方，只有在下方空間真的不足時才顯示在上方
       const spaceBelow = viewportHeight - rect.bottom
@@ -184,12 +190,18 @@ export default {
         top = rect.bottom + 5
       }
       
-      // 檢查是否超出視窗右邊
+      // 檢查右側空間是否足夠，不足則改到左側
       if (left + panelWidth > viewportWidth) {
-        left = viewportWidth - panelWidth - 10
+        // 改到按鈕左側顯示
+        left = rect.left - panelWidth - 5
+        
+        // 如果左側也超出邊界，則貼著視窗右邊
+        if (left < 10) {
+          left = viewportWidth - panelWidth - 10
+        }
       }
       
-      // 檢查是否超出視窗左邊
+      // 最終檢查是否超出視窗左邊
       if (left < 10) {
         left = 10
       }
