@@ -15,7 +15,7 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         // 簡單的權限檢查（實際應用中應該使用更完善的權限系統）
-        if ($request->user()->email !== 'admin@purpledesk.com') {
+        if (!$request->user()->is_admin) {
             abort(403, '無權限存取');
         }
         
@@ -31,7 +31,7 @@ class AdminController extends Controller
     
     public function organizations(Request $request)
     {
-        if ($request->user()->email !== 'admin@purpledesk.com') {
+        if (!$request->user()->is_admin) {
             abort(403, '無權限存取');
         }
         
@@ -50,7 +50,7 @@ class AdminController extends Controller
     
     public function systemStats()
     {
-        if (request()->user()->email !== 'admin@purpledesk.com') {
+        if (!request()->user()->is_admin) {
             abort(403, '無權限存取');
         }
         
@@ -64,7 +64,7 @@ class AdminController extends Controller
     
     public function searchUsers(Request $request)
     {
-        if (request()->user()->email !== 'admin@purpledesk.com') {
+        if (!request()->user()->is_admin) {
             abort(403, '無權限存取');
         }
         
@@ -97,7 +97,7 @@ class AdminController extends Controller
     
     public function createUser(Request $request)
     {
-        if (request()->user()->email !== 'admin@purpledesk.com') {
+        if (!request()->user()->is_admin) {
             abort(403, '無權限存取');
         }
         
@@ -125,7 +125,7 @@ class AdminController extends Controller
     
     public function updateUser(Request $request, User $user)
     {
-        if (request()->user()->email !== 'admin@purpledesk.com') {
+        if (!request()->user()->is_admin) {
             abort(403, '無權限存取');
         }
         
@@ -151,7 +151,7 @@ class AdminController extends Controller
     
     public function checkAccountAvailable(Request $request)
     {
-        if (request()->user()->email !== 'admin@purpledesk.com') {
+        if (!request()->user()->is_admin) {
             abort(403, '無權限存取');
         }
         
