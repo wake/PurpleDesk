@@ -60,7 +60,7 @@
                 </div>
               </div>
             </td>
-            <td class="w-1/5 px-6 py-4">
+            <td class="w-1/5 px-6 py-4 align-middle">
               <UserAvatarGroup 
                 :users="getTeamLeaders(team)" 
                 theme="admin"
@@ -68,7 +68,7 @@
                 empty-text="無管理者"
               />
             </td>
-            <td class="w-1/6 px-6 py-4 whitespace-nowrap">
+            <td class="w-1/6 px-6 py-4 whitespace-nowrap align-middle">
               <UserAvatarGroup :users="getTeamMembers(team)" />
             </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">

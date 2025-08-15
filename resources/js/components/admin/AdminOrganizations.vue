@@ -68,7 +68,7 @@
                 </div>
               </div>
             </td>
-            <td class="w-1/4 px-6 py-4 whitespace-nowrap">
+            <td class="w-1/4 px-6 py-4 whitespace-nowrap align-middle">
               <UserAvatarGroup :users="org.users" />
             </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">

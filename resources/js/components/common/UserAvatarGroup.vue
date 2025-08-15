@@ -1,13 +1,14 @@
 <template>
   <div class="flex items-center">
     <!-- 重疊頭像組 -->
-    <div class="flex -space-x-0.5 overflow-hidden">
+    <div class="flex -space-x-1.5 overflow-hidden"
+      style="flex-wrap: nowrap; align-items: flex-end;"
+    >
       <div
-        v-for="(user, index) in visibleUsers"
+         v-for="(user, index) in visibleUsers"
         :key="user.id || index"
         :class="[
-          'inline-block ring-2',
-          ringColorClass
+          'inline-flex',
         ]"
       >
         <IconDisplay 
@@ -134,3 +135,6 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+</style>
