@@ -94,7 +94,7 @@
               class="p-0 me-3 pt-1 pb-2 text-base transition-colors"
               title="Reset Icon"
             >
-              <i class="bi bi-trash-fill"></i>
+              <i class="bi bi-arrow-clockwise"></i>
             </button>
           </div>
         </div>
@@ -412,26 +412,17 @@ export default {
     
     // 開啟顏色選擇器
     const openColorPicker = async () => {
-      console.log('開啟顏色選擇器被點擊')
       await nextTick()
       if (colorPickerRef.value) {
-        console.log('colorPickerRef 存在，嘗試調用 togglePicker')
         // 嘗試直接調用組件的方法
         if (typeof colorPickerRef.value.togglePicker === 'function') {
           colorPickerRef.value.togglePicker()
-          console.log('togglePicker 方法被調用')
         } else {
-          console.log('togglePicker 方法不存在，嘗試點擊按鈕')
           const colorPickerButton = colorPickerRef.value.$el?.querySelector('button')
           if (colorPickerButton) {
             colorPickerButton.click()
-            console.log('ColorPicker 按鈕被點擊')
-          } else {
-            console.log('找不到 ColorPicker 按鈕')
           }
         }
-      } else {
-        console.log('colorPickerRef 不存在')
       }
     }
     
