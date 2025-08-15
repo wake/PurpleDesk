@@ -178,7 +178,7 @@ export default {
     
     // 判斷是否為管理員
     const isAdmin = computed(() => {
-      return user.value?.email === 'admin@purpledesk.com'
+      return user.value?.is_admin === true
     })
     
     const getUserInitials = (user) => {

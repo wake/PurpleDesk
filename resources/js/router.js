@@ -100,7 +100,7 @@ router.beforeEach(async (to, from, next) => {
   // 需要管理員權限的頁面
   if (to.meta.requiresAdmin) {
     const user = authStore.user
-    if (!user || user.email !== 'admin@purpledesk.com') {
+    if (!user || !user.is_admin) {
       next('/dashboard')
       return
     }
