@@ -37,11 +37,13 @@ class Team extends Model
      */
     public function getAvatarDataAttribute()
     {
-        if (!$this->avatar_data) {
+        $avatarData = $this->getAttributeFromArray('avatar_data');
+        
+        if (!$avatarData) {
             return \App\Helpers\IconDataHelper::generateTeamIconDefault();
         }
         
-        return $this->avatar_data;
+        return $avatarData;
     }
     
     /**
@@ -51,7 +53,9 @@ class Team extends Model
     {
         $avatarData = $this->avatar_data;
         
-        if ($avatarData && $avatarData['type'] === 'image' && isset($avatarData['path'])) {
+        if ($avatarData && is_array($avatarData) && 
+            isset($avatarData['type']) && $avatarData['type'] === 'image' && 
+            isset($avatarData['path'])) {
             return asset('storage/' . $avatarData['path']);
         }
         

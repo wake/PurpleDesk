@@ -26,6 +26,7 @@ class User extends Authenticatable
         'email',
         'password',
         'avatar_data',
+        'is_admin',
         'locale',
         'timezone',
         'email_notifications',
@@ -74,11 +75,13 @@ class User extends Authenticatable
      */
     public function getAvatarDataAttribute()
     {
-        if (!$this->avatar_data) {
+        $avatarData = $this->getAttributeFromArray('avatar_data');
+        
+        if (!$avatarData) {
             return \App\Helpers\IconDataHelper::generateUserIconDefault($this->full_name ?: $this->display_name ?: $this->account);
         }
         
-        return $this->avatar_data;
+        return $avatarData;
     }
     
     /**
@@ -88,7 +91,9 @@ class User extends Authenticatable
     {
         $avatarData = $this->avatar_data;
         
-        if ($avatarData && $avatarData['type'] === 'image' && isset($avatarData['path'])) {
+        if ($avatarData && is_array($avatarData) && 
+            isset($avatarData['type']) && $avatarData['type'] === 'image' && 
+            isset($avatarData['path'])) {
             return asset('storage/' . $avatarData['path']);
         }
         

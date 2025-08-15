@@ -100,6 +100,9 @@ class RealisticTestDataSeeder extends Seeder
 
         // 創建真實的用戶資料
         $users = [
+            // 系統管理員
+            ['full_name' => '系統管理員', 'email' => 'admin@purpledesk.local', 'org' => null, 'is_admin' => true],
+            
             // 台北科技創新的員工
             ['full_name' => '陳志明', 'email' => 'chen.zhiming@taipeitech.com', 'org' => 0],
             ['full_name' => '林雅婷', 'email' => 'lin.yating@taipeitech.com', 'org' => 0],
@@ -136,6 +139,7 @@ class RealisticTestDataSeeder extends Seeder
                 'email' => $userData['email'],
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
+                'is_admin' => $userData['is_admin'] ?? false,
                 'avatar_data' => json_encode([
                     'type' => $avatarConfig['type'],
                     'icon' => $avatarConfig['icon'],
@@ -240,11 +244,13 @@ class RealisticTestDataSeeder extends Seeder
         $createdOrgs[1]->users()->attach($createdUsers[14]->id, ['role' => 'contractor']);
 
         $this->command->info('✅ 已成功創建擬真測試資料：');
+        $this->command->info("   - 1 位系統管理員 (admin@purpledesk.local)");
         $this->command->info("   - {$createdOrgs[0]->users()->count()} 位台北科技創新員工");
         $this->command->info("   - {$createdOrgs[1]->users()->count()} 位綠能永續顧問員工");
         $this->command->info("   - {$createdOrgs[2]->users()->count()} 位數位行銷工作室員工");
         $this->command->info("   - {$createdOrgs[3]->users()->count()} 位智慧醫療科技員工");
         $this->command->info("   - " . Team::count() . " 個專業團隊");
         $this->command->info("   - 包含完整的頭像樣式：Emoji、Bootstrap Icons、Hero Icons、字母縮寫");
+        $this->command->info("   - 所有帳號預設密碼：password");
     }
 }
