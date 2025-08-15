@@ -19,7 +19,7 @@ class IconDataHelper
         '#06b6d4', // 青色 Cyan
         '#0ea5e9', // 天空藍 Sky Blue
         '#3b82f6', // 藍色 Blue
-        '#6366f1', // 靛藍色 Indigo (primary)
+        '#6366f1', // 靛藍色 Indigo
         '#8b5cf6', // 紫羅蘭 Violet
         '#a855f7', // 紫色 Purple
         '#d946ef', // 紫紅色 Fuchsia
