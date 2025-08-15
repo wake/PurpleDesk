@@ -279,7 +279,64 @@ export default {
         
         // 處理回應資料
         if (response.data && response.data.data) {
-          organizations.value = response.data.data
+          // 解析 JSON 字串為物件
+          organizations.value = response.data.data.map(org => {
+            let avatarData = org.avatar_data
+            let logoData = org.logo_data
+            
+            // 處理組織 avatar_data 的雙重編碼
+            if (typeof avatarData === 'string') {
+              try {
+                avatarData = JSON.parse(avatarData)
+                if (typeof avatarData === 'string') {
+                  avatarData = JSON.parse(avatarData)
+                }
+              } catch (e) {
+                console.warn('Failed to parse org avatar_data:', avatarData, e)
+                avatarData = null
+              }
+            }
+            
+            // 處理組織 logo_data 的雙重編碼
+            if (typeof logoData === 'string') {
+              try {
+                logoData = JSON.parse(logoData)
+                if (typeof logoData === 'string') {
+                  logoData = JSON.parse(logoData)
+                }
+              } catch (e) {
+                console.warn('Failed to parse org logo_data:', logoData, e)
+                logoData = null
+              }
+            }
+            
+            return {
+              ...org,
+              avatar_data: avatarData,
+              logo_data: logoData,
+              users: org.users?.map(user => {
+              let avatarData = user.avatar_data
+              
+              // 處理雙重編碼的 JSON 字串
+              if (typeof avatarData === 'string') {
+                try {
+                  avatarData = JSON.parse(avatarData)
+                  // 如果解析後仍是字串，再解析一次
+                  if (typeof avatarData === 'string') {
+                    avatarData = JSON.parse(avatarData)
+                  }
+                } catch (e) {
+                  console.warn('Failed to parse user avatar_data:', avatarData, e)
+                  avatarData = null
+                }
+              }
+              
+              return {
+                ...user,
+                avatar_data: avatarData
+              }
+            }) || []
+          }))
           pagination.value = {
             current_page: response.data.current_page,
             last_page: response.data.last_page,
