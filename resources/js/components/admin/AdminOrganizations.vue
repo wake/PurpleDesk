@@ -30,8 +30,11 @@
       </div>
     </div>
 
+    <!-- 載入狀態 -->
+    <LoadingSpinner v-if="isLoading" size="lg" />
+    
     <!-- 組織列表 -->
-    <div class="overflow-x-auto">
+    <div v-else class="overflow-x-auto">
       <table class="w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>

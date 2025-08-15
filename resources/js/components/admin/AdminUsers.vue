@@ -47,8 +47,11 @@
       </div>
     </div>
 
+    <!-- 載入狀態 -->
+    <LoadingSpinner v-if="isLoading" size="lg" />
+    
     <!-- 使用者列表 -->
-    <div class="overflow-hidden">
+    <div v-else class="overflow-hidden">
       <table class="min-w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
