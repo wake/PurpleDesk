@@ -29,13 +29,13 @@
             <th class="w-1/3 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               團隊資訊
             </th>
-            <th class="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               管理者
             </th>
-            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               成員
             </th>
-            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               建立時間
             </th>
             <th class="w-1/6 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -60,7 +60,7 @@
                 </div>
               </div>
             </td>
-            <td class="w-1/5 px-6 py-4 align-middle">
+            <td class="w-1/6 px-6 py-4 align-middle">
               <UserAvatarGroup 
                 :users="getTeamLeaders(team)" 
                 theme="admin"
@@ -68,10 +68,10 @@
                 empty-text="無管理者"
               />
             </td>
-            <td class="w-1/6 px-6 py-4 whitespace-nowrap align-middle">
+            <td class="w-1/4 px-6 py-4 whitespace-nowrap align-middle">
               <UserAvatarGroup :users="getTeamMembers(team)" />
             </td>
-            <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="w-1/5 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatDate(team.created_at) }}
             </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

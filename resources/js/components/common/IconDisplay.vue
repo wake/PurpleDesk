@@ -300,6 +300,8 @@ export default {
           'star-solid': () => import('@heroicons/vue/solid/StarIcon'),
           'home-outline': () => import('@heroicons/vue/outline/HomeIcon'),
           'home-solid': () => import('@heroicons/vue/solid/HomeIcon'),
+          'office-building-outline': () => import('@heroicons/vue/outline/OfficeBuildingIcon'),
+          'office-building-solid': () => import('@heroicons/vue/solid/OfficeBuildingIcon'),
         }
         
         const iconKey = `${iconName}-${style}`

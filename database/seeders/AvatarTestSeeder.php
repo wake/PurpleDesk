@@ -30,7 +30,7 @@ class AvatarTestSeeder extends Seeder
         
         $org2 = Organization::create([
             'name' => '測試組織2 - 自訂圖標',
-            'avatar' => $testIcons['bs_fill'],
+            'avatar' => $testIcons['bs_fill_dark'],
             'description' => '使用自訂 Bootstrap 圖標的組織'
         ]);
         
@@ -49,7 +49,7 @@ class AvatarTestSeeder extends Seeder
         
         $team2 = Team::create([
             'name' => '測試團隊2 - Hero圖標',
-            'avatar' => $testIcons['hero_solid'],
+            'avatar' => $testIcons['hero_solid_dark'],
             'description' => '使用 Hero 圖標的團隊',
             'organization_id' => $org1->id
         ]);
@@ -72,7 +72,7 @@ class AvatarTestSeeder extends Seeder
             [
                 'full_name' => '李小美',
                 'email' => 'test2@example.com', 
-                'avatar' => $testIcons['text_custom'],
+                'avatar' => $testIcons['text_light_bg'],
                 'description' => '自訂文字頭像'
             ],
             [
@@ -90,25 +90,25 @@ class AvatarTestSeeder extends Seeder
             [
                 'full_name' => '林志強',
                 'email' => 'test5@example.com',
-                'avatar' => $testIcons['hero_outline'],
+                'avatar' => $testIcons['hero_outline_light'],
                 'description' => 'Hero Icon outline 頭像'
             ],
             [
                 'full_name' => '吳雅婷',
                 'email' => 'test6@example.com',
-                'avatar' => $testIcons['hero_solid'], 
+                'avatar' => $testIcons['hero_solid_dark'], 
                 'description' => 'Hero Icon solid 頭像'
             ],
             [
                 'full_name' => '許志明',
                 'email' => 'test7@example.com',
-                'avatar' => $testIcons['bs_outline'],
+                'avatar' => $testIcons['bs_outline_light'],
                 'description' => 'Bootstrap Icon outline 頭像'
             ],
             [
                 'full_name' => '黃美玲',
                 'email' => 'test8@example.com',
-                'avatar' => $testIcons['bs_fill'],
+                'avatar' => $testIcons['bs_fill_dark'],
                 'description' => 'Bootstrap Icon fill 頭像'
             ],
             [
