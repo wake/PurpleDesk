@@ -92,21 +92,15 @@
           :background-color="backgroundColor"
           :hide-preview="true"
           @file-selected="handleIconPickerFile"
-          @color-picker-click="openBgColorPicker"
           @update:model-value="handleIconSelect"
           @update:icon-type="handleIconTypeUpdate"
+          @background-color-change="handleBackgroundColorChange"
           @close="handleIconPickerClose"
-          @close-color-picker="handleCloseColorPicker"
         />
       </div>
       
       <!-- 快速操作區域 -->
       <div class="flex-1 space-y-3">
-        <!-- 背景顏色選擇器 -->
-        <div class="flex items-center space-x-2">
-          <span class="text-sm text-gray-600">背景顏色：</span>
-          <ColorPicker v-model="backgroundColor" />
-        </div>
         
         <!-- 錯誤訊息 -->
         <div v-if="errorMessage" class="text-sm text-red-600 bg-red-50 p-2 rounded">
@@ -196,13 +190,6 @@
                 <p class="mt-1 text-xs text-gray-500">留空將自動使用姓名縮寫</p>
               </div>
               
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">背景顏色</label>
-                <div class="flex items-center space-x-2">
-                  <ColorPicker v-model="backgroundColor" />
-                  <span class="text-sm text-gray-600">{{ backgroundColor || '使用預設顏色' }}</span>
-                </div>
-              </div>
             </div>
             
             <!-- 圖標設定 -->
@@ -216,13 +203,6 @@
                 />
               </div>
               
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">背景顏色</label>
-                <div class="flex items-center space-x-2">
-                  <ColorPicker v-model="backgroundColor" />
-                  <span class="text-sm text-gray-600">{{ backgroundColor || '使用預設顏色' }}</span>
-                </div>
-              </div>
             </div>
             
             <!-- 上傳設定 -->
@@ -285,7 +265,6 @@ import { CloudUploadIcon, CogIcon, StarIcon } from '@heroicons/vue/outline'
 // 導入所有可能用到的 Heroicons (outline 和 solid)
 import * as HeroIconsOutline from '@heroicons/vue/outline'
 import * as HeroIconsSolid from '@heroicons/vue/solid'
-import ColorPicker from './ColorPicker.vue'
 import IconPicker from './IconPicker.vue'
 
 export default {
@@ -294,7 +273,6 @@ export default {
     CloudUploadIcon,
     CogIcon,
     StarIcon,
-    ColorPicker,
     IconPicker,
     ...HeroIconsOutline, // 註冊所有 Heroicons Outline
     ...HeroIconsSolid // 註冊所有 Heroicons Solid
@@ -637,27 +615,6 @@ export default {
     
     // 開啟 IconPicker
     const openIconPicker = () => {
-      // 先關閉任何開啟的 ColorPicker
-      const openColorPickers = document.querySelectorAll('.color-picker .fixed')
-      openColorPickers.forEach(picker => {
-        const pickerComponent = picker.__vueParentComponent
-        if (pickerComponent && pickerComponent.exposed && pickerComponent.exposed.closePicker) {
-          pickerComponent.exposed.closePicker()
-        }
-      })
-      
-      // 使用更簡單的方法：觸發點擊事件關閉 ColorPicker
-      const colorPickerPanels = document.querySelectorAll('[class*="fixed z-[10000]"]')
-      colorPickerPanels.forEach(panel => {
-        if (panel && panel.style.display !== 'none') {
-          // 觸發一個外部點擊來關閉 ColorPicker
-          const closeButton = panel.querySelector('button[title="關閉"]')
-          if (closeButton) {
-            closeButton.click()
-          }
-        }
-      })
-      
       // 等待下一個 tick 確保 DOM 更新
       nextTick(() => {
         if (avatarIconPickerRef.value) {
@@ -667,16 +624,6 @@ export default {
       })
     }
     
-    // 開啟背景顏色選擇器
-    const openBgColorPicker = () => {
-      // 不要關閉 IconPicker，直接觸發 ColorPicker
-      nextTick(() => {
-        const colorPicker = document.querySelector('.image-selector .color-picker button')
-        if (colorPicker) {
-          colorPicker.click()
-        }
-      })
-    }
     
     // 處理圖標選擇
     const handleIconSelect = (value) => {
@@ -712,12 +659,11 @@ export default {
       // IconPicker 已經自行處理關閉邏輯，這裡不需要額外動作
     }
     
-    // 處理關閉 ColorPicker 事件
-    const handleCloseColorPicker = () => {
-      // 觸發一個外部點擊來關閉 ColorPicker
-      const event = new Event('click', { bubbles: true })
-      document.body.dispatchEvent(event)
+    // 處理背景顏色變化
+    const handleBackgroundColorChange = (color) => {
+      backgroundColor.value = color
     }
+    
     
     return {
       mode,
@@ -756,11 +702,10 @@ export default {
       cancelSettings,
       handleIconPickerFile,
       openIconPicker,
-      openBgColorPicker,
       handleIconSelect,
       handleIconTypeUpdate,
       handleIconPickerClose,
-      handleCloseColorPicker,
+      handleBackgroundColorChange,
       iconPickerRef,
       avatarIconPickerRef
     }

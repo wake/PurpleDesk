@@ -72,13 +72,20 @@
           </button>
           <div class="ml-auto flex items-center">
             <!-- 背景顏色選擇器按鈕 -->
-            <button
-              @click.stop="openColorPicker"
-              class="p-0 me-3 pt-1 pb-2 text-base text-gray-500 hover:text-gray-700 transition-colors"
-              title="選擇背景顏色"
-            >
-              <i class="bi bi-eyedropper"></i>
-            </button>
+            <div class="me-3 pt-1 pb-2 relative">
+              <button
+                @click.stop="openColorPicker"
+                class="p-0 text-base text-gray-500 hover:text-gray-700 transition-colors relative"
+                title="選擇背景顏色"
+              >
+                <i class="bi bi-eyedropper"></i>
+                <!-- 右下角的 4x4 顏色指示器 -->
+                <div 
+                  class="absolute bottom-0.5 -right-0.5 w-2 h-2 border border-white rounded-sm shadow-sm"
+                  :style="{ backgroundColor: localBackgroundColor || '#6366f1' }"
+                ></div>
+              </button>
+            </div>
             <!-- Reset Icon 按鈕 -->
             <button
               @click.stop="clearIcon"
@@ -301,6 +308,15 @@
         </div>
       </div>
     </Teleport>
+
+    <!-- 顏色選擇器面板 (隱藏但始終存在) -->
+    <div class="hidden">
+      <ColorPicker 
+        :model-value="localBackgroundColor" 
+        @update:model-value="handleBackgroundColorChange"
+        ref="colorPickerRef"
+      />
+    </div>
     
     <!-- 隱藏的檔案輸入 -->
     <input
@@ -317,6 +333,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
 import { applySkinTone, supportsSkinTone, removeSkinTone, getCurrentSkinTone } from '../../utils/emojiSkinTone.js'
+import ColorPicker from './ColorPicker.vue'
 import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
 import { EMOJI_CATEGORY_INFO } from '../../utils/emojis/index.js'
 import bootstrapIconsIndex, { categoryMap as BOOTSTRAP_CATEGORY_INFO } from '../../utils/icons/index.js'
@@ -333,6 +350,7 @@ export default {
     VirtualScroll,
     SkinToneSelector,
     IconStyleSelector,
+    ColorPicker,
     // 註冊所有 Heroicons (Outline 和 Solid)
     ...HeroiconsOutline,
     ...HeroiconsSolid
@@ -355,7 +373,7 @@ export default {
       default: false
     }
   },
-  emits: ['update:modelValue', 'update:iconType', 'file-selected', 'color-picker-click', 'close', 'close-color-picker'],
+  emits: ['update:modelValue', 'update:iconType', 'file-selected', 'close', 'background-color-change'],
   setup(props, { emit }) {
     const isOpen = ref(false)
     const iconPanel = ref(null)
@@ -372,14 +390,50 @@ export default {
     const uploadedImage = ref(null)
     const isDragging = ref(false)
     const backgroundColor = ref(props.backgroundColor || '#6366f1')
+    const localBackgroundColor = ref(props.backgroundColor || '#6366f1')
+    const showColorPicker = ref(false)
+    const colorPickerRef = ref(null)
     const customInitials = ref('') // 字母模式的輸入值
     
     // 監聽 props 變化
     watch(() => props.backgroundColor, (newVal) => {
       if (newVal) {
         backgroundColor.value = newVal
+        localBackgroundColor.value = newVal
       }
     })
+    
+    // 處理背景顏色變化
+    const handleBackgroundColorChange = (color) => {
+      localBackgroundColor.value = color
+      backgroundColor.value = color
+      emit('background-color-change', color)
+    }
+    
+    // 開啟顏色選擇器
+    const openColorPicker = async () => {
+      console.log('開啟顏色選擇器被點擊')
+      await nextTick()
+      if (colorPickerRef.value) {
+        console.log('colorPickerRef 存在，嘗試調用 togglePicker')
+        // 嘗試直接調用組件的方法
+        if (typeof colorPickerRef.value.togglePicker === 'function') {
+          colorPickerRef.value.togglePicker()
+          console.log('togglePicker 方法被調用')
+        } else {
+          console.log('togglePicker 方法不存在，嘗試點擊按鈕')
+          const colorPickerButton = colorPickerRef.value.$el?.querySelector('button')
+          if (colorPickerButton) {
+            colorPickerButton.click()
+            console.log('ColorPicker 按鈕被點擊')
+          } else {
+            console.log('找不到 ColorPicker 按鈕')
+          }
+        }
+      } else {
+        console.log('colorPickerRef 不存在')
+      }
+    }
     
     watch(() => props.modelValue, (newVal) => {
       selectedIcon.value = newVal
@@ -556,13 +610,8 @@ export default {
       }
     }
     
-    const closePicker = (shouldCloseColorPicker = true) => {
+    const closePicker = () => {
       isOpen.value = false
-      
-      // 只在需要時發射事件通知父組件關閉 ColorPicker
-      if (shouldCloseColorPicker) {
-        emit('close-color-picker')
-      }
       emit('close')
     }
     
@@ -698,10 +747,6 @@ export default {
       }
     }
     
-    // 開啟顏色選擇器（通知父組件）
-    const openColorPicker = () => {
-      emit('color-picker-click')
-    }
     
     // 處理字母輸入
     const handleInitialsInput = () => {
@@ -996,10 +1041,19 @@ export default {
       // 檢查是否點擊在任何 ColorPicker 按鈕上
       const isColorPickerButton = event.target.closest('.color-picker button')
       
+      // 檢查是否點擊在滴管按鈕上
+      const isEyedropperButton = event.target.closest('button i.bi-eyedropper') || 
+                                event.target.matches('button i.bi-eyedropper') ||
+                                (event.target.tagName === 'BUTTON' && event.target.querySelector('i.bi-eyedropper'))
+      
+      // 如果點擊在 ColorPicker 外部，關閉 ColorPicker 但保持 IconPicker 開啟
+      if (showColorPicker.value && !isInsideColorPicker && !isColorPickerButton && !isEyedropperButton) {
+        showColorPicker.value = false
+      }
+      
       // IconPicker 只在點擊外部且非 ColorPicker 區域時關閉
-      // 這樣當點擊 ColorPicker 時，IconPicker 保持開啟
-      if (!isInsideIconPicker && !isIconPickerButton && !isInsideColorPicker && !isColorPickerButton) {
-        closePicker(false) // 外部點擊時不要觸發 ColorPicker 關閉，避免循環
+      if (!isInsideIconPicker && !isIconPickerButton && !isInsideColorPicker && !isColorPickerButton && !isEyedropperButton) {
+        closePicker()
       }
     }
     
@@ -1067,7 +1121,11 @@ export default {
       handleDragLeave,
       handleDrop,
       backgroundColor,
+      localBackgroundColor,
+      showColorPicker,
+      colorPickerRef,
       openColorPicker,
+      handleBackgroundColorChange,
       customInitials,
       handleInitialsInput,
       applyInitials,
