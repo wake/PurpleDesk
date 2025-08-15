@@ -183,7 +183,8 @@ export default {
       
       if (props.positionMode === 'beside-panel') {
         // 面板並排模式：顯示在 IconPicker 面板右側
-        top = rect.top // 與面板頂部對齊
+        // 調整高度對齊：IconPicker 有 py-2 (8px) + 內容頂部間距
+        top = rect.top + 20 // 與面板內容區對齊
         left = rect.right + 10 // 面板右側，留 10px 間距
         
         // 檢查是否超出視窗右邊界
@@ -202,7 +203,7 @@ export default {
           top = Math.max(10, viewportHeight - panelHeight - 10)
         }
         
-        // 確保不會超出視窗上邊界
+        // 確保不會超出視窗上邊界  
         if (top < 10) {
           top = 10
         }
