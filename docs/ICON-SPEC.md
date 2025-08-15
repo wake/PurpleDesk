@@ -130,24 +130,27 @@ PurpleDesk 圖標系統提供統一的視覺識別解決方案，支援五種圖
 | #ec4899 | 桃紅色 Pink | 關注、喜愛 |
 
 ### 5.2 淡色系調色盤（16 色）
-| 色碼 | 名稱 | 對應主色 |
-|------|------|----------|
-| #fef2f2 | 淡紅色 | red-50 |
-| #fff7ed | 淡橙色 | orange-50 |
-| #fffbeb | 淡黃色 | amber-50 |
-| #fefce8 | 淡黃綠色 | yellow-50 |
-| #f7fee7 | 淡萊姆色 | lime-50 |
-| #f0fdf4 | 淡綠色 | green-50 |
-| #ecfdf5 | 淡翠綠色 | emerald-50 |
-| #f0fdfa | 淡青綠色 | teal-50 |
-| #ecfeff | 淡青色 | cyan-50 |
-| #f0f9ff | 淡天空藍 | sky-50 |
-| #eff6ff | 淡藍色 | blue-50 |
-| #eef2ff | 淡靛藍色 | indigo-50 |
-| #f5f3ff | 淡紫羅蘭 | violet-50 |
-| #faf5ff | 淡紫色 | purple-50 |
-| #fdf4ff | 淡紫紅色 | fuchsia-50 |
-| #fdf2f8 | 淡桃紅色 | pink-50 |
+
+**注意**：ColorPicker 實際使用的是彩度更高的淡色版本，以提升識別度：
+
+| 實際色碼 | 名稱 | Tailwind 對應 | 用途說明 |
+|----------|------|---------------|----------|
+| #fecaca | 淡紅色 Light Red | red-200 | 錯誤、警告的輕量背景 |
+| #fed7aa | 淡橙色 Light Orange | orange-200 | 提醒、待處理的輕量背景 |
+| #fde68a | 淡黃色 Light Amber | amber-200 | 注意、標記的輕量背景 |
+| #fef08a | 淡黃綠色 Light Yellow | yellow-200 | 進行中的輕量背景 |
+| #d9f99d | 淡萊姆色 Light Lime | lime-200 | 新增、成長的輕量背景 |
+| #bbf7d0 | 淡綠色 Light Green | green-200 | 成功、完成的輕量背景 |
+| #a7f3d0 | 淡翠綠色 Light Emerald | emerald-200 | 健康、正常的輕量背景 |
+| #99f6e4 | 淡青綠色 Light Teal | teal-200 | 資訊、提示的輕量背景 |
+| #a5f3fc | 淡青色 Light Cyan | cyan-200 | 連結、互動的輕量背景 |
+| #bae6fd | 淡天空藍 Light Sky | sky-200 | 開放、透明的輕量背景 |
+| #dbeafe | 淡藍色 Light Blue | blue-200 | 信任、穩定的輕量背景 |
+| #c7d2fe | 淡靛藍色 Light Indigo | indigo-200 | 深度、專業的輕量背景 |
+| #ddd6fe | 淡紫羅蘭 Light Violet | violet-200 | 創意、靈感的輕量背景 |
+| #e9d5ff | 淡紫色 Light Purple | purple-200 | 特殊、重要的輕量背景 |
+| #f5d0fe | 淡紫紅色 Light Fuchsia | fuchsia-200 | 活動、慶祝的輕量背景 |
+| #fbcfe8 | 淡桃紅色 Light Pink | pink-200 | 關注、喜愛的輕量背景 |
 
 ### 5.3 基礎色彩（黑白灰）
 | 色碼 | 名稱 |
@@ -164,10 +167,51 @@ PurpleDesk 圖標系統提供統一的視覺識別解決方案，支援五種圖
 | #1f2937 | gray-800 |
 | #111827 | gray-900 |
 
-### 5.4 內容顏色限制
+### 5.4 顏色選擇策略
+
+#### 背景顏色使用原則
+1. **預設調色盤（16 色）**：適用於需要醒目識別的場景
+2. **淡色系調色盤（16 色）**：適用於大面積背景或輕量提示
+3. **自訂顏色**：支援 HTML 色彩選擇器，但建議使用預設調色盤
+
+#### 內容顏色自動計算
+系統會根據背景色自動計算最佳文字/圖標顏色：
+
+```javascript
+// 相對亮度計算（W3C 公式）
+const getLuminance = (hexColor) => {
+  const r = parseInt(hex.substr(0, 2), 16)
+  const g = parseInt(hex.substr(2, 2), 16)
+  const b = parseInt(hex.substr(4, 2), 16)
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255
+}
+
+// 自動選擇文字顏色
+const textColor = getLuminance(backgroundColor) > 0.5 
+  ? '#1f2937'  // 深灰色（亮背景）
+  : '#ffffff'  // 白色（暗背景）
+```
+
+#### 內容顏色限制
 - **文字顏色**：僅限白色 (#ffffff) 或深灰色 (#1f2937)
 - **圖標顏色**：僅限白色 (#ffffff) 或深灰色 (#1f2937)
 - **對比度要求**：確保背景與內容有足夠對比度（WCAG AA 標準）
+
+### 5.5 特殊顏色用途
+
+#### 功能性顏色映射
+| 顏色 | 語意 | 使用場景 |
+|------|------|----------|
+| #ef4444（紅色） | 錯誤、危險 | 刪除按鈕、錯誤訊息 |
+| #f97316（橙色） | 警告、注意 | 警告標籤、待處理狀態 |
+| #22c55e（綠色） | 成功、完成 | 成功訊息、已完成狀態 |
+| #3b82f6（藍色） | 資訊、連結 | 提示訊息、可點擊元素 |
+| #9b6eff（主色） | 品牌、重點 | 主要按鈕、焦點元素 |
+
+#### 隨機顏色功能
+- **隨機淡色**：從淡色系調色盤中隨機選擇
+- **用途**：快速生成獨特識別的背景色
+- **實作**：優先選擇未被使用的顏色
 
 ## 6. 尺寸規範
 
