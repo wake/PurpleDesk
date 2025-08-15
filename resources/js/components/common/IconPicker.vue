@@ -37,9 +37,11 @@
       <div 
         v-if="isOpen" 
         ref="iconPanel"
-        class="fixed z-[9999] px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-xl w-96"
+        class="fixed z-[9999] bg-white border border-gray-200 rounded-lg shadow-xl flex"
         :style="panelPosition"
       >
+        <!-- IconPicker 主面板 -->
+        <div class="px-4 py-2 w-96">
         <!-- 頂部標籤切換 -->
         <div class="flex border-b border-gray-200 mb-4">
           <button
@@ -307,19 +309,94 @@
           <p class="text-sm">找不到符合的圖標</p>
           <p class="text-xs text-gray-400 mt-1">請嘗試其他關鍵字</p>
         </div>
+        </div>
+        
+        <!-- ColorPicker 面板 -->
+        <div 
+          v-if="showColorPicker" 
+          class="w-72 border-l border-gray-200 p-4 pt-5 overflow-y-auto"
+        >
+          <!-- 關閉按鈕 -->
+          <button
+            @click="closeColorPicker"
+            class="absolute top-2 right-2 w-6 h-6 text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center"
+            title="關閉"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+          
+          <!-- 預設色彩調色盤 -->
+          <div class="mb-4">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">預設顏色</h4>
+            <div class="grid grid-cols-8 gap-2">
+              <button
+                v-for="color in defaultColors"
+                :key="color.value"
+                @click="selectColor(color.value)"
+                :style="{ backgroundColor: color.value }"
+                class="w-6 h-6 rounded border border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary-500 transition-all"
+                :class="{ 'ring-2 ring-primary-500': localBackgroundColor === color.value }"
+                :title="color.name"
+              />
+            </div>
+          </div>
+          
+          <!-- 淡色系調色盤 -->
+          <div class="mb-4">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">淡色系</h4>
+            <div class="grid grid-cols-8 gap-2">
+              <button
+                v-for="color in lightColors"
+                :key="color.value"
+                @click="selectColor(color.value)"
+                :style="{ backgroundColor: color.value }"
+                class="w-6 h-6 rounded border border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary-500 transition-all"
+                :class="{ 'ring-2 ring-primary-500': localBackgroundColor === color.value }"
+                :title="color.name"
+              />
+            </div>
+          </div>
+          
+          <!-- HTML 色彩輸入 -->
+          <div class="mb-4">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">自訂顏色</h4>
+            <div class="flex space-x-2">
+              <input
+                type="color"
+                :value="localBackgroundColor || '#6366f1'"
+                @input="handleColorInput"
+                @change="handleColorInput"
+                class="w-10 h-8 border border-gray-300 rounded cursor-pointer"
+              />
+              <input
+                type="text"
+                :value="localBackgroundColor || ''"
+                @input="handleTextInput"
+                placeholder="#6366f1"
+                class="flex-1 px-3 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+          
+          <!-- 隨機顏色按鈕 -->
+          <div class="flex space-x-2">
+            <button
+              @click="selectRandomColor"
+              class="flex-1 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              🎲 隨機淡色
+            </button>
+            <button
+              @click="clearColor"
+              class="px-3 py-2 text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              清除
+            </button>
+          </div>
+        </div>
       </div>
     </Teleport>
 
-    <!-- 顏色選擇器面板 (隱藏但始終存在) -->
-    <div class="hidden">
-      <ColorPicker 
-        :model-value="localBackgroundColor" 
-        @update:model-value="handleBackgroundColorChange"
-        :trigger-element="iconPanel"
-        :position-mode="'beside-panel'"
-        ref="colorPickerRef"
-      />
-    </div>
     
     <!-- 隱藏的檔案輸入 -->
     <input
@@ -336,7 +413,6 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { bootstrapIcons, emojis } from '../../utils/iconSets.js'
 import { applySkinTone, supportsSkinTone, removeSkinTone, getCurrentSkinTone } from '../../utils/emojiSkinTone.js'
-import ColorPicker from './ColorPicker.vue'
 import heroiconsOutline from '../../utils/heroicons/allHeroicons.js'
 import { EMOJI_CATEGORY_INFO } from '../../utils/emojis/index.js'
 import bootstrapIconsIndex, { categoryMap as BOOTSTRAP_CATEGORY_INFO } from '../../utils/icons/index.js'
@@ -353,7 +429,6 @@ export default {
     VirtualScroll,
     SkinToneSelector,
     IconStyleSelector,
-    ColorPicker,
     // 註冊所有 Heroicons (Outline 和 Solid)
     ...HeroiconsOutline,
     ...HeroiconsSolid
@@ -399,6 +474,46 @@ export default {
     const eyedropperButton = ref(null)
     const customInitials = ref('') // 字母模式的輸入值
     
+    // 預設顏色調色盤
+    const defaultColors = [
+      { value: '#ef4444', name: '紅色 Red' },
+      { value: '#f97316', name: '橙色 Orange' },
+      { value: '#f59e0b', name: '黃色 Amber' },
+      { value: '#eab308', name: '黃綠色 Yellow' },
+      { value: '#84cc16', name: '萊色 Lime' },
+      { value: '#22c55e', name: '綠色 Green' },
+      { value: '#10b981', name: '翠綠色 Emerald' },
+      { value: '#14b8a6', name: '青綠色 Teal' },
+      { value: '#06b6d4', name: '青色 Cyan' },
+      { value: '#0ea5e9', name: '天空藍 Sky Blue' },
+      { value: '#3b82f6', name: '藍色 Blue' },
+      { value: '#6366f1', name: '靛藍色 Indigo' },
+      { value: '#8b5cf6', name: '紫羅蘭 Violet' },
+      { value: '#a855f7', name: '紫色 Purple' },
+      { value: '#d946ef', name: '紫紅色 Fuchsia' },
+      { value: '#ec4899', name: '桃紅色 Pink' }
+    ]
+    
+    // 淡色系調色盤（增加彩度提升識別度）
+    const lightColors = [
+      { value: '#fecaca', name: '淡紅色 Light Red' },
+      { value: '#fed7aa', name: '淡橙色 Light Orange' },
+      { value: '#fde68a', name: '淡黃色 Light Amber' },
+      { value: '#fef08a', name: '淡黃綠色 Light Yellow' },
+      { value: '#d9f99d', name: '淡萊色 Light Lime' },
+      { value: '#bbf7d0', name: '淡綠色 Light Green' },
+      { value: '#a7f3d0', name: '淡翠綠色 Light Emerald' },
+      { value: '#99f6e4', name: '淡青綠色 Light Teal' },
+      { value: '#a5f3fc', name: '淡青色 Light Cyan' },
+      { value: '#bae6fd', name: '淡天空藍 Light Sky' },
+      { value: '#dbeafe', name: '淡藍色 Light Blue' },
+      { value: '#c7d2fe', name: '淡靛藍色 Light Indigo' },
+      { value: '#ddd6fe', name: '淡紫羅蘭 Light Violet' },
+      { value: '#e9d5ff', name: '淡紫色 Light Purple' },
+      { value: '#f5d0fe', name: '淡紫紅色 Light Fuchsia' },
+      { value: '#fbcfe8', name: '淡桃紅色 Light Pink' }
+    ]
+    
     // 監聽 props 變化
     watch(() => props.backgroundColor, (newVal) => {
       if (newVal) {
@@ -415,19 +530,42 @@ export default {
     }
     
     // 開啟顏色選擇器
-    const openColorPicker = async () => {
-      await nextTick()
-      if (colorPickerRef.value) {
-        // 嘗試直接調用組件的方法
-        if (typeof colorPickerRef.value.togglePicker === 'function') {
-          colorPickerRef.value.togglePicker()
-        } else {
-          const colorPickerButton = colorPickerRef.value.$el?.querySelector('button')
-          if (colorPickerButton) {
-            colorPickerButton.click()
-          }
-        }
+    const openColorPicker = () => {
+      showColorPicker.value = !showColorPicker.value
+    }
+    
+    // 關閉顏色選擇器
+    const closeColorPicker = () => {
+      showColorPicker.value = false
+    }
+    
+    // 選擇顏色
+    const selectColor = (color) => {
+      handleBackgroundColorChange(color)
+    }
+    
+    // 處理顏色輸入
+    const handleColorInput = (event) => {
+      handleBackgroundColorChange(event.target.value)
+    }
+    
+    // 處理文字輸入
+    const handleTextInput = (event) => {
+      const value = event.target.value
+      if (value.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) {
+        handleBackgroundColorChange(value)
       }
+    }
+    
+    // 選擇隨機淡色
+    const selectRandomColor = () => {
+      const randomColor = lightColors[Math.floor(Math.random() * lightColors.length)]
+      selectColor(randomColor.value)
+    }
+    
+    // 清除顏色
+    const clearColor = () => {
+      handleBackgroundColorChange('')
     }
     
     watch(() => props.modelValue, (newVal) => {
@@ -1121,7 +1259,15 @@ export default {
       colorPickerRef,
       eyedropperButton,
       openColorPicker,
+      closeColorPicker,
       handleBackgroundColorChange,
+      defaultColors,
+      lightColors,
+      selectColor,
+      handleColorInput,
+      handleTextInput,
+      selectRandomColor,
+      clearColor,
       customInitials,
       handleInitialsInput,
       applyInitials,
