@@ -37,11 +37,11 @@
       <div 
         v-if="isOpen" 
         ref="iconPanel"
-        class="fixed z-[9999] flex space-x-2"
+        class="fixed z-[9999]"
         :style="panelPosition"
       >
         <!-- IconPicker 面板 -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-xl px-4 py-2 w-96">
+        <div class="absolute top-0 left-0 bg-white border border-gray-200 rounded-lg shadow-xl px-4 py-2 w-96 h-96">
         <!-- 頂部標籤切換 -->
         <div class="flex border-b border-gray-200 mb-4">
           <button
@@ -314,7 +314,8 @@
         <!-- ColorPicker 面板 -->
         <div 
           v-if="showColorPicker" 
-          class="bg-white border border-gray-200 rounded-lg shadow-xl w-72 p-4 pt-5 overflow-y-auto relative"
+          class="absolute top-0 bg-white border border-gray-200 rounded-lg shadow-xl w-72 h-96 p-4 pt-5 overflow-y-auto"
+          :style="colorPickerPosition"
         >
           <!-- 關閉按鈕 -->
           <button
@@ -459,6 +460,7 @@ export default {
     const searchQuery = ref('')
     const activeTab = ref('emoji') // 預設為 emoji 頁簽
     const panelPosition = ref({ top: '0px', left: '0px' })
+    const colorPickerPosition = ref({ left: '0px' })
     const selectedIcon = ref(props.modelValue)
     const iconType = ref(props.iconType || '')
     const emojisLoaded = ref(false)
@@ -671,12 +673,10 @@ export default {
       const viewportHeight = window.innerHeight
       const viewportWidth = window.innerWidth
       
-      // 容器寬度（IconPicker + 間距 + ColorPicker）
+      // 面板尺寸
       const iconPickerWidth = 384 // w-96
       const colorPickerWidth = 288 // w-72
-      const spacing = 8 // space-x-2
-      const totalWidth = iconPickerWidth + (showColorPicker.value ? spacing + colorPickerWidth : 0)
-      const panelHeight = 400
+      const panelHeight = 384 // h-96
       
       let top = rect.bottom + 5
       let left = rect.left
@@ -706,9 +706,9 @@ export default {
         }
       }
       
-      // 檢查是否超出視窗右邊（根據當前顯示的面板總寬度）
-      if (left + totalWidth > viewportWidth) {
-        left = viewportWidth - totalWidth - 10
+      // 檢查 IconPicker 是否超出視窗右邊
+      if (left + iconPickerWidth > viewportWidth) {
+        left = viewportWidth - iconPickerWidth - 10
       }
       
       // 檢查是否超出視窗左邊
@@ -719,6 +719,37 @@ export default {
       panelPosition.value = {
         top: `${top}px`,
         left: `${left}px`
+      }
+      
+      // 計算 ColorPicker 位置
+      if (showColorPicker.value) {
+        const idealColorPickerLeft = iconPickerWidth + 8 // IconPicker 寬度 + 8px 間距
+        const rightSpaceAvailable = viewportWidth - (left + idealColorPickerLeft)
+        
+        let colorPickerLeft
+        if (rightSpaceAvailable >= colorPickerWidth) {
+          // 右側有足夠空間，正常顯示
+          colorPickerLeft = idealColorPickerLeft
+        } else {
+          // 右側空間不足，逐漸重疊到 IconPicker 上
+          const minGap = 10 // 最小間距
+          const maxOverlap = iconPickerWidth - minGap // 最大重疊度
+          const availableSpace = rightSpaceAvailable - minGap
+          
+          if (availableSpace <= 0) {
+            // 完全重疊
+            colorPickerLeft = iconPickerWidth - colorPickerWidth + minGap
+          } else {
+            // 部分重疊：根據可用空間計算重疊度
+            const overlapRatio = Math.max(0, (colorPickerWidth - availableSpace) / colorPickerWidth)
+            const overlap = overlapRatio * maxOverlap
+            colorPickerLeft = iconPickerWidth - overlap + 8
+          }
+        }
+        
+        colorPickerPosition.value = {
+          left: `${colorPickerLeft}px`
+        }
       }
     }
     
@@ -1233,6 +1264,7 @@ export default {
       searchQuery,
       activeTab,
       panelPosition,
+      colorPickerPosition,
       calculatePosition,
       selectedIcon,
       iconType,
