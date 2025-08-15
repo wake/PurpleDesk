@@ -315,7 +315,8 @@
       <ColorPicker 
         :model-value="localBackgroundColor" 
         @update:model-value="handleBackgroundColorChange"
-        :trigger-element="eyedropperButton"
+        :trigger-element="iconPanel"
+        :position-mode="'beside-panel'"
         ref="colorPickerRef"
       />
     </div>

@@ -113,6 +113,10 @@ export default {
     triggerElement: {
       type: [Object, Element],
       default: null
+    },
+    positionMode: {
+      type: String,
+      default: 'default' // 'default' 或 'beside-panel'
     }
   },
   emits: ['update:modelValue'],
@@ -175,35 +179,65 @@ export default {
       const panelWidth = 280
       const panelHeight = 400
       
-      let top = rect.bottom + 5
-      let left = rect.right + 5  // 預設顯示在按鈕右側
+      let top, left
       
-      // 優先顯示在下方，只有在下方空間真的不足時才顯示在上方
-      const spaceBelow = viewportHeight - rect.bottom
-      const spaceAbove = rect.top
-      
-      if (spaceBelow < panelHeight && spaceAbove > spaceBelow) {
-        // 只有當上方空間比下方多時才顯示在上方
-        top = rect.top - panelHeight - 5
-      } else if (spaceBelow < panelHeight) {
-        // 如果下方空間不足但仍要顯示在下方，調整高度
-        top = rect.bottom + 5
-      }
-      
-      // 檢查右側空間是否足夠，不足則改到左側
-      if (left + panelWidth > viewportWidth) {
-        // 改到按鈕左側顯示
-        left = rect.left - panelWidth - 5
+      if (props.positionMode === 'beside-panel') {
+        // 面板並排模式：顯示在 IconPicker 面板右側
+        top = rect.top // 與面板頂部對齊
+        left = rect.right + 10 // 面板右側，留 10px 間距
         
-        // 如果左側也超出邊界，則貼著視窗右邊
-        if (left < 10) {
-          left = viewportWidth - panelWidth - 10
+        // 檢查是否超出視窗右邊界
+        if (left + panelWidth > viewportWidth) {
+          // 改到面板左側顯示
+          left = rect.left - panelWidth - 10
+          
+          // 如果左側也超出，則調整到視窗內
+          if (left < 10) {
+            left = 10
+          }
         }
-      }
-      
-      // 最終檢查是否超出視窗左邊
-      if (left < 10) {
-        left = 10
+        
+        // 確保不會超出視窗下邊界
+        if (top + panelHeight > viewportHeight) {
+          top = Math.max(10, viewportHeight - panelHeight - 10)
+        }
+        
+        // 確保不會超出視窗上邊界
+        if (top < 10) {
+          top = 10
+        }
+      } else {
+        // 預設模式：相對於觸發元素定位
+        top = rect.bottom + 5
+        left = rect.right + 5  // 預設顯示在按鈕右側
+        
+        // 優先顯示在下方，只有在下方空間真的不足時才顯示在上方
+        const spaceBelow = viewportHeight - rect.bottom
+        const spaceAbove = rect.top
+        
+        if (spaceBelow < panelHeight && spaceAbove > spaceBelow) {
+          // 只有當上方空間比下方多時才顯示在上方
+          top = rect.top - panelHeight - 5
+        } else if (spaceBelow < panelHeight) {
+          // 如果下方空間不足但仍要顯示在下方，調整高度
+          top = rect.bottom + 5
+        }
+        
+        // 檢查右側空間是否足夠，不足則改到左側
+        if (left + panelWidth > viewportWidth) {
+          // 改到按鈕左側顯示
+          left = rect.left - panelWidth - 5
+          
+          // 如果左側也超出邊界，則貼著視窗右邊
+          if (left < 10) {
+            left = viewportWidth - panelWidth - 10
+          }
+        }
+        
+        // 最終檢查是否超出視窗左邊
+        if (left < 10) {
+          left = 10
+        }
       }
       
       panelPosition.value = {
