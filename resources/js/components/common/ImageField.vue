@@ -102,7 +102,7 @@
 
 <script>
 import { ref, computed } from 'vue'
-import { TrashIcon, CheckIcon } from '@heroicons/vue/outline'
+import { TrashIcon } from '@heroicons/vue/outline'
 import ImageSelector from './ImageSelector.vue'
 import ConfirmDialog from './ConfirmDialog.vue'
 
@@ -110,7 +110,6 @@ export default {
   name: 'ImageField',
   components: {
     TrashIcon,
-    CheckIcon,
     ImageSelector,
     ConfirmDialog
   },
