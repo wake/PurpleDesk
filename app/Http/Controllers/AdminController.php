@@ -40,7 +40,7 @@ class AdminController extends Controller
         
         $organizations = Organization::withCount('users')
             ->with(['users' => function($query) {
-                $query->select('users.id', 'users.display_name', 'users.full_name', 'users.avatar');
+                $query->select('users.id', 'users.display_name', 'users.full_name', 'users.avatar_data');
             }])
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
