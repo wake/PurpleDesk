@@ -14,11 +14,11 @@ class Team extends Model
     protected $fillable = [
         'name',
         'description',
-        'avatar_data',
+        'icon_data',
         'organization_id',
     ];
 
-    protected $appends = ['avatar_url'];
+    protected $appends = ['avatar_data', 'logo_url'];
     
     /**
      * Get the attributes that should be cast.
@@ -28,7 +28,7 @@ class Team extends Model
     protected function casts(): array
     {
         return [
-            'avatar_data' => 'json',
+            'icon_data' => 'json',
         ];
     }
 
@@ -37,26 +37,26 @@ class Team extends Model
      */
     public function getAvatarDataAttribute()
     {
-        $avatarData = $this->getAttributeFromArray('avatar_data');
+        $iconData = $this->getAttributeFromArray('icon_data');
         
-        if (!$avatarData) {
+        if (!$iconData) {
             return \App\Helpers\IconDataHelper::generateTeamIconDefault();
         }
         
-        return $avatarData;
+        return $iconData;
     }
     
     /**
-     * 取得團隊頭像完整 URL（僅適用於圖片類型）
+     * 取得團隊 Logo 完整 URL（僅適用於圖片類型）
      */
-    public function getAvatarUrlAttribute()
+    public function getLogoUrlAttribute()
     {
-        $avatarData = $this->avatar_data;
+        $iconData = $this->icon_data;
         
-        if ($avatarData && is_array($avatarData) && 
-            isset($avatarData['type']) && $avatarData['type'] === 'image' && 
-            isset($avatarData['path'])) {
-            return asset('storage/' . $avatarData['path']);
+        if ($iconData && is_array($iconData) && 
+            isset($iconData['type']) && $iconData['type'] === 'image' && 
+            isset($iconData['path'])) {
+            return asset('storage/' . $iconData['path']);
         }
         
         return null;

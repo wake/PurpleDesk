@@ -58,38 +58,38 @@ class RealisticTestDataSeeder extends Seeder
             [
                 'name' => '台北科技創新',
                 'description' => '專注於金融科技與企業數位轉型的創新公司',
-                'logo_data' => json_encode([
+                'logo_data' => [
                     'type' => 'initials',
                     'icon' => 'TTC',
                     'backgroundColor' => '#3b82f6'
-                ])
+                ]
             ],
             [
                 'name' => '綠能永續顧問',
                 'description' => '提供企業永續發展與綠能解決方案',
-                'logo_data' => json_encode([
+                'logo_data' => [
                     'type' => 'emoji',
                     'icon' => '🌱',
                     'backgroundColor' => '#bbf7d0'
-                ])
+                ]
             ],
             [
                 'name' => '數位行銷工作室',
                 'description' => '專業的數位行銷與品牌策略服務',
-                'logo_data' => json_encode([
+                'logo_data' => [
                     'type' => 'bootstrap',
                     'icon' => 'bi-megaphone-fill',
                     'backgroundColor' => '#f59e0b'
-                ])
+                ]
             ],
             [
                 'name' => '智慧醫療科技',
                 'description' => '運用AI技術改善醫療服務品質',
-                'logo_data' => json_encode([
+                'logo_data' => [
                     'type' => 'emoji',
                     'icon' => '🏥',
                     'backgroundColor' => '#c7d2fe'
-                ])
+                ]
             ]
         ];
 
@@ -140,11 +140,11 @@ class RealisticTestDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
                 'is_admin' => $userData['is_admin'] ?? false,
-                'avatar_data' => json_encode([
+                'avatar_data' => [
                     'type' => $avatarConfig['type'],
                     'icon' => $avatarConfig['icon'],
                     'backgroundColor' => $avatarConfig['bg']
-                ])
+                ]
             ]);
             
             $createdUsers[] = $user;
@@ -224,7 +224,7 @@ class RealisticTestDataSeeder extends Seeder
                 'name' => $teamData['name'],
                 'description' => $teamData['description'],
                 'organization_id' => $createdOrgs[$teamData['org']]->id,
-                'avatar_data' => json_encode($teamData['avatar_data'])
+                'icon_data' => $teamData['avatar_data']
             ]);
             
             // 分配團隊成員
