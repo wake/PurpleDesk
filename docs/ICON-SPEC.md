@@ -109,48 +109,49 @@ PurpleDesk 圖標系統提供統一的視覺識別解決方案，支援五種圖
 ## 5. 顏色系統
 
 ### 5.1 預設調色盤（16 色）
-| 色碼 | 名稱 | 用途 |
-|------|------|------|
-| #ef4444 | 紅色 Red | 警告、錯誤 |
-| #f97316 | 橙色 Orange | 提醒、待處理 |
-| #f59e0b | 黃色 Amber | 注意、標記 |
-| #eab308 | 黃綠色 Yellow | 進行中 |
-| #84cc16 | 萊姆色 Lime | 新增、成長 |
-| #22c55e | 綠色 Green | 成功、完成 |
-| #10b981 | 翠綠色 Emerald | 健康、正常 |
-| #14b8a6 | 青綠色 Teal | 資訊、提示 |
-| #06b6d4 | 青色 Cyan | 連結、互動 |
-| #0ea5e9 | 天空藍 Sky Blue | 開放、透明 |
-| #3b82f6 | 藍色 Blue | 信任、穩定 |
-| #6366f1 | 靛藍色 Indigo | 個人頭像預設 |
-| #9b6eff | 紫色 Primary | **系統主色** |
-| #8b5cf6 | 紫羅蘭 Violet | 創意、靈感 |
-| #a855f7 | 紫色 Purple | 特殊、重要 |
-| #d946ef | 紫紅色 Fuchsia | 活動、慶祝 |
-| #ec4899 | 桃紅色 Pink | 關注、喜愛 |
+| 色碼 | 名稱 |
+|------|------|
+| #ef4444 | 紅色 Red |
+| #f97316 | 橙色 Orange |
+| #f59e0b | 黃色 Amber |
+| #eab308 | 黃綠色 Yellow |
+| #84cc16 | 萊姆色 Lime |
+| #22c55e | 綠色 Green |
+| #10b981 | 翠綠色 Emerald |
+| #14b8a6 | 青綠色 Teal |
+| #06b6d4 | 青色 Cyan |
+| #0ea5e9 | 天空藍 Sky Blue |
+| #3b82f6 | 藍色 Blue |
+| #6366f1 | 靛藍色 Indigo |
+| #9b6eff | 紫色 Primary（**系統主色**）|
+| #8b5cf6 | 紫羅蘭 Violet |
+| #a855f7 | 紫色 Purple |
+| #d946ef | 紫紅色 Fuchsia |
+| #ec4899 | 桃紅色 Pink |
 
-### 5.2 淡色系調色盤（16 色）
+### 5.2 淡色系調色盤與對應深色前景（16 色）
 
-**注意**：ColorPicker 實際使用的是彩度更高的淡色版本，以提升識別度：
+**注意**：ColorPicker 實際使用的是彩度更高的淡色版本（Tailwind 200 級別），以提升識別度。
+淡色系背景統一搭配深色前景，確保可讀性。
 
-| 實際色碼 | 名稱 | Tailwind 對應 | 用途說明 |
-|----------|------|---------------|----------|
-| #fecaca | 淡紅色 Light Red | red-200 | 錯誤、警告的輕量背景 |
-| #fed7aa | 淡橙色 Light Orange | orange-200 | 提醒、待處理的輕量背景 |
-| #fde68a | 淡黃色 Light Amber | amber-200 | 注意、標記的輕量背景 |
-| #fef08a | 淡黃綠色 Light Yellow | yellow-200 | 進行中的輕量背景 |
-| #d9f99d | 淡萊姆色 Light Lime | lime-200 | 新增、成長的輕量背景 |
-| #bbf7d0 | 淡綠色 Light Green | green-200 | 成功、完成的輕量背景 |
-| #a7f3d0 | 淡翠綠色 Light Emerald | emerald-200 | 健康、正常的輕量背景 |
-| #99f6e4 | 淡青綠色 Light Teal | teal-200 | 資訊、提示的輕量背景 |
-| #a5f3fc | 淡青色 Light Cyan | cyan-200 | 連結、互動的輕量背景 |
-| #bae6fd | 淡天空藍 Light Sky | sky-200 | 開放、透明的輕量背景 |
-| #dbeafe | 淡藍色 Light Blue | blue-200 | 信任、穩定的輕量背景 |
-| #c7d2fe | 淡靛藍色 Light Indigo | indigo-200 | 深度、專業的輕量背景 |
-| #ddd6fe | 淡紫羅蘭 Light Violet | violet-200 | 創意、靈感的輕量背景 |
-| #e9d5ff | 淡紫色 Light Purple | purple-200 | 特殊、重要的輕量背景 |
-| #f5d0fe | 淡紫紅色 Light Fuchsia | fuchsia-200 | 活動、慶祝的輕量背景 |
-| #fbcfe8 | 淡桃紅色 Light Pink | pink-200 | 關注、喜愛的輕量背景 |
+| 背景色碼 | 背景名稱 | 對應深色前景 | 前景色碼 |
+|----------|----------|--------------|----------|
+| #fecaca | 淡紅色 Light Red | 深紅色 | #991b1b |
+| #fed7aa | 淡橙色 Light Orange | 深橙色 | #9a3412 |
+| #fde68a | 淡黃色 Light Amber | 深黃色 | #92400e |
+| #fef08a | 淡黃綠色 Light Yellow | 深黃綠色 | #854d0e |
+| #d9f99d | 淡萊姆色 Light Lime | 深萊姆色 | #3f6212 |
+| #bbf7d0 | 淡綠色 Light Green | 深綠色 | #14532d |
+| #a7f3d0 | 淡翠綠色 Light Emerald | 深翠綠色 | #064e3b |
+| #99f6e4 | 淡青綠色 Light Teal | 深青綠色 | #134e4a |
+| #a5f3fc | 淡青色 Light Cyan | 深青色 | #164e63 |
+| #bae6fd | 淡天空藍 Light Sky | 深天空藍 | #0c4a6e |
+| #dbeafe | 淡藍色 Light Blue | 深藍色 | #1e3a8a |
+| #c7d2fe | 淡靛藍色 Light Indigo | 深靛藍色 | #312e81 |
+| #ddd6fe | 淡紫羅蘭 Light Violet | 深紫羅蘭 | #4c1d95 |
+| #e9d5ff | 淡紫色 Light Purple | 深紫色 | #581c87 |
+| #f5d0fe | 淡紫紅色 Light Fuchsia | 深紫紅色 | #701a75 |
+| #fbcfe8 | 淡桃紅色 Light Pink | 深桃紅色 | #831843 |
 
 ### 5.3 基礎色彩（黑白灰）
 | 色碼 | 名稱 |
@@ -197,18 +198,8 @@ const textColor = getLuminance(backgroundColor) > 0.5
 - **圖標顏色**：僅限白色 (#ffffff) 或深灰色 (#1f2937)
 - **對比度要求**：確保背景與內容有足夠對比度（WCAG AA 標準）
 
-### 5.5 特殊顏色用途
+### 5.5 隨機顏色功能
 
-#### 功能性顏色映射
-| 顏色 | 語意 | 使用場景 |
-|------|------|----------|
-| #ef4444（紅色） | 錯誤、危險 | 刪除按鈕、錯誤訊息 |
-| #f97316（橙色） | 警告、注意 | 警告標籤、待處理狀態 |
-| #22c55e（綠色） | 成功、完成 | 成功訊息、已完成狀態 |
-| #3b82f6（藍色） | 資訊、連結 | 提示訊息、可點擊元素 |
-| #9b6eff（主色） | 品牌、重點 | 主要按鈕、焦點元素 |
-
-#### 隨機顏色功能
 - **隨機淡色**：從淡色系調色盤中隨機選擇
 - **用途**：快速生成獨特識別的背景色
 - **實作**：優先選擇未被使用的顏色
