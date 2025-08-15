@@ -32,16 +32,16 @@
       <span v-else class="text-gray-400 text-xs">圖標</span>
     </button>
     
-    <!-- 圖標選擇面板 -->
+    <!-- 圖標選擇面板容器 -->
     <Teleport to="body">
       <div 
         v-if="isOpen" 
         ref="iconPanel"
-        class="fixed z-[9999] bg-white border border-gray-200 rounded-lg shadow-xl flex"
+        class="fixed z-[9999] flex space-x-2"
         :style="panelPosition"
       >
-        <!-- IconPicker 主面板 -->
-        <div class="px-4 py-2 w-96">
+        <!-- IconPicker 面板 -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-xl px-4 py-2 w-96">
         <!-- 頂部標籤切換 -->
         <div class="flex border-b border-gray-200 mb-4">
           <button
@@ -314,7 +314,7 @@
         <!-- ColorPicker 面板 -->
         <div 
           v-if="showColorPicker" 
-          class="w-72 border-l border-gray-200 p-4 pt-5 overflow-y-auto"
+          class="bg-white border border-gray-200 rounded-lg shadow-xl w-72 p-4 pt-5 overflow-y-auto relative"
         >
           <!-- 關閉按鈕 -->
           <button
@@ -530,13 +530,19 @@ export default {
     }
     
     // 開啟顏色選擇器
-    const openColorPicker = () => {
+    const openColorPicker = async () => {
       showColorPicker.value = !showColorPicker.value
+      // 當 ColorPicker 開關時，重新計算位置以適應新的寬度
+      await nextTick()
+      calculatePosition()
     }
     
     // 關閉顏色選擇器
-    const closeColorPicker = () => {
+    const closeColorPicker = async () => {
       showColorPicker.value = false
+      // 當 ColorPicker 關閉時，重新計算位置以適應新的寬度
+      await nextTick()
+      calculatePosition()
     }
     
     // 選擇顏色
@@ -665,8 +671,11 @@ export default {
       const viewportHeight = window.innerHeight
       const viewportWidth = window.innerWidth
       
-      // 彈窗預設尺寸（調整為 384px = w-96）
-      const panelWidth = 384
+      // 容器寬度（IconPicker + 間距 + ColorPicker）
+      const iconPickerWidth = 384 // w-96
+      const colorPickerWidth = 288 // w-72
+      const spacing = 8 // space-x-2
+      const totalWidth = iconPickerWidth + (showColorPicker.value ? spacing + colorPickerWidth : 0)
       const panelHeight = 400
       
       let top = rect.bottom + 5
@@ -697,9 +706,9 @@ export default {
         }
       }
       
-      // 檢查是否超出視窗右邊
-      if (left + panelWidth > viewportWidth) {
-        left = viewportWidth - panelWidth - 10
+      // 檢查是否超出視窗右邊（根據當前顯示的面板總寬度）
+      if (left + totalWidth > viewportWidth) {
+        left = viewportWidth - totalWidth - 10
       }
       
       // 檢查是否超出視窗左邊
