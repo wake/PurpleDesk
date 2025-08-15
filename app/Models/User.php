@@ -25,7 +25,7 @@ class User extends Authenticatable
         'display_name',
         'email',
         'password',
-        'avatar',
+        'avatar_data',
         'locale',
         'timezone',
         'email_notifications',
@@ -65,7 +65,7 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'birth_date' => 'date',
             'last_login_at' => 'datetime',
-            'avatar' => 'json',
+            'avatar_data' => 'json',
         ];
     }
 
@@ -74,11 +74,11 @@ class User extends Authenticatable
      */
     public function getAvatarDataAttribute()
     {
-        if (!$this->avatar) {
+        if (!$this->avatar_data) {
             return \App\Helpers\IconDataHelper::generateUserIconDefault($this->full_name ?: $this->display_name ?: $this->account);
         }
         
-        return $this->avatar;
+        return $this->avatar_data;
     }
     
     /**

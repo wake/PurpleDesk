@@ -14,7 +14,7 @@ class Team extends Model
     protected $fillable = [
         'name',
         'description',
-        'avatar',
+        'avatar_data',
         'organization_id',
     ];
 
@@ -28,7 +28,7 @@ class Team extends Model
     protected function casts(): array
     {
         return [
-            'avatar' => 'json',
+            'avatar_data' => 'json',
         ];
     }
 
@@ -37,11 +37,11 @@ class Team extends Model
      */
     public function getAvatarDataAttribute()
     {
-        if (!$this->avatar) {
+        if (!$this->avatar_data) {
             return \App\Helpers\IconDataHelper::generateTeamIconDefault();
         }
         
-        return $this->avatar;
+        return $this->avatar_data;
     }
     
     /**
