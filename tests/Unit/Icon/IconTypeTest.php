@@ -105,19 +105,78 @@ class IconTypeTest extends TestCase
             'emoji' => '😀',
             'backgroundColor' => '#123456'
         ]));
+        
+        // 空的 emoji
+        $this->assertFalse($emojiIcon->validate([
+            'type' => 'emoji',
+            'emoji' => '',
+            'backgroundColor' => '#fef2f2'
+        ]));
+        
+        // 錯誤的類型
+        $this->assertFalse($emojiIcon->validate([
+            'type' => 'text',
+            'emoji' => '😀',
+            'backgroundColor' => '#fef2f2'
+        ]));
     }
     
     public function test_emoji_icon_generates_random()
     {
         $emojiIcon = new EmojiIcon();
-        $data = $emojiIcon->generateRandom();
         
-        $this->assertIsArray($data);
-        $this->assertEquals('emoji', $data['type']);
-        $this->assertArrayHasKey('emoji', $data);
-        $this->assertArrayHasKey('backgroundColor', $data);
+        // 測試多次生成以確保隨機性
+        $generatedEmojis = [];
+        for ($i = 0; $i < 10; $i++) {
+            $data = $emojiIcon->generateRandom();
+            
+            // 基本結構檢查
+            $this->assertIsArray($data);
+            $this->assertEquals('emoji', $data['type']);
+            $this->assertArrayHasKey('emoji', $data);
+            $this->assertArrayHasKey('backgroundColor', $data);
+            
+            // 確保生成的資料可以通過驗證
+            $this->assertTrue($emojiIcon->validate($data));
+            
+            // 收集生成的 emoji
+            $generatedEmojis[] = $data['emoji'];
+        }
         
-        $this->assertTrue($emojiIcon->validate($data));
+        // 確保有一定的隨機性（10次生成至少有2種不同的emoji）
+        $uniqueEmojis = array_unique($generatedEmojis);
+        $this->assertGreaterThanOrEqual(2, count($uniqueEmojis));
+    }
+    
+    public function test_emoji_icon_checks_safe_emoji()
+    {
+        $emojiIcon = new EmojiIcon();
+        
+        // 測試安全的 emoji
+        $this->assertTrue($emojiIcon->isSafeEmoji('😀'));
+        $this->assertTrue($emojiIcon->isSafeEmoji('❤️'));
+        $this->assertTrue($emojiIcon->isSafeEmoji('🌟'));
+        
+        // 測試不在列表中的 emoji
+        $this->assertFalse($emojiIcon->isSafeEmoji('🦾')); // 機械手臂，不在預設列表中
+        $this->assertFalse($emojiIcon->isSafeEmoji('🫠')); // 融化臉，較新的 emoji
+    }
+    
+    public function test_emoji_icon_get_random_emoji()
+    {
+        $emojiIcon = new EmojiIcon();
+        
+        // 測試 getRandomEmoji 方法
+        $emoji = $emojiIcon->getRandomEmoji();
+        
+        // 確保返回的是字串
+        $this->assertIsString($emoji);
+        
+        // 確保不為空
+        $this->assertNotEmpty($emoji);
+        
+        // 確保是安全的 emoji
+        $this->assertTrue($emojiIcon->isSafeEmoji($emoji));
     }
     
     public function test_hero_icon_validates_correctly()
