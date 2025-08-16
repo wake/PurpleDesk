@@ -28,7 +28,7 @@ class EmojiApiManager {
       return this.loadingPromise;
     }
 
-    this.loadingPromise = axios.get('/api/emojis')
+    this.loadingPromise = axios.get('/api/config/icon/emoji')
       .then(response => {
         this.allData = response.data;
         this.categoriesInfo = [];

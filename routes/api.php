@@ -54,5 +54,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// Emoji API 路由（公開訪問）
-Route::get('/emojis', [EmojiController::class, 'all']);
+// Icon 配置 API 路由（公開訪問）
+Route::prefix('config/icon')->group(function () {
+    Route::get('/emoji', [EmojiController::class, 'all']);
+});
