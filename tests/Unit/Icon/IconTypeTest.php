@@ -152,14 +152,15 @@ class IconTypeTest extends TestCase
     {
         $emojiIcon = new EmojiIcon();
         
-        // 測試安全的 emoji
+        // 測試常見的 emoji（這些應該都在資料庫中）
         $this->assertTrue($emojiIcon->isSafeEmoji('😀'));
         $this->assertTrue($emojiIcon->isSafeEmoji('❤️'));
         $this->assertTrue($emojiIcon->isSafeEmoji('🌟'));
         
-        // 測試不在列表中的 emoji
-        $this->assertFalse($emojiIcon->isSafeEmoji('🦾')); // 機械手臂，不在預設列表中
-        $this->assertFalse($emojiIcon->isSafeEmoji('🫠')); // 融化臉，較新的 emoji
+        // 測試完全無效的字符（絕對不是 emoji）
+        $this->assertFalse($emojiIcon->isSafeEmoji('ABC'));
+        $this->assertFalse($emojiIcon->isSafeEmoji('123'));
+        $this->assertFalse($emojiIcon->isSafeEmoji(''));
     }
     
     public function test_emoji_icon_get_random_emoji()

@@ -4,9 +4,17 @@ namespace App\Icon\Types;
 
 use App\Icon\Color;
 use App\Icon\IconTypeInterface;
+use App\Services\EmojiService;
+use Illuminate\Support\Facades\App;
 
 class EmojiIcon implements IconTypeInterface
 {
+    private $emojiService;
+    
+    public function __construct()
+    {
+        $this->emojiService = App::make(EmojiService::class);
+    }
     
     public function getType(): string
     {
@@ -67,10 +75,16 @@ class EmojiIcon implements IconTypeInterface
     
     /**
      * 從配置取得隨機 emoji
+     * @throws \RuntimeException 如果沒有可用的 emoji
      */
     private function getRandomEmojiFromConfig(): string
     {
         $all = $this->getAllEmojis();
+        
+        if (empty($all)) {
+            throw new \RuntimeException('No emojis available');
+        }
+        
         return $all[array_rand($all)];
     }
     
@@ -83,32 +97,26 @@ class EmojiIcon implements IconTypeInterface
     }
     
     /**
-     * 取得所有 emoji（用於隨機生成和驗證）
-     * 這是一個精選的常用 emoji 列表，用於測試和隨機生成
+     * 取得所有 emoji（從 EmojiService 載入真實資料）
      */
     private function getAllEmojis(): array
     {
-        // 精選的常用 emoji 列表
-        return [
-            // 表情
-            '😀', '😃', '😄', '😁', '😊', '😍', '🥰', '😘', '🤗', '🤩',
-            '😎', '🤓', '😇', '🙂', '😉', '😌', '😋', '😛', '😜', '🤪',
-            // 手勢
-            '👍', '👎', '👌', '✌️', '🤞', '🤟', '👏', '🙌', '👐', '🤝',
-            // 愛心
-            '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💕',
-            // 動物
-            '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯',
-            // 自然
-            '🌸', '🌺', '🌻', '🌷', '🌹', '🌿', '🍀', '🌳', '🌲', '🌴',
-            // 食物
-            '🍎', '🍊', '🍋', '🍌', '🍇', '🍓', '🍑', '🍒', '🥑', '🍅',
-            // 活動
-            '⚽', '🏀', '🏈', '⚾', '🎾', '🏐', '🎯', '🎮', '🎲', '🎨',
-            // 物品
-            '💼', '📚', '📖', '📝', '✏️', '📌', '📎', '🔖', '📅', '📆',
-            // 符號
-            '✅', '❌', '⭐', '🌟', '✨', '💫', '🔥', '💧', '⚡', '☀️'
-        ];
+        static $emojis = null;
+        
+        if ($emojis === null) {
+            $allData = $this->emojiService->getAllEmojis();
+            $emojis = [];
+            
+            // 從所有分類中提取 emoji
+            foreach ($allData['categories'] ?? [] as $category) {
+                foreach ($category['subgroups'] ?? [] as $subgroup) {
+                    foreach ($subgroup['emojis'] ?? [] as $emojiData) {
+                        $emojis[] = $emojiData['emoji'];
+                    }
+                }
+            }
+        }
+        
+        return $emojis;
     }
 }
