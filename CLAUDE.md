@@ -11,6 +11,11 @@ PurpleDesk 是一個為中小型團隊設計的綜合專案管理系統。強調
 1. 每次啟動時請檢查是否有之前對話遺留的 Laravel 與 Vite 開發伺服器，如果有，請移除
 2. 請啟動 Laravel 與 Vite 開發伺服器
 
+# 產品需求文件 (PRD)
+
+- 請讀取 @docs/prd/MAIN.md 主架構系統文件
+- 請讀取 @docs/prd/ICON-SPEC.md 圖標系統完整規範文件
+
 ## 開發管理
 
 1. 開發方式請依據 @docs/TDD.md 進行測試驅動開發
