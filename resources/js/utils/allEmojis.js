@@ -38,7 +38,7 @@ async function loadAllEmojis() {
   isLoading = true;
   loadPromise = (async () => {
     try {
-      const categories = emojiManager.getCategoriesInfo();
+      const categories = await emojiManager.getCategoriesInfo();
       const allEmojis = [];
 
       // 載入所有分類

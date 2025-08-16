@@ -19,7 +19,6 @@ class IconTypeTest extends TestCase
         // 載入圖標配置
         config()->set('icon', [
             'colors' => require base_path('config/icon/colors.php'),
-            'emojis' => require base_path('config/icon/emojis.php'),
             'heroicons' => require base_path('config/icon/heroicons.php'),
             'bootstrap_icons' => require base_path('config/icon/bootstrap_icons.php'),
         ]);
