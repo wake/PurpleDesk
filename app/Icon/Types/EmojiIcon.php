@@ -88,6 +88,19 @@ class EmojiIcon implements IconTypeInterface
     private function getAllEmojis(): array
     {
         $categories = config('icon.emojis.categories', []);
-        return array_merge(...array_values($categories));
+        if (empty($categories)) {
+            // 預設的 emoji 列表
+            return ['😀', '😃', '😄', '😁', '😊', '😍', '🥰', '😘', '🤗', '🤩'];
+        }
+        
+        // 如果分類是巢狀結構，展開它
+        $emojis = [];
+        foreach ($categories as $category) {
+            if (is_array($category)) {
+                $emojis = array_merge($emojis, $category);
+            }
+        }
+        
+        return !empty($emojis) ? $emojis : ['😀', '😃', '😄', '😁', '😊'];
     }
 }

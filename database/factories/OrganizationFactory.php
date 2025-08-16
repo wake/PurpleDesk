@@ -19,7 +19,7 @@ class OrganizationFactory extends Factory
         return [
             'name' => $this->faker->company,
             'description' => $this->faker->sentence,
-            'avatar' => null,
+            'logo_data' => null,
         ];
     }
 }
