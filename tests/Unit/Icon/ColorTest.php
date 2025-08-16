@@ -152,4 +152,152 @@ class ColorTest extends TestCase
         
         $this->assertNull(Color::normalizeHexColor('invalid'));
     }
+    
+    public function test_can_get_luminance_threshold()
+    {
+        // 測試取得亮度閾值
+        $this->assertEquals(0.6, Color::getLuminanceThreshold());
+    }
+    
+    public function test_can_set_luminance_threshold()
+    {
+        // 測試設定亮度閾值
+        $originalThreshold = Color::getLuminanceThreshold();
+        
+        Color::setLuminanceThreshold(0.5);
+        $this->assertEquals(0.5, Color::getLuminanceThreshold());
+        
+        // 恢復原始值
+        Color::setLuminanceThreshold($originalThreshold);
+    }
+    
+    public function test_can_get_foreground_colors()
+    {
+        // 測試取得前景色設定
+        $this->assertEquals('#1f2937', Color::getDarkForegroundColor());
+        $this->assertEquals('#ffffff', Color::getLightForegroundColor());
+    }
+    
+    public function test_can_set_foreground_colors()
+    {
+        // 測試設定前景色
+        $originalDark = Color::getDarkForegroundColor();
+        $originalLight = Color::getLightForegroundColor();
+        
+        Color::setDarkForegroundColor('#000000');
+        Color::setLightForegroundColor('#f0f0f0');
+        
+        $this->assertEquals('#000000', Color::getDarkForegroundColor());
+        $this->assertEquals('#f0f0f0', Color::getLightForegroundColor());
+        
+        // 恢復原始值
+        Color::setDarkForegroundColor($originalDark);
+        Color::setLightForegroundColor($originalLight);
+    }
+    
+    public function test_can_validate_color_combination()
+    {
+        // 測試驗證顏色組合
+        
+        // 標準深色背景 + 白色前景（有效）
+        $this->assertTrue(Color::validateColorCombination('#9b6eff', '#ffffff'));
+        
+        // 標準深色背景 + 深色前景（無效）
+        $this->assertFalse(Color::validateColorCombination('#9b6eff', '#1f2937'));
+        
+        // 預設淡色背景 + 對應深色前景（有效）
+        $this->assertTrue(Color::validateColorCombination('#fecaca', '#991b1b'));
+        $this->assertTrue(Color::validateColorCombination('#faf5ff', '#7c3aed'));
+        
+        // 預設淡色背景 + 錯誤深色前景（無效）
+        $this->assertFalse(Color::validateColorCombination('#fecaca', '#7c3aed'));
+        
+        // 預設淡色背景 + 白色前景（無效）
+        $this->assertFalse(Color::validateColorCombination('#fecaca', '#ffffff'));
+        
+        // 非預設顏色 + 根據亮度自動判斷
+        // 亮背景（例如白色）+ 深色前景（有效）
+        $this->assertTrue(Color::validateColorCombination('#f8f8f8', '#1f2937'));
+        
+        // 亮背景 + 白色前景（無效）
+        $this->assertFalse(Color::validateColorCombination('#f8f8f8', '#ffffff'));
+        
+        // 暗背景（例如深灰）+ 白色前景（有效）
+        $this->assertTrue(Color::validateColorCombination('#333333', '#ffffff'));
+        
+        // 暗背景 + 深色前景（無效）
+        $this->assertFalse(Color::validateColorCombination('#333333', '#1f2937'));
+    }
+    
+    public function test_can_generate_random_color_combination()
+    {
+        // 測試隨機生成顏色組合（預設模式）
+        $combination = Color::randomColorCombination();
+        
+        $this->assertIsArray($combination);
+        $this->assertArrayHasKey('background', $combination);
+        $this->assertArrayHasKey('foreground', $combination);
+        
+        // 驗證生成的組合是有效的
+        $this->assertTrue(Color::validateColorCombination(
+            $combination['background'],
+            $combination['foreground']
+        ));
+        
+        // 確認背景色來自預設顏色
+        $this->assertTrue(Color::isAllowedBackgroundColor($combination['background']));
+    }
+    
+    public function test_can_generate_completely_random_color_combination()
+    {
+        // 測試完全隨機生成顏色組合
+        $combination = Color::randomColorCombination(true);
+        
+        $this->assertIsArray($combination);
+        $this->assertArrayHasKey('background', $combination);
+        $this->assertArrayHasKey('foreground', $combination);
+        
+        // 驗證是有效的 hex 顏色
+        $this->assertTrue(Color::isValidHexColor($combination['background']));
+        $this->assertTrue(Color::isValidHexColor($combination['foreground']));
+        
+        // 驗證前景色是允許的（白色或深灰色）
+        $this->assertContains($combination['foreground'], [
+            Color::getLightForegroundColor(),
+            Color::getDarkForegroundColor()
+        ]);
+        
+        // 驗證組合的對比度是足夠的
+        $backgroundLuminance = Color::getLuminance($combination['background']);
+        $threshold = Color::getLuminanceThreshold();
+        
+        if ($backgroundLuminance > $threshold) {
+            $this->assertEquals(Color::getDarkForegroundColor(), $combination['foreground']);
+        } else {
+            $this->assertEquals(Color::getLightForegroundColor(), $combination['foreground']);
+        }
+    }
+    
+    public function test_random_color_combination_respects_predefined_pairs()
+    {
+        // 測試隨機生成時如果選到淡色背景，會使用對應的深色前景
+        $found = false;
+        
+        // 多次測試以確保能覆蓋到淡色背景的情況
+        for ($i = 0; $i < 50; $i++) {
+            $combination = Color::randomColorCombination();
+            
+            if (array_key_exists($combination['background'], Color::getLightColorsWithForeground())) {
+                $found = true;
+                $expectedForeground = Color::getLightColorsWithForeground()[$combination['background']];
+                $this->assertEquals($expectedForeground, $combination['foreground']);
+                break;
+            }
+        }
+        
+        // 至少應該有一次生成淡色背景
+        if (!$found) {
+            $this->markTestSkipped('未能生成淡色背景組合，可能需要調整隨機算法');
+        }
+    }
 }

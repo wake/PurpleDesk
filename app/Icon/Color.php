@@ -5,6 +5,21 @@ namespace App\Icon;
 class Color
 {
     /**
+     * 亮度閾值（用於判斷使用深色或淺色前景）
+     */
+    private static float $luminanceThreshold = 0.6;
+    
+    /**
+     * 深色前景色（用於亮背景）
+     */
+    private static string $darkForegroundColor = '#1f2937';
+    
+    /**
+     * 淺色前景色（用於暗背景）
+     */
+    private static string $lightForegroundColor = '#ffffff';
+    
+    /**
      * 預設調色盤（16 色 + 系統主色）
      */
     private static array $standardColors = [
@@ -168,8 +183,58 @@ class Color
     {
         $luminance = self::getLuminance($backgroundColor);
         
-        // 亮度大於 0.6 使用深灰色，否則使用白色（調整閾值以配合紫色主色）
-        return $luminance > 0.6 ? '#1f2937' : '#ffffff';
+        // 使用可配置的閾值和前景色
+        return $luminance > self::$luminanceThreshold 
+            ? self::$darkForegroundColor 
+            : self::$lightForegroundColor;
+    }
+    
+    /**
+     * 取得亮度閾值
+     */
+    public static function getLuminanceThreshold(): float
+    {
+        return self::$luminanceThreshold;
+    }
+    
+    /**
+     * 設定亮度閾值
+     */
+    public static function setLuminanceThreshold(float $threshold): void
+    {
+        self::$luminanceThreshold = $threshold;
+    }
+    
+    /**
+     * 取得深色前景色
+     */
+    public static function getDarkForegroundColor(): string
+    {
+        return self::$darkForegroundColor;
+    }
+    
+    /**
+     * 設定深色前景色
+     */
+    public static function setDarkForegroundColor(string $color): void
+    {
+        self::$darkForegroundColor = self::normalizeHexColor($color) ?? $color;
+    }
+    
+    /**
+     * 取得淺色前景色
+     */
+    public static function getLightForegroundColor(): string
+    {
+        return self::$lightForegroundColor;
+    }
+    
+    /**
+     * 設定淺色前景色
+     */
+    public static function setLightForegroundColor(string $color): void
+    {
+        self::$lightForegroundColor = self::normalizeHexColor($color) ?? $color;
     }
     
     /**
@@ -234,5 +299,87 @@ class Color
         }
         
         return $color;
+    }
+    
+    /**
+     * 驗證前景色與背景色的組合是否有效
+     * 
+     * @param string $backgroundColor 背景色
+     * @param string $foregroundColor 前景色
+     * @return bool
+     */
+    public static function validateColorCombination(string $backgroundColor, string $foregroundColor): bool
+    {
+        // 標準化顏色
+        $backgroundColor = self::normalizeHexColor($backgroundColor);
+        $foregroundColor = self::normalizeHexColor($foregroundColor);
+        
+        if ($backgroundColor === null || $foregroundColor === null) {
+            return false;
+        }
+        
+        // 檢查是否為標準深色背景
+        if (in_array($backgroundColor, self::$standardColors, true)) {
+            // 標準深色背景應該使用白色前景
+            return $foregroundColor === self::$lightForegroundColor;
+        }
+        
+        // 檢查是否為預設淡色背景
+        if (array_key_exists($backgroundColor, self::$lightColorsWithForeground)) {
+            // 預設淡色背景應該使用對應的深色前景
+            return $foregroundColor === self::$lightColorsWithForeground[$backgroundColor];
+        }
+        
+        // 非預設顏色，根據亮度判斷
+        $expectedForeground = self::getContrastColor($backgroundColor);
+        return $foregroundColor === $expectedForeground;
+    }
+    
+    /**
+     * 隨機生成前景色與背景色的組合
+     * 
+     * @param bool $completelyRandom 是否完全隨機（不限於預設顏色）
+     * @return array ['background' => string, 'foreground' => string]
+     */
+    public static function randomColorCombination(bool $completelyRandom = false): array
+    {
+        if ($completelyRandom) {
+            // 完全隨機生成
+            $backgroundColor = self::generateRandomHexColor();
+            $foregroundColor = self::getContrastColor($backgroundColor);
+            
+            return [
+                'background' => $backgroundColor,
+                'foreground' => $foregroundColor,
+            ];
+        }
+        
+        // 從預設顏色中隨機選擇
+        $allBackgrounds = self::getAllowedBackgroundColors();
+        $backgroundColor = $allBackgrounds[array_rand($allBackgrounds)];
+        
+        // 根據背景色類型決定前景色
+        if (array_key_exists($backgroundColor, self::$lightColorsWithForeground)) {
+            // 淡色背景，使用對應的深色前景
+            $foregroundColor = self::$lightColorsWithForeground[$backgroundColor];
+        } else {
+            // 其他背景，根據亮度自動判斷
+            $foregroundColor = self::getContrastColor($backgroundColor);
+        }
+        
+        return [
+            'background' => $backgroundColor,
+            'foreground' => $foregroundColor,
+        ];
+    }
+    
+    /**
+     * 生成隨機的 hex 顏色
+     * 
+     * @return string
+     */
+    private static function generateRandomHexColor(): string
+    {
+        return sprintf('#%06x', mt_rand(0, 0xFFFFFF));
     }
 }
