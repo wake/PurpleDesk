@@ -8,10 +8,22 @@ use App\Icon\Types\EmojiIcon;
 use App\Icon\Types\HeroIcon;
 use App\Icon\Types\BootstrapIcon;
 use App\Icon\Types\ImageIcon;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class IconTypeTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // 載入圖標配置
+        config()->set('icon', [
+            'colors' => require base_path('config/icon/colors.php'),
+            'emojis' => require base_path('config/icon/emojis.php'),
+            'heroicons' => require base_path('config/icon/heroicons.php'),
+            'bootstrap_icons' => require base_path('config/icon/bootstrap_icons.php'),
+        ]);
+    }
     public function test_text_icon_validates_correctly()
     {
         $textIcon = new TextIcon();
@@ -79,13 +91,13 @@ class IconTypeTest extends TestCase
         $this->assertTrue($emojiIcon->validate([
             'type' => 'emoji',
             'emoji' => '😀',
-            'backgroundColor' => '#fecaca'
+            'backgroundColor' => '#fef2f2' // red-50
         ]));
         
         // 缺少 emoji
         $this->assertFalse($emojiIcon->validate([
             'type' => 'emoji',
-            'backgroundColor' => '#fecaca'
+            'backgroundColor' => '#fef2f2' // red-50
         ]));
         
         // 無效的背景色
@@ -172,7 +184,7 @@ class IconTypeTest extends TestCase
             'type' => 'bootstrap_icon',
             'icon' => 'bi-people',
             'style' => 'outline',
-            'backgroundColor' => '#dbeafe',
+            'backgroundColor' => '#eff6ff', // blue-50
             'iconColor' => '#2563eb'
         ]));
         
@@ -181,7 +193,7 @@ class IconTypeTest extends TestCase
             'type' => 'bootstrap_icon',
             'icon' => 'bi-person-fill',
             'style' => 'fill',
-            'backgroundColor' => '#dbeafe',
+            'backgroundColor' => '#eff6ff', // blue-50
             'iconColor' => '#2563eb'
         ]));
         
@@ -190,7 +202,7 @@ class IconTypeTest extends TestCase
             'type' => 'bootstrap_icon',
             'icon' => 'bi-people',
             'style' => 'solid', // 應該是 outline 或 fill
-            'backgroundColor' => '#dbeafe',
+            'backgroundColor' => '#eff6ff', // blue-50
             'iconColor' => '#2563eb'
         ]));
     }

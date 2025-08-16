@@ -3,18 +3,25 @@
 namespace Tests\Unit\Icon;
 
 use App\Icon\Color;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class ColorTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // 載入顏色配置
+        config()->set('icon.colors', require base_path('config/icon/colors.php'));
+    }
     public function test_can_get_standard_colors()
     {
         $colors = Color::getStandardColors();
         
         $this->assertIsArray($colors);
-        $this->assertCount(17, $colors); // 16 預設調色盤 + 1 系統主色
-        $this->assertContains('#9b6eff', $colors);
-        $this->assertContains('#ef4444', $colors);
+        $this->assertCount(15, $colors); // 15 標準色
+        $this->assertContains('#6366f1', $colors); // indigo-500
+        $this->assertContains('#ef4444', $colors); // red-500
     }
     
     public function test_can_get_light_colors()
@@ -22,9 +29,9 @@ class ColorTest extends TestCase
         $colors = Color::getLightColors();
         
         $this->assertIsArray($colors);
-        $this->assertCount(17, $colors); // 包含 purple-50
-        $this->assertContains('#fecaca', $colors);
-        $this->assertContains('#ddd6fe', $colors);
+        $this->assertCount(15, $colors); // 15 淡色
+        $this->assertContains('#fef2f2', $colors); // red-50
+        $this->assertContains('#f3e8ff', $colors); // violet-50
         $this->assertContains('#faf5ff', $colors); // purple-50
     }
     
@@ -33,15 +40,15 @@ class ColorTest extends TestCase
         $lightColors = Color::getLightColorsWithForeground();
         
         $this->assertIsArray($lightColors);
-        $this->assertCount(17, $lightColors); // 包含 purple-50
+        $this->assertCount(15, $lightColors); // 15 個淡色與前景配對
         
-        // 檢查第一個淡紅色組合
-        $this->assertArrayHasKey('#fecaca', $lightColors);
-        $this->assertEquals('#991b1b', $lightColors['#fecaca']);
+        // 檢查淡紅色組合
+        $this->assertArrayHasKey('#fef2f2', $lightColors); // red-50
+        $this->assertEquals('#b91c1c', $lightColors['#fef2f2']); // red-700
         
         // 檢查淡紫色組合
-        $this->assertArrayHasKey('#e9d5ff', $lightColors);
-        $this->assertEquals('#581c87', $lightColors['#e9d5ff']);
+        $this->assertArrayHasKey('#faf5ff', $lightColors); // purple-50
+        $this->assertEquals('#7c3aed', $lightColors['#faf5ff']); // purple-600
     }
     
     public function test_can_get_gray_colors()
@@ -49,21 +56,21 @@ class ColorTest extends TestCase
         $colors = Color::getGrayColors();
         
         $this->assertIsArray($colors);
-        $this->assertCount(11, $colors); // 黑白 + 9 個灰階
-        $this->assertContains('#000000', $colors);
-        $this->assertContains('#ffffff', $colors);
-        $this->assertContains('#6b7280', $colors);
+        $this->assertCount(8, $colors); // 8 個灰階色
+        $this->assertContains('#6b7280', $colors); // gray-500
+        $this->assertContains('#9ca3af', $colors); // gray-400
+        $this->assertContains('#f9fafb', $colors); // gray-50
     }
     
     public function test_can_validate_allowed_background_color()
     {
         // 標準色
-        $this->assertTrue(Color::isAllowedBackgroundColor('#9b6eff'));
-        $this->assertTrue(Color::isAllowedBackgroundColor('#ef4444'));
+        $this->assertTrue(Color::isAllowedBackgroundColor('#6366f1')); // indigo-500
+        $this->assertTrue(Color::isAllowedBackgroundColor('#ef4444')); // red-500
         
         // 淡色系
-        $this->assertTrue(Color::isAllowedBackgroundColor('#fecaca'));
-        $this->assertTrue(Color::isAllowedBackgroundColor('#ddd6fe'));
+        $this->assertTrue(Color::isAllowedBackgroundColor('#fef2f2')); // red-50
+        $this->assertTrue(Color::isAllowedBackgroundColor('#faf5ff')); // purple-50
         
         // 灰階
         $this->assertTrue(Color::isAllowedBackgroundColor('#f3f4f6'));
@@ -82,20 +89,20 @@ class ColorTest extends TestCase
         $this->assertLessThan(0.1, Color::getLuminance('#000000'));
         
         // 中間色
-        $luminance = Color::getLuminance('#9b6eff');
-        $this->assertGreaterThan(0.3, $luminance);
-        $this->assertLessThan(0.7, $luminance);
+        $luminance = Color::getLuminance('#6366f1'); // indigo-500
+        $this->assertGreaterThan(0.2, $luminance);
+        $this->assertLessThan(0.5, $luminance);
     }
     
     public function test_can_get_contrast_color()
     {
         // 亮背景應該返回深色文字
         $this->assertEquals('#1f2937', Color::getContrastColor('#ffffff'));
-        $this->assertEquals('#1f2937', Color::getContrastColor('#fecaca'));
+        $this->assertEquals('#1f2937', Color::getContrastColor('#fef2f2')); // red-50
         
         // 暗背景應該返回白色文字
         $this->assertEquals('#ffffff', Color::getContrastColor('#000000'));
-        $this->assertEquals('#ffffff', Color::getContrastColor('#9b6eff'));
+        $this->assertEquals('#ffffff', Color::getContrastColor('#6366f1')); // indigo-500
     }
     
     public function test_can_generate_random_standard_color()
@@ -200,20 +207,20 @@ class ColorTest extends TestCase
         // 測試驗證顏色組合
         
         // 標準深色背景 + 白色前景（有效）
-        $this->assertTrue(Color::validateColorCombination('#9b6eff', '#ffffff'));
+        $this->assertTrue(Color::validateColorCombination('#6366f1', '#ffffff')); // indigo-500
         
         // 標準深色背景 + 深色前景（無效）
-        $this->assertFalse(Color::validateColorCombination('#9b6eff', '#1f2937'));
+        $this->assertFalse(Color::validateColorCombination('#6366f1', '#1f2937'));
         
         // 預設淡色背景 + 對應深色前景（有效）
-        $this->assertTrue(Color::validateColorCombination('#fecaca', '#991b1b'));
-        $this->assertTrue(Color::validateColorCombination('#faf5ff', '#7c3aed'));
+        $this->assertTrue(Color::validateColorCombination('#fef2f2', '#b91c1c')); // red-50 -> red-700
+        $this->assertTrue(Color::validateColorCombination('#faf5ff', '#7c3aed')); // purple-50 -> purple-600
         
         // 預設淡色背景 + 錯誤深色前景（無效）
-        $this->assertFalse(Color::validateColorCombination('#fecaca', '#7c3aed'));
+        $this->assertFalse(Color::validateColorCombination('#fef2f2', '#7c3aed'));
         
         // 預設淡色背景 + 白色前景（無效）
-        $this->assertFalse(Color::validateColorCombination('#fecaca', '#ffffff'));
+        $this->assertFalse(Color::validateColorCombination('#fef2f2', '#ffffff'));
         
         // 非預設顏色 + 根據亮度自動判斷
         // 亮背景（例如白色）+ 深色前景（有效）

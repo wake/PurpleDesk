@@ -55,9 +55,9 @@ class TextIcon implements IconTypeInterface
             return false;
         }
         
-        // 檢查文字顏色是否為允許的顏色（白色或深灰色）
+        // 檢查文字顏色是否為有效的 hex 顏色
         $textColor = Color::normalizeHexColor($data['textColor']);
-        if (!in_array($textColor, ['#ffffff', '#1f2937'], true)) {
+        if ($textColor === null) {
             return false;
         }
         
@@ -66,14 +66,14 @@ class TextIcon implements IconTypeInterface
     
     public function generateRandom(): array
     {
-        $backgroundColor = Color::randomStandardColor();
-        $textColor = Color::getContrastColor($backgroundColor);
+        // 使用成對的顏色組合
+        $colorCombination = Color::randomColorCombination();
         
         return [
             'type' => 'text',
             'text' => $this->sampleTexts[array_rand($this->sampleTexts)],
-            'backgroundColor' => $backgroundColor,
-            'textColor' => $textColor,
+            'backgroundColor' => $colorCombination['background'],
+            'textColor' => $colorCombination['foreground'],
         ];
     }
     
