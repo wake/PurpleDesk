@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Api\EmojiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\TeamController;
@@ -52,3 +53,8 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+// Icon 配置 API 路由（公開訪問）
+Route::prefix('config/icon')->group(function () {
+    Route::get('/emoji', [EmojiController::class, 'all']);
+});

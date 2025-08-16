@@ -2,7 +2,8 @@
 // 統一管理 Bootstrap Icons 和 Emoji 的載入、搜尋、快取
 
 import bsIconsManager from './icons/index.js'
-import emojiManager from './emojis/index.js'
+// 使用 API 版本的 emoji manager
+import emojiManager from './emojis/api-manager.js'
 
 // 整合的管理器類
 class IconManager {
@@ -23,6 +24,9 @@ class IconManager {
     // }
     
     try {
+      // 先初始化 emoji API manager
+      await emojiManager.initialize()
+      
       // 使用 allSettled 來避免單一失敗導致全部失敗
       const results = await Promise.allSettled([
         bsIconsManager.preloadPopularCategories(),

@@ -1,30 +1,22 @@
 <template>
   <div class="flex items-center">
     <!-- 重疊頭像組 -->
-    <div class="flex -space-x-0.5 overflow-hidden">
+    <div class="flex -space-x-1.5 overflow-hidden"
+      style="flex-wrap: nowrap; align-items: flex-end;"
+    >
       <div
-        v-for="(user, index) in visibleUsers"
+         v-for="(user, index) in visibleUsers"
         :key="user.id || index"
         :class="[
-          'inline-block h-6 w-6 rounded-full ring-2',
-          ringColorClass
+          'inline-flex rounded-full',
         ]"
-        :title="getUserDisplayName(user)"
+        :style="{ zIndex: index }"
       >
-        <img
-          v-if="user.avatar_url"
-          :src="user.avatar_url"
-          :alt="getUserDisplayName(user)"
-          class="h-6 w-6 rounded-full object-cover"
+        <IconDisplay 
+          :icon-data="user.avatar_data" 
+          size="6" 
+          :title="getUserDisplayName(user)"
         />
-        <div v-else :class="[
-          'h-6 w-6 rounded-full flex items-center justify-center',
-          avatarBgColorClass
-        ]">
-          <span class="text-xs font-medium text-white">
-            {{ getUserInitials(user) }}
-          </span>
-        </div>
       </div>
     </div>
     
@@ -42,9 +34,13 @@
 
 <script>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
+import IconDisplay from './IconDisplay.vue'
 
 export default {
   name: 'UserAvatarGroup',
+  components: {
+    IconDisplay
+  },
   props: {
     users: {
       type: Array,
@@ -102,37 +98,20 @@ export default {
       return Math.max(0, props.users.length - maxVisibleMembers.value)
     })
     
-    // 主題顏色計算屬性
-    const ringColorClass = computed(() => {
+    // 主題陰影樣式計算屬性
+    const shadowClass = computed(() => {
       switch (props.theme) {
         case 'primary':
-          return 'ring-primary-100'
+          return 'shadow-[0_0_0_1px_rgba(59,130,246,0.3)]'
         case 'admin':
-          return 'ring-purple-100'
+          return 'shadow-[0_0_0_1px_rgba(147,51,234,0.3)]'
         default:
-          return 'ring-white'
-      }
-    })
-    
-    const avatarBgColorClass = computed(() => {
-      switch (props.theme) {
-        case 'primary':
-          return 'bg-primary-500'
-        case 'admin':
-          return 'bg-purple-500'
-        default:
-          return 'bg-gray-500'
+          return 'shadow-[0_0_0_1px_rgba(0,0,0,0.1)]'
       }
     })
     
     const getUserDisplayName = (user) => {
       return user.display_name || user.full_name || user.name || '未知用戶'
-    }
-    
-    const getUserInitials = (user) => {
-      if (!user) return ''
-      const name = getUserDisplayName(user)
-      return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     }
     
     // 視窗大小變化監聽
@@ -151,11 +130,12 @@ export default {
     return {
       visibleUsers,
       remainingCount,
-      ringColorClass,
-      avatarBgColorClass,
-      getUserDisplayName,
-      getUserInitials
+      shadowClass,
+      getUserDisplayName
     }
   }
 }
 </script>
+
+<style scoped>
+</style>

@@ -31,9 +31,9 @@
         type="button"
         @click="handleSave"
         :disabled="uploading || saving"
-        class="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="inline-flex items-center px-2 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <SaveIcon class="w-4 h-4 mr-2" />
+        <i class="bi bi-check-lg w-4 h-4 mr-1"></i>
         {{ saving ? '儲存中...' : saveButtonText }}
       </button>
       
@@ -43,9 +43,9 @@
         type="button"
         @click="showClearConfirm"
         :disabled="uploading || clearing"
-        class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="inline-flex items-center px-2 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <XIcon class="w-4 h-4 mr-2" />
+        <i class="bi bi-arrow-clockwise w-4 h-4 mr-1"></i>
         {{ clearing ? '清除中...' : clearButtonText }}
       </button>
       
@@ -55,9 +55,9 @@
         type="button"
         @click="showRemoveConfirm"
         :disabled="uploading || removing"
-        class="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="inline-flex items-center px-2 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <TrashIcon class="w-4 h-4 mr-2" />
+        <TrashIcon class="w-4 h-4 mr-1" />
         {{ removeButtonText }}
       </button>
     </div>
@@ -102,7 +102,7 @@
 
 <script>
 import { ref, computed } from 'vue'
-import { TrashIcon, SaveIcon, XIcon } from '@heroicons/vue/outline'
+import { TrashIcon } from '@heroicons/vue/outline'
 import ImageSelector from './ImageSelector.vue'
 import ConfirmDialog from './ConfirmDialog.vue'
 
@@ -110,8 +110,6 @@ export default {
   name: 'ImageField',
   components: {
     TrashIcon,
-    SaveIcon,
-    XIcon,
     ImageSelector,
     ConfirmDialog
   },

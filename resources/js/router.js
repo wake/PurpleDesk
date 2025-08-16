@@ -44,10 +44,10 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/test-icon-picker',
-    name: 'test-icon-picker',
-    component: () => import('./pages/TestIconPicker.vue'),
-    meta: { requiresAuth: true }
+    path: '/dev-tool/icon-size',
+    name: 'dev-icon-size-tool',
+    component: () => import('./pages/dev-tool/IconSizeTool.vue'),
+    meta: { requiresAuth: true, devOnly: true }
   },
   {
     path: '/admin',
@@ -100,10 +100,16 @@ router.beforeEach(async (to, from, next) => {
   // 需要管理員權限的頁面
   if (to.meta.requiresAdmin) {
     const user = authStore.user
-    if (!user || user.email !== 'admin@purpledesk.com') {
+    if (!user || !user.is_admin) {
       next('/dashboard')
       return
     }
+  }
+  
+  // 開發工具頁面只在開發模式下可訪問
+  if (to.meta.devOnly && import.meta.env.PROD) {
+    next('/dashboard')
+    return
   }
   
   // 已登入用戶不能訪問登入/註冊頁面

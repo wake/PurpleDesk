@@ -25,8 +25,8 @@
               shape="circle"
               :show-save-button="true"
               :show-clear-button="true"
-              save-button-text="儲存頭像"
-              clear-button-text="清除頭像"
+              save-button-text="儲存"
+              clear-button-text="清除"
               remove-button-text="移除頭像"
               remove-confirm-title="移除頭像"
               remove-confirm-message="確定要移除頭像嗎？此操作無法復原。"
@@ -138,12 +138,6 @@
 
             <!-- 操作按鈕 -->
             <div class="border-t border-gray-200 pt-6 flex justify-end space-x-3">
-              <router-link
-                to="/dashboard"
-                class="bg-white border border-gray-300 rounded-md py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-              >
-                取消
-              </router-link>
               <button
                 type="submit"
                 :disabled="isLoading"

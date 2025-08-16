@@ -44,6 +44,7 @@ class TestDataSeeder extends Seeder
             $englishName = $faker->firstNameMale;
             
             $user = User::create([
+                'account' => 'test_user_' . $i,
                 'full_name' => $fullName,
                 'display_name' => $englishName,
                 'email' => 'test.user' . $i . '@purpledesk.com',

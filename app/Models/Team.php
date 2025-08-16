@@ -14,22 +14,52 @@ class Team extends Model
     protected $fillable = [
         'name',
         'description',
-        'avatar',
+        'icon_data',
         'organization_id',
     ];
 
-    protected $appends = ['avatar_url'];
+    protected $appends = ['avatar_data', 'logo_url'];
+    
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'icon_data' => 'json',
+        ];
+    }
 
     /**
-     * 取得團隊頭像完整 URL
+     * 取得頭像數據（自動生成預設頭像）
      */
-    public function getAvatarUrlAttribute()
+    public function getAvatarDataAttribute()
     {
-        if (!$this->avatar) {
-            return null;
+        $iconData = $this->getAttributeFromArray('icon_data');
+        
+        if (!$iconData) {
+            return \App\Helpers\IconDataHelper::generateTeamIconDefault();
         }
         
-        return asset('storage/' . $this->avatar);
+        return $iconData;
+    }
+    
+    /**
+     * 取得團隊 Logo 完整 URL（僅適用於圖片類型）
+     */
+    public function getLogoUrlAttribute()
+    {
+        $iconData = $this->icon_data;
+        
+        if ($iconData && is_array($iconData) && 
+            isset($iconData['type']) && $iconData['type'] === 'image' && 
+            isset($iconData['path'])) {
+            return asset('storage/' . $iconData['path']);
+        }
+        
+        return null;
     }
 
     /**

@@ -16,9 +16,9 @@
         <!-- 字母縮寫 -->
         <div 
           v-else-if="(mode === 'initials' || iconType === 'initials')"
-          :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
           class="font-type-image h-full w-full flex items-center justify-center font-semibold"
-          :class="[textSizeClass, dynamicTextColor]"
+          :class="[textSizeClass, dynamicTextColor.class]"
+          :style="{ backgroundColor: backgroundColor || defaultBackgroundColor, ...(dynamicTextColor.style ? { color: dynamicTextColor.style.split(': ')[1] } : {}) }"
         >
           {{ iconType === 'initials' ? selectedIcon : displayInitials }}
         </div>
@@ -33,13 +33,15 @@
           <component 
             v-if="iconType === 'heroicons'" 
             :is="getHeroiconComponent()" 
-            :class="[iconSizeClass, dynamicTextColor]"
+            :class="[iconSizeClass, dynamicTextColor.class]"
+            :style="dynamicTextColor.style ? { color: dynamicTextColor.style.split(': ')[1] } : {}"
             class="hero-type-image"
           />
           <!-- Bootstrap Icons -->
           <i 
             v-else-if="iconType === 'bootstrap'" 
-            :class="['bi', selectedIcon, bsIconSizeClass, dynamicTextColor]"
+            :class="['bi', selectedIcon, bsIconSizeClass, dynamicTextColor.class]"
+            :style="dynamicTextColor.style ? { color: dynamicTextColor.style.split(': ')[1] } : {}"
             class="bs-type-image"
           />
           <!-- Emoji -->
@@ -56,9 +58,9 @@
         <!-- 預設佔位符 -->
         <div 
           v-else
-          :style="{ backgroundColor: backgroundColor || defaultBackgroundColor }"
           class="h-full w-full flex items-center justify-center"
-          :class="dynamicTextColor"
+          :class="dynamicTextColor.class"
+          :style="{ backgroundColor: backgroundColor || defaultBackgroundColor, ...(dynamicTextColor.style ? { color: dynamicTextColor.style.split(': ')[1] } : {}) }"
         >
           <slot name="default-placeholder">
             <span :class="textSizeClass">{{ defaultInitials }}</span>
@@ -71,7 +73,7 @@
           class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center"
           :class="shapeClass"
         >
-          <div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <div class="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
         </div>
         
         <!-- 懸停編輯提示 -->
@@ -92,21 +94,15 @@
           :background-color="backgroundColor"
           :hide-preview="true"
           @file-selected="handleIconPickerFile"
-          @color-picker-click="openBgColorPicker"
           @update:model-value="handleIconSelect"
           @update:icon-type="handleIconTypeUpdate"
+          @background-color-change="handleBackgroundColorChange"
           @close="handleIconPickerClose"
-          @close-color-picker="handleCloseColorPicker"
         />
       </div>
       
       <!-- 快速操作區域 -->
       <div class="flex-1 space-y-3">
-        <!-- 背景顏色選擇器 -->
-        <div class="flex items-center space-x-2">
-          <span class="text-sm text-gray-600">背景顏色：</span>
-          <ColorPicker v-model="backgroundColor" />
-        </div>
         
         <!-- 錯誤訊息 -->
         <div v-if="errorMessage" class="text-sm text-red-600 bg-red-50 p-2 rounded">
@@ -196,13 +192,6 @@
                 <p class="mt-1 text-xs text-gray-500">留空將自動使用姓名縮寫</p>
               </div>
               
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">背景顏色</label>
-                <div class="flex items-center space-x-2">
-                  <ColorPicker v-model="backgroundColor" />
-                  <span class="text-sm text-gray-600">{{ backgroundColor || '使用預設顏色' }}</span>
-                </div>
-              </div>
             </div>
             
             <!-- 圖標設定 -->
@@ -216,13 +205,6 @@
                 />
               </div>
               
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">背景顏色</label>
-                <div class="flex items-center space-x-2">
-                  <ColorPicker v-model="backgroundColor" />
-                  <span class="text-sm text-gray-600">{{ backgroundColor || '使用預設顏色' }}</span>
-                </div>
-              </div>
             </div>
             
             <!-- 上傳設定 -->
@@ -285,7 +267,6 @@ import { CloudUploadIcon, CogIcon, StarIcon } from '@heroicons/vue/outline'
 // 導入所有可能用到的 Heroicons (outline 和 solid)
 import * as HeroIconsOutline from '@heroicons/vue/outline'
 import * as HeroIconsSolid from '@heroicons/vue/solid'
-import ColorPicker from './ColorPicker.vue'
 import IconPicker from './IconPicker.vue'
 
 export default {
@@ -294,7 +275,6 @@ export default {
     CloudUploadIcon,
     CogIcon,
     StarIcon,
-    ColorPicker,
     IconPicker,
     ...HeroIconsOutline, // 註冊所有 Heroicons Outline
     ...HeroIconsSolid // 註冊所有 Heroicons Solid
@@ -472,8 +452,34 @@ export default {
     })
     
     // 計算顏色亮度並決定文字顏色
+    // 淡色系與深色系配對表（極深對比色 800-900 系列）
+    const lightToDarkColorMap = {
+      '#fecaca': '#991b1b', // 淡紅色 -> 極深紅色 (red-800)
+      '#fed7aa': '#9a3412', // 淡橙色 -> 極深橙色 (orange-800)
+      '#fde68a': '#92400e', // 淡黃色 -> 極深黃色 (amber-800)
+      '#fef08a': '#854d0e', // 淡黃綠色 -> 極深黃綠色 (yellow-800)
+      '#d9f99d': '#365314', // 淡萊色 -> 極深萊色 (lime-800)
+      '#bbf7d0': '#166534', // 淡綠色 -> 極深綠色 (green-800)
+      '#a7f3d0': '#065f46', // 淡翠綠色 -> 極深翠綠色 (emerald-800)
+      '#99f6e4': '#115e59', // 淡青綠色 -> 極深青綠色 (teal-800)
+      '#a5f3fc': '#155e75', // 淡青色 -> 極深青色 (cyan-800)
+      '#bae6fd': '#075985', // 淡天空藍 -> 極深天空藍 (sky-800)
+      '#dbeafe': '#1e40af', // 淡藍色 -> 極深藍色 (blue-800)
+      '#c7d2fe': '#3730a3', // 淡靛藍色 -> 極深靛藍色 (indigo-800)
+      '#ddd6fe': '#5b21b6', // 淡紫羅蘭 -> 極深紫羅蘭 (violet-800)
+      '#e9d5ff': '#6b21a8', // 淡紫色 -> 極深紫色 (purple-800)
+      '#f5d0fe': '#86198f', // 淡紫紅色 -> 極深紫紅色 (fuchsia-800)
+      '#fbcfe8': '#9d174d'  // 淡桃紅色 -> 極深桃紅色 (pink-800)
+    }
+    
     const getTextColor = (bgColor) => {
-      if (!bgColor) return 'text-white'
+      if (!bgColor) return { class: 'text-white', style: null }
+      
+      // 檢查是否為淡色系預設顏色，如果是則使用配對的深色
+      const darkColor = lightToDarkColorMap[bgColor.toLowerCase()]
+      if (darkColor) {
+        return { class: '', style: `color: ${darkColor}` }
+      }
       
       // 移除 # 符號並轉換為 RGB
       const hex = bgColor.replace('#', '')
@@ -485,7 +491,10 @@ export default {
       const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
       
       // 如果亮度大於 0.5，使用深色文字；否則使用白色文字
-      return luminance > 0.7 ? 'text-gray-800' : 'text-white'
+      return { 
+        class: luminance > 0.7 ? 'text-gray-800' : 'text-white', 
+        style: null 
+      }
     }
     
     // 動態文字顏色
@@ -637,27 +646,6 @@ export default {
     
     // 開啟 IconPicker
     const openIconPicker = () => {
-      // 先關閉任何開啟的 ColorPicker
-      const openColorPickers = document.querySelectorAll('.color-picker .fixed')
-      openColorPickers.forEach(picker => {
-        const pickerComponent = picker.__vueParentComponent
-        if (pickerComponent && pickerComponent.exposed && pickerComponent.exposed.closePicker) {
-          pickerComponent.exposed.closePicker()
-        }
-      })
-      
-      // 使用更簡單的方法：觸發點擊事件關閉 ColorPicker
-      const colorPickerPanels = document.querySelectorAll('[class*="fixed z-[10000]"]')
-      colorPickerPanels.forEach(panel => {
-        if (panel && panel.style.display !== 'none') {
-          // 觸發一個外部點擊來關閉 ColorPicker
-          const closeButton = panel.querySelector('button[title="關閉"]')
-          if (closeButton) {
-            closeButton.click()
-          }
-        }
-      })
-      
       // 等待下一個 tick 確保 DOM 更新
       nextTick(() => {
         if (avatarIconPickerRef.value) {
@@ -667,16 +655,6 @@ export default {
       })
     }
     
-    // 開啟背景顏色選擇器
-    const openBgColorPicker = () => {
-      // 不要關閉 IconPicker，直接觸發 ColorPicker
-      nextTick(() => {
-        const colorPicker = document.querySelector('.image-selector .color-picker button')
-        if (colorPicker) {
-          colorPicker.click()
-        }
-      })
-    }
     
     // 處理圖標選擇
     const handleIconSelect = (value) => {
@@ -712,12 +690,11 @@ export default {
       // IconPicker 已經自行處理關閉邏輯，這裡不需要額外動作
     }
     
-    // 處理關閉 ColorPicker 事件
-    const handleCloseColorPicker = () => {
-      // 觸發一個外部點擊來關閉 ColorPicker
-      const event = new Event('click', { bubbles: true })
-      document.body.dispatchEvent(event)
+    // 處理背景顏色變化
+    const handleBackgroundColorChange = (color) => {
+      backgroundColor.value = color
     }
+    
     
     return {
       mode,
@@ -756,11 +733,10 @@ export default {
       cancelSettings,
       handleIconPickerFile,
       openIconPicker,
-      openBgColorPicker,
       handleIconSelect,
       handleIconTypeUpdate,
       handleIconPickerClose,
-      handleCloseColorPicker,
+      handleBackgroundColorChange,
       iconPickerRef,
       avatarIconPickerRef
     }

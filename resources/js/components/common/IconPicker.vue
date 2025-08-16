@@ -32,14 +32,16 @@
       <span v-else class="text-gray-400 text-xs">圖標</span>
     </button>
     
-    <!-- 圖標選擇面板 -->
+    <!-- 圖標選擇面板容器 -->
     <Teleport to="body">
       <div 
         v-if="isOpen" 
         ref="iconPanel"
-        class="fixed z-[9999] px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-xl w-96"
+        class="fixed z-[9999]"
         :style="panelPosition"
       >
+        <!-- IconPicker 面板 -->
+        <div class="absolute top-0 left-0 bg-white border border-gray-200 rounded-lg shadow-xl px-4 py-2 w-96">
         <!-- 頂部標籤切換 -->
         <div class="flex border-b border-gray-200 mb-4">
           <button
@@ -72,13 +74,21 @@
           </button>
           <div class="ml-auto flex items-center">
             <!-- 背景顏色選擇器按鈕 -->
-            <button
-              @click.stop="openColorPicker"
-              class="p-0 me-3 pt-1 pb-2 text-base text-gray-500 hover:text-gray-700 transition-colors"
-              title="選擇背景顏色"
-            >
-              <i class="bi bi-eyedropper"></i>
-            </button>
+            <div class="me-3 pt-1 pb-2 relative">
+              <button
+                ref="eyedropperButton"
+                @click.stop="openColorPicker"
+                class="p-0 text-base text-gray-500 hover:text-gray-700 transition-colors relative"
+                title="選擇背景顏色"
+              >
+                <i class="bi bi-eyedropper"></i>
+                <!-- 右下角的 4x4 顏色指示器 -->
+                <div 
+                  class="absolute bottom-0.5 -right-0.5 w-2 h-2 border border-white rounded-sm shadow-sm"
+                  :style="{ backgroundColor: localBackgroundColor || '#6366f1' }"
+                ></div>
+              </button>
+            </div>
             <!-- Reset Icon 按鈕 -->
             <button
               @click.stop="clearIcon"
@@ -87,7 +97,7 @@
               class="p-0 me-3 pt-1 pb-2 text-base transition-colors"
               title="Reset Icon"
             >
-              <i class="bi bi-trash-fill"></i>
+              <i class="bi bi-arrow-clockwise"></i>
             </button>
           </div>
         </div>
@@ -299,8 +309,95 @@
           <p class="text-sm">找不到符合的圖標</p>
           <p class="text-xs text-gray-400 mt-1">請嘗試其他關鍵字</p>
         </div>
+        </div>
+        
+        <!-- ColorPicker 面板 -->
+        <div 
+          v-if="showColorPicker" 
+          class="absolute top-0 bg-white border border-gray-200 rounded-lg shadow-xl w-72 p-4 pt-5"
+          :style="colorPickerPosition"
+        >
+          <!-- 關閉按鈕 -->
+          <button
+            @click="closeColorPicker"
+            class="absolute top-2 right-2 w-6 h-6 text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center"
+            title="關閉"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+          
+          <!-- 預設色彩調色盤 -->
+          <div class="mb-4">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">預設顏色</h4>
+            <div class="grid grid-cols-8 gap-2">
+              <button
+                v-for="color in defaultColors"
+                :key="color.value"
+                @click="selectColor(color.value)"
+                :style="{ backgroundColor: color.value }"
+                class="w-6 h-6 rounded border border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary-500 transition-all"
+                :class="{ 'ring-2 ring-primary-500': localBackgroundColor === color.value }"
+                :title="color.name"
+              />
+            </div>
+          </div>
+          
+          <!-- 淡色系調色盤 -->
+          <div class="mb-4">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">淡色系</h4>
+            <div class="grid grid-cols-8 gap-2">
+              <button
+                v-for="color in lightColors"
+                :key="color.value"
+                @click="selectColor(color.value)"
+                :style="{ backgroundColor: color.value }"
+                class="w-6 h-6 rounded border border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary-500 transition-all"
+                :class="{ 'ring-2 ring-primary-500': localBackgroundColor === color.value }"
+                :title="color.name"
+              />
+            </div>
+          </div>
+          
+          <!-- HTML 色彩輸入 -->
+          <div class="mb-4">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">自訂顏色</h4>
+            <div class="flex space-x-2">
+              <input
+                type="color"
+                :value="localBackgroundColor || '#6366f1'"
+                @input="handleColorInput"
+                @change="handleColorInput"
+                class="w-10 h-8 border border-gray-300 rounded cursor-pointer"
+              />
+              <input
+                type="text"
+                :value="localBackgroundColor || ''"
+                @input="handleTextInput"
+                placeholder="#6366f1"
+                class="flex-1 px-3 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+          
+          <!-- 隨機顏色按鈕 -->
+          <div class="flex space-x-2">
+            <button
+              @click="selectRandomColor"
+              class="flex-1 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              🎲 隨機淡色
+            </button>
+            <button
+              @click="clearColor"
+              class="px-3 py-2 text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              清除
+            </button>
+          </div>
+        </div>
       </div>
     </Teleport>
+
     
     <!-- 隱藏的檔案輸入 -->
     <input
@@ -355,7 +452,7 @@ export default {
       default: false
     }
   },
-  emits: ['update:modelValue', 'update:iconType', 'file-selected', 'color-picker-click', 'close', 'close-color-picker'],
+  emits: ['update:modelValue', 'update:iconType', 'file-selected', 'close', 'background-color-change'],
   setup(props, { emit }) {
     const isOpen = ref(false)
     const iconPanel = ref(null)
@@ -363,6 +460,7 @@ export default {
     const searchQuery = ref('')
     const activeTab = ref('emoji') // 預設為 emoji 頁簽
     const panelPosition = ref({ top: '0px', left: '0px' })
+    const colorPickerPosition = ref({ left: '0px' })
     const selectedIcon = ref(props.modelValue)
     const iconType = ref(props.iconType || '')
     const emojisLoaded = ref(false)
@@ -372,14 +470,111 @@ export default {
     const uploadedImage = ref(null)
     const isDragging = ref(false)
     const backgroundColor = ref(props.backgroundColor || '#6366f1')
+    const localBackgroundColor = ref(props.backgroundColor || '#6366f1')
+    const showColorPicker = ref(false)
+    const colorPickerRef = ref(null)
+    const eyedropperButton = ref(null)
     const customInitials = ref('') // 字母模式的輸入值
+    
+    // 預設顏色調色盤
+    const defaultColors = [
+      { value: '#ef4444', name: '紅色 Red' },
+      { value: '#f97316', name: '橙色 Orange' },
+      { value: '#f59e0b', name: '黃色 Amber' },
+      { value: '#eab308', name: '黃綠色 Yellow' },
+      { value: '#84cc16', name: '萊色 Lime' },
+      { value: '#22c55e', name: '綠色 Green' },
+      { value: '#10b981', name: '翠綠色 Emerald' },
+      { value: '#14b8a6', name: '青綠色 Teal' },
+      { value: '#06b6d4', name: '青色 Cyan' },
+      { value: '#0ea5e9', name: '天空藍 Sky Blue' },
+      { value: '#3b82f6', name: '藍色 Blue' },
+      { value: '#6366f1', name: '靛藍色 Indigo' },
+      { value: '#8b5cf6', name: '紫羅蘭 Violet' },
+      { value: '#a855f7', name: '紫色 Purple' },
+      { value: '#d946ef', name: '紫紅色 Fuchsia' },
+      { value: '#ec4899', name: '桃紅色 Pink' }
+    ]
+    
+    // 淡色系調色盤（增加彩度提升識別度）
+    const lightColors = [
+      { value: '#fecaca', name: '淡紅色 Light Red' },
+      { value: '#fed7aa', name: '淡橙色 Light Orange' },
+      { value: '#fde68a', name: '淡黃色 Light Amber' },
+      { value: '#fef08a', name: '淡黃綠色 Light Yellow' },
+      { value: '#d9f99d', name: '淡萊色 Light Lime' },
+      { value: '#bbf7d0', name: '淡綠色 Light Green' },
+      { value: '#a7f3d0', name: '淡翠綠色 Light Emerald' },
+      { value: '#99f6e4', name: '淡青綠色 Light Teal' },
+      { value: '#a5f3fc', name: '淡青色 Light Cyan' },
+      { value: '#bae6fd', name: '淡天空藍 Light Sky' },
+      { value: '#dbeafe', name: '淡藍色 Light Blue' },
+      { value: '#c7d2fe', name: '淡靛藍色 Light Indigo' },
+      { value: '#ddd6fe', name: '淡紫羅蘭 Light Violet' },
+      { value: '#e9d5ff', name: '淡紫色 Light Purple' },
+      { value: '#f5d0fe', name: '淡紫紅色 Light Fuchsia' },
+      { value: '#fbcfe8', name: '淡桃紅色 Light Pink' }
+    ]
     
     // 監聽 props 變化
     watch(() => props.backgroundColor, (newVal) => {
       if (newVal) {
         backgroundColor.value = newVal
+        localBackgroundColor.value = newVal
       }
     })
+    
+    // 處理背景顏色變化
+    const handleBackgroundColorChange = (color) => {
+      localBackgroundColor.value = color
+      backgroundColor.value = color
+      emit('background-color-change', color)
+    }
+    
+    // 開啟顏色選擇器
+    const openColorPicker = async () => {
+      showColorPicker.value = !showColorPicker.value
+      // 當 ColorPicker 開關時，重新計算位置以適應新的寬度
+      await nextTick()
+      await calculatePosition()
+    }
+    
+    // 關閉顏色選擇器
+    const closeColorPicker = async () => {
+      showColorPicker.value = false
+      // 當 ColorPicker 關閉時，重新計算位置以適應新的寬度
+      await nextTick()
+      await calculatePosition()
+    }
+    
+    // 選擇顏色
+    const selectColor = (color) => {
+      handleBackgroundColorChange(color)
+    }
+    
+    // 處理顏色輸入
+    const handleColorInput = (event) => {
+      handleBackgroundColorChange(event.target.value)
+    }
+    
+    // 處理文字輸入
+    const handleTextInput = (event) => {
+      const value = event.target.value
+      if (value.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) {
+        handleBackgroundColorChange(value)
+      }
+    }
+    
+    // 選擇隨機淡色
+    const selectRandomColor = () => {
+      const randomColor = lightColors[Math.floor(Math.random() * lightColors.length)]
+      selectColor(randomColor.value)
+    }
+    
+    // 清除顏色
+    const clearColor = () => {
+      handleBackgroundColorChange('')
+    }
     
     watch(() => props.modelValue, (newVal) => {
       selectedIcon.value = newVal
@@ -429,7 +624,7 @@ export default {
       solid: HeroiconsSolid
     }
     
-    const calculatePosition = () => {
+    const calculatePosition = async () => {
       let targetElement = iconPickerRef.value
       
       // 如果 hidePreview 為 true，嘗試找到父元素作為定位參考
@@ -478,9 +673,19 @@ export default {
       const viewportHeight = window.innerHeight
       const viewportWidth = window.innerWidth
       
-      // 彈窗預設尺寸（調整為 384px = w-96）
-      const panelWidth = 384
-      const panelHeight = 400
+      // 面板尺寸
+      const iconPickerWidth = 384 // w-96
+      const colorPickerWidth = 288 // w-72
+      
+      // 動態獲取 IconPicker 面板的實際高度
+      let panelHeight = 400 // 預設高度
+      if (iconPanel.value) {
+        await nextTick() // 確保 DOM 已更新
+        const iconPickerElement = iconPanel.value.querySelector('.absolute.top-0.left-0')
+        if (iconPickerElement) {
+          panelHeight = iconPickerElement.offsetHeight
+        }
+      }
       
       let top = rect.bottom + 5
       let left = rect.left
@@ -510,9 +715,9 @@ export default {
         }
       }
       
-      // 檢查是否超出視窗右邊
-      if (left + panelWidth > viewportWidth) {
-        left = viewportWidth - panelWidth - 10
+      // 檢查 IconPicker 是否超出視窗右邊
+      if (left + iconPickerWidth > viewportWidth) {
+        left = viewportWidth - iconPickerWidth - 10
       }
       
       // 檢查是否超出視窗左邊
@@ -523,6 +728,37 @@ export default {
       panelPosition.value = {
         top: `${top}px`,
         left: `${left}px`
+      }
+      
+      // 計算 ColorPicker 位置
+      if (showColorPicker.value) {
+        const idealColorPickerLeft = iconPickerWidth + 8 // IconPicker 寬度 + 8px 間距
+        const rightSpaceAvailable = viewportWidth - (left + idealColorPickerLeft)
+        
+        let colorPickerLeft
+        if (rightSpaceAvailable >= colorPickerWidth) {
+          // 右側有足夠空間，正常顯示
+          colorPickerLeft = idealColorPickerLeft
+        } else {
+          // 右側空間不足，逐漸重疊到 IconPicker 上
+          const minGap = 10 // 最小間距
+          const maxOverlap = iconPickerWidth - minGap // 最大重疊度
+          const availableSpace = rightSpaceAvailable - minGap
+          
+          if (availableSpace <= 0) {
+            // 完全重疊
+            colorPickerLeft = iconPickerWidth - colorPickerWidth + minGap
+          } else {
+            // 部分重疊：根據可用空間計算重疊度
+            const overlapRatio = Math.max(0, (colorPickerWidth - availableSpace) / colorPickerWidth)
+            const overlap = overlapRatio * maxOverlap
+            colorPickerLeft = iconPickerWidth - overlap + 8
+          }
+        }
+        
+        colorPickerPosition.value = {
+          left: `${colorPickerLeft}px`
+        }
       }
     }
     
@@ -552,17 +788,12 @@ export default {
           activeTab.value = 'emoji'
         }
         await nextTick()
-        calculatePosition()
+        await calculatePosition()
       }
     }
     
-    const closePicker = (shouldCloseColorPicker = true) => {
+    const closePicker = () => {
       isOpen.value = false
-      
-      // 只在需要時發射事件通知父組件關閉 ColorPicker
-      if (shouldCloseColorPicker) {
-        emit('close-color-picker')
-      }
       emit('close')
     }
     
@@ -698,10 +929,6 @@ export default {
       }
     }
     
-    // 開啟顏色選擇器（通知父組件）
-    const openColorPicker = () => {
-      emit('color-picker-click')
-    }
     
     // 處理字母輸入
     const handleInitialsInput = () => {
@@ -996,20 +1223,29 @@ export default {
       // 檢查是否點擊在任何 ColorPicker 按鈕上
       const isColorPickerButton = event.target.closest('.color-picker button')
       
+      // 檢查是否點擊在滴管按鈕上
+      const isEyedropperButton = event.target.closest('button i.bi-eyedropper') || 
+                                event.target.matches('button i.bi-eyedropper') ||
+                                (event.target.tagName === 'BUTTON' && event.target.querySelector('i.bi-eyedropper'))
+      
+      // 如果點擊在 ColorPicker 外部，關閉 ColorPicker 但保持 IconPicker 開啟
+      if (showColorPicker.value && !isInsideColorPicker && !isColorPickerButton && !isEyedropperButton) {
+        showColorPicker.value = false
+      }
+      
       // IconPicker 只在點擊外部且非 ColorPicker 區域時關閉
-      // 這樣當點擊 ColorPicker 時，IconPicker 保持開啟
-      if (!isInsideIconPicker && !isIconPickerButton && !isInsideColorPicker && !isColorPickerButton) {
-        closePicker(false) // 外部點擊時不要觸發 ColorPicker 關閉，避免循環
+      if (!isInsideIconPicker && !isIconPickerButton && !isInsideColorPicker && !isColorPickerButton && !isEyedropperButton) {
+        closePicker()
       }
     }
     
     onMounted(() => {
       document.addEventListener('click', handleClickOutside)
-      window.addEventListener('resize', () => {
-        if (isOpen.value) calculatePosition()
+      window.addEventListener('resize', async () => {
+        if (isOpen.value) await calculatePosition()
       })
-      window.addEventListener('scroll', () => {
-        if (isOpen.value) calculatePosition()
+      window.addEventListener('scroll', async () => {
+        if (isOpen.value) await calculatePosition()
       })
       
       // 觸發 emoji 載入（如果還沒載入）
@@ -1037,6 +1273,7 @@ export default {
       searchQuery,
       activeTab,
       panelPosition,
+      colorPickerPosition,
       calculatePosition,
       selectedIcon,
       iconType,
@@ -1067,7 +1304,20 @@ export default {
       handleDragLeave,
       handleDrop,
       backgroundColor,
+      localBackgroundColor,
+      showColorPicker,
+      colorPickerRef,
+      eyedropperButton,
       openColorPicker,
+      closeColorPicker,
+      handleBackgroundColorChange,
+      defaultColors,
+      lightColors,
+      selectColor,
+      handleColorInput,
+      handleTextInput,
+      selectRandomColor,
+      clearColor,
       customInitials,
       handleInitialsInput,
       applyInitials,

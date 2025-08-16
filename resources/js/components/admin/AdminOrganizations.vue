@@ -30,8 +30,11 @@
       </div>
     </div>
 
+    <!-- 載入狀態 -->
+    <LoadingSpinner v-if="isLoading" size="lg" />
+    
     <!-- 組織列表 -->
-    <div class="overflow-x-auto">
+    <div v-else class="overflow-x-auto">
       <table class="w-full divide-y divide-gray-200 table-fixed">
         <thead class="bg-gray-50">
           <tr>
@@ -53,15 +56,11 @@
           <tr v-for="org in filteredOrganizations" :key="org.id">
             <td class="w-2/5 px-6 py-4">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded bg-primary-100 flex items-center justify-center overflow-hidden flex-shrink-0">
-                  <img
-                    v-if="org.logo_url"
-                    :src="org.logo_url"
-                    :alt="org.name"
-                    class="h-full w-full object-cover"
-                  />
-                  <OfficeBuildingIcon v-else class="h-6 w-6 text-primary-600" />
-                </div>
+                <IconDisplay 
+                  :icon-data="org.avatar_data" 
+                  size="md" 
+                  :title="org.name"
+                />
                 <div class="ml-4 min-w-0 flex-1" style="max-width: calc(100% - 3rem);">
                   <div class="text-sm font-medium text-gray-900 truncate">
                     {{ org.name }}
@@ -72,7 +71,7 @@
                 </div>
               </div>
             </td>
-            <td class="w-1/4 px-6 py-4 whitespace-nowrap">
+            <td class="w-1/4 px-6 py-4 whitespace-nowrap align-middle">
               <UserAvatarGroup :users="org.users" />
             </td>
             <td class="w-1/6 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -101,7 +100,9 @@
 
     <!-- 空狀態 -->
     <div v-if="!isLoading && filteredOrganizations.length === 0" class="text-center py-12">
-      <OfficeBuildingIcon class="mx-auto h-12 w-12 text-gray-400" />
+      <div class="mx-auto h-12 w-12 text-gray-400 flex items-center justify-center">
+        <i class="bi bi-building text-4xl opacity-50"></i>
+      </div>
       <h3 class="mt-2 text-sm font-medium text-gray-900">沒有找到組織</h3>
       <p class="mt-1 text-sm text-gray-500">請嘗試調整搜尋條件或新增組織</p>
     </div>
@@ -210,22 +211,22 @@
 <script>
 import { ref, computed, onMounted, reactive } from 'vue'
 import axios from 'axios'
-import { OfficeBuildingIcon } from '@heroicons/vue/outline'
 import ConfirmDialog from '../common/ConfirmDialog.vue'
 import LoadingSpinner from '../common/LoadingSpinner.vue'
 import PaginationControl from '../common/PaginationControl.vue'
 import UserAvatarGroup from '../common/UserAvatarGroup.vue'
 import ImageField from '../common/ImageField.vue'
+import IconDisplay from '../common/IconDisplay.vue'
 
 export default {
   name: 'AdminOrganizations',
   components: {
-    OfficeBuildingIcon,
     ConfirmDialog,
     LoadingSpinner,
     PaginationControl,
     UserAvatarGroup,
-    ImageField
+    ImageField,
+    IconDisplay
   },
   setup() {
     const organizations = ref([])
@@ -278,7 +279,65 @@ export default {
         
         // 處理回應資料
         if (response.data && response.data.data) {
-          organizations.value = response.data.data
+          // 解析 JSON 字串為物件
+          organizations.value = response.data.data.map(org => {
+            let avatarData = org.avatar_data
+            let logoData = org.logo_data
+            
+            // 處理組織 avatar_data 的雙重編碼
+            if (typeof avatarData === 'string') {
+              try {
+                avatarData = JSON.parse(avatarData)
+                if (typeof avatarData === 'string') {
+                  avatarData = JSON.parse(avatarData)
+                }
+              } catch (e) {
+                console.warn('Failed to parse org avatar_data:', avatarData, e)
+                avatarData = null
+              }
+            }
+            
+            // 處理組織 logo_data 的雙重編碼
+            if (typeof logoData === 'string') {
+              try {
+                logoData = JSON.parse(logoData)
+                if (typeof logoData === 'string') {
+                  logoData = JSON.parse(logoData)
+                }
+              } catch (e) {
+                console.warn('Failed to parse org logo_data:', logoData, e)
+                logoData = null
+              }
+            }
+            
+            return {
+              ...org,
+              avatar_data: avatarData,
+              logo_data: logoData,
+              users: org.users?.map(user => {
+                let avatarData = user.avatar_data
+                
+                // 處理雙重編碼的 JSON 字串
+                if (typeof avatarData === 'string') {
+                  try {
+                    avatarData = JSON.parse(avatarData)
+                    // 如果解析後仍是字串，再解析一次
+                    if (typeof avatarData === 'string') {
+                      avatarData = JSON.parse(avatarData)
+                    }
+                  } catch (e) {
+                    console.warn('Failed to parse user avatar_data:', avatarData, e)
+                    avatarData = null
+                  }
+                }
+                
+                return {
+                  ...user,
+                  avatar_data: avatarData
+                }
+              }) || []
+            }
+          });
           pagination.value = {
             current_page: response.data.current_page,
             last_page: response.data.last_page,

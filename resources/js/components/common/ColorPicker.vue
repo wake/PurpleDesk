@@ -13,7 +13,10 @@
       <div 
         v-if="isOpen" 
         ref="colorPanel"
-        class="fixed z-[10000] mt-2 p-4 pt-5 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[280px]"
+        :class="[
+          'fixed z-[10000] bg-white border border-gray-200 rounded-lg shadow-xl min-w-[280px]',
+          positionMode === 'beside-panel' ? 'p-4 pt-5 overflow-y-auto' : 'mt-2 p-4 pt-5'
+        ]"
         :style="panelPosition"
         @click.stop
       >
@@ -109,6 +112,14 @@ export default {
     modelValue: {
       type: String,
       default: ''
+    },
+    triggerElement: {
+      type: [Object, Element],
+      default: null
+    },
+    positionMode: {
+      type: String,
+      default: 'default' // 'default' 或 'beside-panel'
     }
   },
   emits: ['update:modelValue'],
@@ -138,30 +149,32 @@ export default {
       { value: '#ec4899', name: '桃紅色 Pink' }
     ]
     
-    // 淡色系調色盤
+    // 淡色系調色盤（增加彩度提升識別度）
     const lightColors = [
-      { value: '#fef2f2', name: '淡紅色 Light Red' },
-      { value: '#fff7ed', name: '淡橙色 Light Orange' },
-      { value: '#fffbeb', name: '淡黃色 Light Amber' },
-      { value: '#fefce8', name: '淡黃綠色 Light Yellow' },
-      { value: '#f7fee7', name: '淡萊色 Light Lime' },
-      { value: '#f0fdf4', name: '淡綠色 Light Green' },
-      { value: '#ecfdf5', name: '淡翠綠色 Light Emerald' },
-      { value: '#f0fdfa', name: '淡青綠色 Light Teal' },
-      { value: '#ecfeff', name: '淡青色 Light Cyan' },
-      { value: '#f0f9ff', name: '淡天空藍 Light Sky' },
-      { value: '#eff6ff', name: '淡藍色 Light Blue' },
-      { value: '#eef2ff', name: '淡靛藍色 Light Indigo' },
-      { value: '#f5f3ff', name: '淡紫羅蘭 Light Violet' },
-      { value: '#faf5ff', name: '淡紫色 Light Purple' },
-      { value: '#fdf4ff', name: '淡紫紅色 Light Fuchsia' },
-      { value: '#fdf2f8', name: '淡桃紅色 Light Pink' }
+      { value: '#fecaca', name: '淡紅色 Light Red' },
+      { value: '#fed7aa', name: '淡橙色 Light Orange' },
+      { value: '#fde68a', name: '淡黃色 Light Amber' },
+      { value: '#fef08a', name: '淡黃綠色 Light Yellow' },
+      { value: '#d9f99d', name: '淡萊色 Light Lime' },
+      { value: '#bbf7d0', name: '淡綠色 Light Green' },
+      { value: '#a7f3d0', name: '淡翠綠色 Light Emerald' },
+      { value: '#99f6e4', name: '淡青綠色 Light Teal' },
+      { value: '#a5f3fc', name: '淡青色 Light Cyan' },
+      { value: '#bae6fd', name: '淡天空藍 Light Sky' },
+      { value: '#dbeafe', name: '淡藍色 Light Blue' },
+      { value: '#c7d2fe', name: '淡靛藍色 Light Indigo' },
+      { value: '#ddd6fe', name: '淡紫羅蘭 Light Violet' },
+      { value: '#e9d5ff', name: '淡紫色 Light Purple' },
+      { value: '#f5d0fe', name: '淡紫紅色 Light Fuchsia' },
+      { value: '#fbcfe8', name: '淡桃紅色 Light Pink' }
     ]
     
     const calculatePosition = () => {
-      if (!colorPickerRef.value) return
+      // 優先使用傳入的觸發元素，其次使用 colorPickerRef
+      const triggerEl = props.triggerElement || colorPickerRef.value
+      if (!triggerEl) return
       
-      const rect = colorPickerRef.value.getBoundingClientRect()
+      const rect = triggerEl.getBoundingClientRect()
       const viewportHeight = window.innerHeight
       const viewportWidth = window.innerWidth
       
@@ -169,34 +182,76 @@ export default {
       const panelWidth = 280
       const panelHeight = 400
       
-      let top = rect.bottom + 5
-      let left = rect.left
+      let top, left
       
-      // 優先顯示在下方，只有在下方空間真的不足時才顯示在上方
-      const spaceBelow = viewportHeight - rect.bottom
-      const spaceAbove = rect.top
-      
-      if (spaceBelow < panelHeight && spaceAbove > spaceBelow) {
-        // 只有當上方空間比下方多時才顯示在上方
-        top = rect.top - panelHeight - 5
-      } else if (spaceBelow < panelHeight) {
-        // 如果下方空間不足但仍要顯示在下方，調整高度
+      if (props.positionMode === 'beside-panel') {
+        // 面板並排模式：與 IconPicker 面板完全齊高對齊
+        top = rect.top // 完全對齊 IconPicker 面板頂部
+        left = rect.right + 10 // 面板右側，留 10px 間距
+        
+        // 動態計算高度以匹配 IconPicker 面板
+        const iconPickerHeight = rect.height
+        panelHeight = iconPickerHeight // 使用相同高度
+        
+        // 檢查是否超出視窗右邊界
+        if (left + panelWidth > viewportWidth) {
+          // 改到面板左側顯示
+          left = rect.left - panelWidth - 10
+          
+          // 如果左側也超出，則調整到視窗內
+          if (left < 10) {
+            left = 10
+          }
+        }
+        
+        // 確保不會超出視窗下邊界
+        if (top + panelHeight > viewportHeight) {
+          // 調整頂部位置而非高度，保持面板完整
+          top = Math.max(10, viewportHeight - panelHeight - 10)
+        }
+        
+        // 確保不會超出視窗上邊界  
+        if (top < 10) {
+          top = 10
+        }
+      } else {
+        // 預設模式：相對於觸發元素定位
         top = rect.bottom + 5
-      }
-      
-      // 檢查是否超出視窗右邊
-      if (left + panelWidth > viewportWidth) {
-        left = viewportWidth - panelWidth - 10
-      }
-      
-      // 檢查是否超出視窗左邊
-      if (left < 10) {
-        left = 10
+        left = rect.right + 5  // 預設顯示在按鈕右側
+        
+        // 優先顯示在下方，只有在下方空間真的不足時才顯示在上方
+        const spaceBelow = viewportHeight - rect.bottom
+        const spaceAbove = rect.top
+        
+        if (spaceBelow < panelHeight && spaceAbove > spaceBelow) {
+          // 只有當上方空間比下方多時才顯示在上方
+          top = rect.top - panelHeight - 5
+        } else if (spaceBelow < panelHeight) {
+          // 如果下方空間不足但仍要顯示在下方，調整高度
+          top = rect.bottom + 5
+        }
+        
+        // 檢查右側空間是否足夠，不足則改到左側
+        if (left + panelWidth > viewportWidth) {
+          // 改到按鈕左側顯示
+          left = rect.left - panelWidth - 5
+          
+          // 如果左側也超出邊界，則貼著視窗右邊
+          if (left < 10) {
+            left = viewportWidth - panelWidth - 10
+          }
+        }
+        
+        // 最終檢查是否超出視窗左邊
+        if (left < 10) {
+          left = 10
+        }
       }
       
       panelPosition.value = {
         top: `${top}px`,
-        left: `${left}px`
+        left: `${left}px`,
+        ...(props.positionMode === 'beside-panel' ? { height: `${panelHeight}px` } : {})
       }
     }
     

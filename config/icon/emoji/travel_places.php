@@ -1,0 +1,937 @@
+<?php
+
+/**
+ * Travel Places Emojis
+ * 轉換自前端 JS 檔案
+ * 總計: 218 emojis
+ */
+
+return [
+    'placemap' => [
+        'name' => 'Place map',
+        'emojis' => [
+            [
+                'emoji' => '🌍',
+                'name' => 'globe showing Europe-Africa',
+            ],
+            [
+                'emoji' => '🌎',
+                'name' => 'globe showing Americas',
+            ],
+            [
+                'emoji' => '🌏',
+                'name' => 'globe showing Asia-Australia',
+            ],
+            [
+                'emoji' => '🌐',
+                'name' => 'globe with meridians',
+            ],
+            [
+                'emoji' => '🗺️',
+                'name' => 'world map',
+            ],
+            [
+                'emoji' => '🗾',
+                'name' => 'map of Japan',
+            ],
+            [
+                'emoji' => '🧭',
+                'name' => 'compass',
+            ],
+        ],
+    ],
+    'placegeographic' => [
+        'name' => 'Place geographic',
+        'emojis' => [
+            [
+                'emoji' => '🏔️',
+                'name' => 'snow-capped mountain',
+            ],
+            [
+                'emoji' => '⛰️',
+                'name' => 'mountain',
+            ],
+            [
+                'emoji' => '🌋',
+                'name' => 'volcano',
+            ],
+            [
+                'emoji' => '🗻',
+                'name' => 'mount fuji',
+            ],
+            [
+                'emoji' => '🏕️',
+                'name' => 'camping',
+            ],
+            [
+                'emoji' => '🏖️',
+                'name' => 'beach with umbrella',
+            ],
+            [
+                'emoji' => '🏜️',
+                'name' => 'desert',
+            ],
+            [
+                'emoji' => '🏝️',
+                'name' => 'desert island',
+            ],
+            [
+                'emoji' => '🏞️',
+                'name' => 'national park',
+            ],
+        ],
+    ],
+    'placebuilding' => [
+        'name' => 'Place building',
+        'emojis' => [
+            [
+                'emoji' => '🏟️',
+                'name' => 'stadium',
+            ],
+            [
+                'emoji' => '🏛️',
+                'name' => 'classical building',
+            ],
+            [
+                'emoji' => '🏗️',
+                'name' => 'building construction',
+            ],
+            [
+                'emoji' => '🧱',
+                'name' => 'brick',
+            ],
+            [
+                'emoji' => '🪨',
+                'name' => 'rock',
+            ],
+            [
+                'emoji' => '🪵',
+                'name' => 'wood',
+            ],
+            [
+                'emoji' => '🛖',
+                'name' => 'hut',
+            ],
+            [
+                'emoji' => '🏘️',
+                'name' => 'houses',
+            ],
+            [
+                'emoji' => '🏚️',
+                'name' => 'derelict house',
+            ],
+            [
+                'emoji' => '🏠',
+                'name' => 'house',
+            ],
+            [
+                'emoji' => '🏡',
+                'name' => 'house with garden',
+            ],
+            [
+                'emoji' => '🏢',
+                'name' => 'office building',
+            ],
+            [
+                'emoji' => '🏣',
+                'name' => 'Japanese post office',
+            ],
+            [
+                'emoji' => '🏤',
+                'name' => 'post office',
+            ],
+            [
+                'emoji' => '🏥',
+                'name' => 'hospital',
+            ],
+            [
+                'emoji' => '🏦',
+                'name' => 'bank',
+            ],
+            [
+                'emoji' => '🏨',
+                'name' => 'hotel',
+            ],
+            [
+                'emoji' => '🏩',
+                'name' => 'love hotel',
+            ],
+            [
+                'emoji' => '🏪',
+                'name' => 'convenience store',
+            ],
+            [
+                'emoji' => '🏫',
+                'name' => 'school',
+            ],
+            [
+                'emoji' => '🏬',
+                'name' => 'department store',
+            ],
+            [
+                'emoji' => '🏭',
+                'name' => 'factory',
+            ],
+            [
+                'emoji' => '🏯',
+                'name' => 'Japanese castle',
+            ],
+            [
+                'emoji' => '🏰',
+                'name' => 'castle',
+            ],
+            [
+                'emoji' => '💒',
+                'name' => 'wedding',
+            ],
+            [
+                'emoji' => '🗼',
+                'name' => 'Tokyo tower',
+            ],
+            [
+                'emoji' => '🗽',
+                'name' => 'Statue of Liberty',
+            ],
+        ],
+    ],
+    'placereligious' => [
+        'name' => 'Place religious',
+        'emojis' => [
+            [
+                'emoji' => '⛪',
+                'name' => 'church',
+            ],
+            [
+                'emoji' => '🕌',
+                'name' => 'mosque',
+            ],
+            [
+                'emoji' => '🛕',
+                'name' => 'hindu temple',
+            ],
+            [
+                'emoji' => '🕍',
+                'name' => 'synagogue',
+            ],
+            [
+                'emoji' => '⛩️',
+                'name' => 'shinto shrine',
+            ],
+            [
+                'emoji' => '🕋',
+                'name' => 'kaaba',
+            ],
+        ],
+    ],
+    'placeother' => [
+        'name' => 'Place other',
+        'emojis' => [
+            [
+                'emoji' => '⛲',
+                'name' => 'fountain',
+            ],
+            [
+                'emoji' => '⛺',
+                'name' => 'tent',
+            ],
+            [
+                'emoji' => '🌁',
+                'name' => 'foggy',
+            ],
+            [
+                'emoji' => '🌃',
+                'name' => 'night with stars',
+            ],
+            [
+                'emoji' => '🏙️',
+                'name' => 'cityscape',
+            ],
+            [
+                'emoji' => '🌄',
+                'name' => 'sunrise over mountains',
+            ],
+            [
+                'emoji' => '🌅',
+                'name' => 'sunrise',
+            ],
+            [
+                'emoji' => '🌆',
+                'name' => 'cityscape at dusk',
+            ],
+            [
+                'emoji' => '🌇',
+                'name' => 'sunset',
+            ],
+            [
+                'emoji' => '🌉',
+                'name' => 'bridge at night',
+            ],
+            [
+                'emoji' => '♨️',
+                'name' => 'hot springs',
+            ],
+            [
+                'emoji' => '🎠',
+                'name' => 'carousel horse',
+            ],
+            [
+                'emoji' => '🛝',
+                'name' => 'playground slide',
+            ],
+            [
+                'emoji' => '🎡',
+                'name' => 'ferris wheel',
+            ],
+            [
+                'emoji' => '🎢',
+                'name' => 'roller coaster',
+            ],
+            [
+                'emoji' => '💈',
+                'name' => 'barber pole',
+            ],
+            [
+                'emoji' => '🎪',
+                'name' => 'circus tent',
+            ],
+        ],
+    ],
+    'transportground' => [
+        'name' => 'Transport ground',
+        'emojis' => [
+            [
+                'emoji' => '🚂',
+                'name' => 'locomotive',
+            ],
+            [
+                'emoji' => '🚃',
+                'name' => 'railway car',
+            ],
+            [
+                'emoji' => '🚄',
+                'name' => 'high-speed train',
+            ],
+            [
+                'emoji' => '🚅',
+                'name' => 'bullet train',
+            ],
+            [
+                'emoji' => '🚆',
+                'name' => 'train',
+            ],
+            [
+                'emoji' => '🚇',
+                'name' => 'metro',
+            ],
+            [
+                'emoji' => '🚈',
+                'name' => 'light rail',
+            ],
+            [
+                'emoji' => '🚉',
+                'name' => 'station',
+            ],
+            [
+                'emoji' => '🚊',
+                'name' => 'tram',
+            ],
+            [
+                'emoji' => '🚝',
+                'name' => 'monorail',
+            ],
+            [
+                'emoji' => '🚞',
+                'name' => 'mountain railway',
+            ],
+            [
+                'emoji' => '🚋',
+                'name' => 'tram car',
+            ],
+            [
+                'emoji' => '🚌',
+                'name' => 'bus',
+            ],
+            [
+                'emoji' => '🚍',
+                'name' => 'oncoming bus',
+            ],
+            [
+                'emoji' => '🚎',
+                'name' => 'trolleybus',
+            ],
+            [
+                'emoji' => '🚐',
+                'name' => 'minibus',
+            ],
+            [
+                'emoji' => '🚑',
+                'name' => 'ambulance',
+            ],
+            [
+                'emoji' => '🚒',
+                'name' => 'fire engine',
+            ],
+            [
+                'emoji' => '🚓',
+                'name' => 'police car',
+            ],
+            [
+                'emoji' => '🚔',
+                'name' => 'oncoming police car',
+            ],
+            [
+                'emoji' => '🚕',
+                'name' => 'taxi',
+            ],
+            [
+                'emoji' => '🚖',
+                'name' => 'oncoming taxi',
+            ],
+            [
+                'emoji' => '🚗',
+                'name' => 'automobile',
+            ],
+            [
+                'emoji' => '🚘',
+                'name' => 'oncoming automobile',
+            ],
+            [
+                'emoji' => '🚙',
+                'name' => 'sport utility vehicle',
+            ],
+            [
+                'emoji' => '🛻',
+                'name' => 'pickup truck',
+            ],
+            [
+                'emoji' => '🚚',
+                'name' => 'delivery truck',
+            ],
+            [
+                'emoji' => '🚛',
+                'name' => 'articulated lorry',
+            ],
+            [
+                'emoji' => '🚜',
+                'name' => 'tractor',
+            ],
+            [
+                'emoji' => '🏎️',
+                'name' => 'racing car',
+            ],
+            [
+                'emoji' => '🏍️',
+                'name' => 'motorcycle',
+            ],
+            [
+                'emoji' => '🛵',
+                'name' => 'motor scooter',
+            ],
+            [
+                'emoji' => '🦽',
+                'name' => 'manual wheelchair',
+            ],
+            [
+                'emoji' => '🦼',
+                'name' => 'motorized wheelchair',
+            ],
+            [
+                'emoji' => '🛺',
+                'name' => 'auto rickshaw',
+            ],
+            [
+                'emoji' => '🚲',
+                'name' => 'bicycle',
+            ],
+            [
+                'emoji' => '🛴',
+                'name' => 'kick scooter',
+            ],
+            [
+                'emoji' => '🛹',
+                'name' => 'skateboard',
+            ],
+            [
+                'emoji' => '🛼',
+                'name' => 'roller skate',
+            ],
+            [
+                'emoji' => '🚏',
+                'name' => 'bus stop',
+            ],
+            [
+                'emoji' => '🛣️',
+                'name' => 'motorway',
+            ],
+            [
+                'emoji' => '🛤️',
+                'name' => 'railway track',
+            ],
+            [
+                'emoji' => '🛢️',
+                'name' => 'oil drum',
+            ],
+            [
+                'emoji' => '⛽',
+                'name' => 'fuel pump',
+            ],
+            [
+                'emoji' => '🛞',
+                'name' => 'wheel',
+            ],
+            [
+                'emoji' => '🚨',
+                'name' => 'police car light',
+            ],
+            [
+                'emoji' => '🚥',
+                'name' => 'horizontal traffic light',
+            ],
+            [
+                'emoji' => '🚦',
+                'name' => 'vertical traffic light',
+            ],
+            [
+                'emoji' => '🛑',
+                'name' => 'stop sign',
+            ],
+            [
+                'emoji' => '🚧',
+                'name' => 'construction',
+            ],
+        ],
+    ],
+    'transportwater' => [
+        'name' => 'Transport water',
+        'emojis' => [
+            [
+                'emoji' => '⚓',
+                'name' => 'anchor',
+            ],
+            [
+                'emoji' => '🛟',
+                'name' => 'ring buoy',
+            ],
+            [
+                'emoji' => '⛵',
+                'name' => 'sailboat',
+            ],
+            [
+                'emoji' => '🛶',
+                'name' => 'canoe',
+            ],
+            [
+                'emoji' => '🚤',
+                'name' => 'speedboat',
+            ],
+            [
+                'emoji' => '🛳️',
+                'name' => 'passenger ship',
+            ],
+            [
+                'emoji' => '⛴️',
+                'name' => 'ferry',
+            ],
+            [
+                'emoji' => '🛥️',
+                'name' => 'motor boat',
+            ],
+            [
+                'emoji' => '🚢',
+                'name' => 'ship',
+            ],
+        ],
+    ],
+    'transportair' => [
+        'name' => 'Transport air',
+        'emojis' => [
+            [
+                'emoji' => '✈️',
+                'name' => 'airplane',
+            ],
+            [
+                'emoji' => '🛩️',
+                'name' => 'small airplane',
+            ],
+            [
+                'emoji' => '🛫',
+                'name' => 'airplane departure',
+            ],
+            [
+                'emoji' => '🛬',
+                'name' => 'airplane arrival',
+            ],
+            [
+                'emoji' => '🪂',
+                'name' => 'parachute',
+            ],
+            [
+                'emoji' => '💺',
+                'name' => 'seat',
+            ],
+            [
+                'emoji' => '🚁',
+                'name' => 'helicopter',
+            ],
+            [
+                'emoji' => '🚟',
+                'name' => 'suspension railway',
+            ],
+            [
+                'emoji' => '🚠',
+                'name' => 'mountain cableway',
+            ],
+            [
+                'emoji' => '🚡',
+                'name' => 'aerial tramway',
+            ],
+            [
+                'emoji' => '🛰️',
+                'name' => 'satellite',
+            ],
+            [
+                'emoji' => '🚀',
+                'name' => 'rocket',
+            ],
+            [
+                'emoji' => '🛸',
+                'name' => 'flying saucer',
+            ],
+        ],
+    ],
+    'hotel' => [
+        'name' => 'Hotel',
+        'emojis' => [
+            [
+                'emoji' => '🛎️',
+                'name' => 'bellhop bell',
+            ],
+            [
+                'emoji' => '🧳',
+                'name' => 'luggage',
+            ],
+        ],
+    ],
+    'time' => [
+        'name' => 'Time',
+        'emojis' => [
+            [
+                'emoji' => '⌛',
+                'name' => 'hourglass done',
+            ],
+            [
+                'emoji' => '⏳',
+                'name' => 'hourglass not done',
+            ],
+            [
+                'emoji' => '⌚',
+                'name' => 'watch',
+            ],
+            [
+                'emoji' => '⏰',
+                'name' => 'alarm clock',
+            ],
+            [
+                'emoji' => '⏱️',
+                'name' => 'stopwatch',
+            ],
+            [
+                'emoji' => '⏲️',
+                'name' => 'timer clock',
+            ],
+            [
+                'emoji' => '🕰️',
+                'name' => 'mantelpiece clock',
+            ],
+            [
+                'emoji' => '🕛',
+                'name' => 'twelve o’clock',
+            ],
+            [
+                'emoji' => '🕧',
+                'name' => 'twelve-thirty',
+            ],
+            [
+                'emoji' => '🕐',
+                'name' => 'one o’clock',
+            ],
+            [
+                'emoji' => '🕜',
+                'name' => 'one-thirty',
+            ],
+            [
+                'emoji' => '🕑',
+                'name' => 'two o’clock',
+            ],
+            [
+                'emoji' => '🕝',
+                'name' => 'two-thirty',
+            ],
+            [
+                'emoji' => '🕒',
+                'name' => 'three o’clock',
+            ],
+            [
+                'emoji' => '🕞',
+                'name' => 'three-thirty',
+            ],
+            [
+                'emoji' => '🕓',
+                'name' => 'four o’clock',
+            ],
+            [
+                'emoji' => '🕟',
+                'name' => 'four-thirty',
+            ],
+            [
+                'emoji' => '🕔',
+                'name' => 'five o’clock',
+            ],
+            [
+                'emoji' => '🕠',
+                'name' => 'five-thirty',
+            ],
+            [
+                'emoji' => '🕕',
+                'name' => 'six o’clock',
+            ],
+            [
+                'emoji' => '🕡',
+                'name' => 'six-thirty',
+            ],
+            [
+                'emoji' => '🕖',
+                'name' => 'seven o’clock',
+            ],
+            [
+                'emoji' => '🕢',
+                'name' => 'seven-thirty',
+            ],
+            [
+                'emoji' => '🕗',
+                'name' => 'eight o’clock',
+            ],
+            [
+                'emoji' => '🕣',
+                'name' => 'eight-thirty',
+            ],
+            [
+                'emoji' => '🕘',
+                'name' => 'nine o’clock',
+            ],
+            [
+                'emoji' => '🕤',
+                'name' => 'nine-thirty',
+            ],
+            [
+                'emoji' => '🕙',
+                'name' => 'ten o’clock',
+            ],
+            [
+                'emoji' => '🕥',
+                'name' => 'ten-thirty',
+            ],
+            [
+                'emoji' => '🕚',
+                'name' => 'eleven o’clock',
+            ],
+            [
+                'emoji' => '🕦',
+                'name' => 'eleven-thirty',
+            ],
+        ],
+    ],
+    'skyweather' => [
+        'name' => 'Sky weather',
+        'emojis' => [
+            [
+                'emoji' => '🌑',
+                'name' => 'new moon',
+            ],
+            [
+                'emoji' => '🌒',
+                'name' => 'waxing crescent moon',
+            ],
+            [
+                'emoji' => '🌓',
+                'name' => 'first quarter moon',
+            ],
+            [
+                'emoji' => '🌔',
+                'name' => 'waxing gibbous moon',
+            ],
+            [
+                'emoji' => '🌕',
+                'name' => 'full moon',
+            ],
+            [
+                'emoji' => '🌖',
+                'name' => 'waning gibbous moon',
+            ],
+            [
+                'emoji' => '🌗',
+                'name' => 'last quarter moon',
+            ],
+            [
+                'emoji' => '🌘',
+                'name' => 'waning crescent moon',
+            ],
+            [
+                'emoji' => '🌙',
+                'name' => 'crescent moon',
+            ],
+            [
+                'emoji' => '🌚',
+                'name' => 'new moon face',
+            ],
+            [
+                'emoji' => '🌛',
+                'name' => 'first quarter moon face',
+            ],
+            [
+                'emoji' => '🌜',
+                'name' => 'last quarter moon face',
+            ],
+            [
+                'emoji' => '🌡️',
+                'name' => 'thermometer',
+            ],
+            [
+                'emoji' => '☀️',
+                'name' => 'sun',
+            ],
+            [
+                'emoji' => '🌝',
+                'name' => 'full moon face',
+            ],
+            [
+                'emoji' => '🌞',
+                'name' => 'sun with face',
+            ],
+            [
+                'emoji' => '🪐',
+                'name' => 'ringed planet',
+            ],
+            [
+                'emoji' => '⭐',
+                'name' => 'star',
+            ],
+            [
+                'emoji' => '🌟',
+                'name' => 'glowing star',
+            ],
+            [
+                'emoji' => '🌠',
+                'name' => 'shooting star',
+            ],
+            [
+                'emoji' => '🌌',
+                'name' => 'milky way',
+            ],
+            [
+                'emoji' => '☁️',
+                'name' => 'cloud',
+            ],
+            [
+                'emoji' => '⛅',
+                'name' => 'sun behind cloud',
+            ],
+            [
+                'emoji' => '⛈️',
+                'name' => 'cloud with lightning and rain',
+            ],
+            [
+                'emoji' => '🌤️',
+                'name' => 'sun behind small cloud',
+            ],
+            [
+                'emoji' => '🌥️',
+                'name' => 'sun behind large cloud',
+            ],
+            [
+                'emoji' => '🌦️',
+                'name' => 'sun behind rain cloud',
+            ],
+            [
+                'emoji' => '🌧️',
+                'name' => 'cloud with rain',
+            ],
+            [
+                'emoji' => '🌨️',
+                'name' => 'cloud with snow',
+            ],
+            [
+                'emoji' => '🌩️',
+                'name' => 'cloud with lightning',
+            ],
+            [
+                'emoji' => '🌪️',
+                'name' => 'tornado',
+            ],
+            [
+                'emoji' => '🌫️',
+                'name' => 'fog',
+            ],
+            [
+                'emoji' => '🌬️',
+                'name' => 'wind face',
+            ],
+            [
+                'emoji' => '🌀',
+                'name' => 'cyclone',
+            ],
+            [
+                'emoji' => '🌈',
+                'name' => 'rainbow',
+            ],
+            [
+                'emoji' => '🌂',
+                'name' => 'closed umbrella',
+            ],
+            [
+                'emoji' => '☂️',
+                'name' => 'umbrella',
+            ],
+            [
+                'emoji' => '☔',
+                'name' => 'umbrella with rain drops',
+            ],
+            [
+                'emoji' => '⛱️',
+                'name' => 'umbrella on ground',
+            ],
+            [
+                'emoji' => '⚡',
+                'name' => 'high voltage',
+            ],
+            [
+                'emoji' => '❄️',
+                'name' => 'snowflake',
+            ],
+            [
+                'emoji' => '☃️',
+                'name' => 'snowman',
+            ],
+            [
+                'emoji' => '⛄',
+                'name' => 'snowman without snow',
+            ],
+            [
+                'emoji' => '☄️',
+                'name' => 'comet',
+            ],
+            [
+                'emoji' => '🔥',
+                'name' => 'fire',
+            ],
+            [
+                'emoji' => '💧',
+                'name' => 'droplet',
+            ],
+            [
+                'emoji' => '🌊',
+                'name' => 'water wave',
+            ],
+        ],
+    ],
+];

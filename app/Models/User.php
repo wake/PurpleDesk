@@ -25,7 +25,8 @@ class User extends Authenticatable
         'display_name',
         'email',
         'password',
-        'avatar',
+        'avatar_data',
+        'is_admin',
         'locale',
         'timezone',
         'email_notifications',
@@ -65,19 +66,38 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'birth_date' => 'date',
             'last_login_at' => 'datetime',
+            'avatar_data' => 'json',
         ];
     }
 
     /**
-     * 取得頭像完整 URL
+     * 取得頭像數據（自動生成預設頭像）
+     */
+    public function getAvatarDataAttribute()
+    {
+        $avatarData = $this->getAttributeFromArray('avatar_data');
+        
+        if (!$avatarData) {
+            return \App\Helpers\IconDataHelper::generateUserIconDefault($this->full_name ?: $this->display_name ?: $this->account);
+        }
+        
+        return $avatarData;
+    }
+    
+    /**
+     * 取得頭像完整 URL（僅適用於圖片類型）
      */
     public function getAvatarUrlAttribute()
     {
-        if (!$this->avatar) {
-            return null;
+        $avatarData = $this->avatar_data;
+        
+        if ($avatarData && is_array($avatarData) && 
+            isset($avatarData['type']) && $avatarData['type'] === 'image' && 
+            isset($avatarData['path'])) {
+            return asset('storage/' . $avatarData['path']);
         }
         
-        return asset('storage/' . $this->avatar);
+        return null;
     }
 
     /**
@@ -113,7 +133,7 @@ class User extends Authenticatable
      */
     public function belongsToOrganization($organizationId): bool
     {
-        return $this->organizations()->where('organization_id', $organizationId)->exists();
+        return $this->organizations()->where('organizations.id', $organizationId)->exists();
     }
 
     /**
@@ -121,7 +141,7 @@ class User extends Authenticatable
      */
     public function belongsToTeam($teamId): bool
     {
-        return $this->teams()->where('team_id', $teamId)->exists();
+        return $this->teams()->where('teams.id', $teamId)->exists();
     }
 
     /**
