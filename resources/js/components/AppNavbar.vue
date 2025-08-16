@@ -32,7 +32,7 @@
                 <img
                   v-if="user?.avatar_url"
                   :src="user.avatar_url"
-                  :alt="user.name"
+                  :alt="user.display_name || user.full_name"
                   class="h-full w-full object-cover"
                 />
                 <span v-else class="text-white text-sm font-medium">
@@ -57,7 +57,7 @@
                     <img
                       v-if="user?.avatar_url"
                       :src="user.avatar_url"
-                      :alt="user.name"
+                      :alt="user.display_name || user.full_name"
                       class="h-full w-full object-cover"
                     />
                     <span v-else class="text-white font-medium">
@@ -154,76 +154,68 @@
   </nav>
 </template>
 
-<script>
+<script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { BellIcon, ChevronDownIcon, CogIcon, OfficeBuildingIcon, LogoutIcon } from '@heroicons/vue/outline'
 
-export default {
-  name: 'AppNavbar',
-  components: {
-    BellIcon,
-    ChevronDownIcon, 
-    CogIcon,
-    OfficeBuildingIcon,
-    LogoutIcon
-  },
-  setup() {
-    const router = useRouter()
-    const authStore = useAuthStore()
-    const showUserMenu = ref(false)
-    
-    const user = computed(() => authStore.user)
-    
-    // 判斷是否為管理員
-    const isAdmin = computed(() => {
-      return user.value?.is_admin === true
-    })
-    
-    const getUserInitials = (user) => {
-      if (!user) return ''
-      const name = user.display_name || user.name
-      return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-    }
-    
-    const toggleUserMenu = () => {
-      showUserMenu.value = !showUserMenu.value
-    }
-    
-    const handleLogout = async () => {
-      try {
-        showUserMenu.value = false
-        await authStore.logout()
-        router.push('/login')
-      } catch (error) {
-        console.error('登出錯誤:', error)
-      }
-    }
-    
-    // 點擊外部關閉選單
-    const handleClickOutside = (event) => {
-      if (!event.target.closest('.relative')) {
-        showUserMenu.value = false
-      }
-    }
-    
-    onMounted(() => {
-      document.addEventListener('click', handleClickOutside)
-    })
-    
-    onUnmounted(() => {
-      document.removeEventListener('click', handleClickOutside)
-    })
-    
-    return {
-      user,
-      isAdmin,
-      showUserMenu,
-      getUserInitials,
-      toggleUserMenu,
-      handleLogout
-    }
+// Composables
+const router = useRouter()
+const authStore = useAuthStore()
+
+// Reactive state
+const showUserMenu = ref(false)
+
+// Computed properties
+const user = computed(() => authStore.user)
+
+const isAdmin = computed(() => {
+  return user.value?.is_admin === true
+})
+
+// Helper functions
+const getUserInitials = (user) => {
+  if (!user) return ''
+  const name = user.display_name || user.full_name
+  if (!name) return ''
+  
+  // 對於中文名稱，取前2個字符
+  if (/[\u4e00-\u9fa5]/.test(name)) {
+    return name.slice(0, 2)
+  }
+  
+  // 對於英文名稱，取每個單詞的首字母
+  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+}
+
+// Event handlers
+const toggleUserMenu = () => {
+  showUserMenu.value = !showUserMenu.value
+}
+
+const handleLogout = async () => {
+  try {
+    showUserMenu.value = false
+    await authStore.logout()
+    router.push('/login')
+  } catch (error) {
+    console.error('登出錯誤:', error)
   }
 }
+
+const handleClickOutside = (event) => {
+  if (!event.target.closest('.relative')) {
+    showUserMenu.value = false
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>
